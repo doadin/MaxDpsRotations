@@ -169,7 +169,7 @@ function DeathKnight:UnholyAoe()
 	end
 
 	-- festering_strike,target_if=max:debuff.festering_wound.stack,if=!variable.pop_wounds;
-	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= -20 and (not popWounds) then
+	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= 20 and (not popWounds) then
 		return UH.FesteringStrike;
 	end
 
@@ -332,7 +332,7 @@ function DeathKnight:UnholyAoeSetup()
 	end
 
 	-- festering_strike,target_if=min:debuff.festering_wound.stack,if=death_knight.fwounded_targets<active_enemies&talent.bursting_sores;
-	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= -20 and (fwoundedTargets < targets and talents[UH.BurstingSores]) then
+	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= 20 and (fwoundedTargets < targets and talents[UH.BurstingSores]) then
 		return UH.FesteringStrike;
 	end
 
@@ -342,12 +342,12 @@ function DeathKnight:UnholyAoeSetup()
 	end
 
 	-- festering_strike,target_if=min:debuff.festering_wound.stack,if=death_knight.fwounded_targets<active_enemies;
-	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= -20 and (fwoundedTargets < targets) then
+	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= 20 and (fwoundedTargets < targets) then
 		return UH.FesteringStrike;
 	end
 
 	-- festering_strike,target_if=max:debuff.festering_wound.stack,if=cooldown.apocalypse.remains<variable.apoc_timing&debuff.festering_wound.stack<4;
-	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= -20 and (cooldown[UH.Apocalypse].remains < apocTiming and debuff[UH.FesteringWound].count < 4) then
+	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= 20 and (cooldown[UH.Apocalypse].remains < apocTiming and debuff[UH.FesteringWound].count < 4) then
 		return UH.FesteringStrike;
 	end
 
@@ -419,12 +419,12 @@ function DeathKnight:UnholyCooldowns()
 	end
 
 	-- soul_reaper,if=active_enemies=1&target.time_to_pct_35<5&target.time_to_die>5;
-	if talents[UH.SoulReaper] and cooldown[UH.SoulReaper].ready and runes >= 1 and runicPower >= -10 and (targets == 1 and timeTo35 < 5 and timeToDie > 5) then
+	if talents[UH.SoulReaper] and cooldown[UH.SoulReaper].ready and runes >= 1 and runicPower >= 10 and (targets == 1 and timeTo35 < 5 and timeToDie > 5) then
 		return UH.SoulReaper;
 	end
 
 	-- soul_reaper,target_if=min:dot.soul_reaper.remains,if=target.time_to_pct_35<5&active_enemies>=2&target.time_to_die>(dot.soul_reaper.remains+5);
-	if talents[UH.SoulReaper] and cooldown[UH.SoulReaper].ready and runes >= 1 and runicPower >= -10 and (timeTo35 < 5 and targets >= 2 and timeToDie > ( debuff[UH.SoulReaper].remains + 5 )) then
+	if talents[UH.SoulReaper] and cooldown[UH.SoulReaper].ready and runes >= 1 and runicPower >= 10 and (timeTo35 < 5 and targets >= 2 and timeToDie > ( debuff[UH.SoulReaper].remains + 5 )) then
 		return UH.SoulReaper;
 	end
 end
@@ -461,12 +461,12 @@ function DeathKnight:UnholyGargSetup()
 	end
 
 	-- army_of_the_dead,if=talent.commander_of_the_dead&(cooldown.dark_transformation.remains<3|buff.commander_of_the_dead.up)|!talent.commander_of_the_dead&talent.unholy_assault&cooldown.unholy_assault.remains<10|!talent.unholy_assault&!talent.commander_of_the_dead;
-	if talents[UH.ArmyOfTheDead] and cooldown[UH.ArmyOfTheDead].ready and runes >= 1 and runicPower >= -10 and (talents[UH.CommanderOfTheDead] and ( cooldown[UH.DarkTransformation].remains < 3 or buff[UH.CommanderOfTheDead].up ) or not talents[UH.CommanderOfTheDead] and talents[UH.UnholyAssault] and cooldown[UH.UnholyAssault].remains < 10 or not talents[UH.UnholyAssault] and not talents[UH.CommanderOfTheDead]) then
+	if talents[UH.ArmyOfTheDead] and cooldown[UH.ArmyOfTheDead].ready and runes >= 1 and runicPower >= 10 and (talents[UH.CommanderOfTheDead] and ( cooldown[UH.DarkTransformation].remains < 3 or buff[UH.CommanderOfTheDead].up ) or not talents[UH.CommanderOfTheDead] and talents[UH.UnholyAssault] and cooldown[UH.UnholyAssault].remains < 10 or not talents[UH.UnholyAssault] and not talents[UH.CommanderOfTheDead]) then
 		return UH.ArmyOfTheDead;
 	end
 
 	-- soul_reaper,if=active_enemies=1&target.time_to_pct_35<5&target.time_to_die>5;
-	if talents[UH.SoulReaper] and cooldown[UH.SoulReaper].ready and runes >= 1 and runicPower >= -10 and (targets == 1 and timeTo35 < 5 and timeToDie > 5) then
+	if talents[UH.SoulReaper] and cooldown[UH.SoulReaper].ready and runes >= 1 and runicPower >= 10 and (targets == 1 and timeTo35 < 5 and timeToDie > 5) then
 		return UH.SoulReaper;
 	end
 
@@ -496,7 +496,7 @@ function DeathKnight:UnholyGargSetup()
 	end
 
 	-- festering_strike,if=debuff.festering_wound.stack=0|!talent.apocalypse|runic_power<40&!pet.gargoyle.active;
-	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= -20 and (debuff[UH.FesteringWound].count == 0 or not talents[UH.Apocalypse] or runicPower < 40 and not petGargoyle) then
+	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= 20 and (debuff[UH.FesteringWound].count == 0 or not talents[UH.Apocalypse] or runicPower < 40 and not petGargoyle) then
 		return UH.FesteringStrike;
 	end
 
@@ -544,7 +544,7 @@ function DeathKnight:UnholyHighPrioActions()
 	end
 
 	-- army_of_the_dead,if=talent.summon_gargoyle&cooldown.summon_gargoyle.remains<2|!talent.summon_gargoyle|fight_remains<35;
-	if talents[UH.ArmyOfTheDead] and cooldown[UH.ArmyOfTheDead].ready and runes >= 1 and runicPower >= -10 and (talents[UH.SummonGargoyle] and cooldown[UH.SummonGargoyle].remains < 2 or not talents[UH.SummonGargoyle] or timeToDie < 35) then
+	if talents[UH.ArmyOfTheDead] and cooldown[UH.ArmyOfTheDead].ready and runes >= 1 and runicPower >= 10 and (talents[UH.SummonGargoyle] and cooldown[UH.SummonGargoyle].remains < 2 or not talents[UH.SummonGargoyle] or timeToDie < 35) then
 		return UH.ArmyOfTheDead;
 	end
 
@@ -564,12 +564,12 @@ function DeathKnight:UnholyHighPrioActions()
 	end
 
 	-- unholy_blight,if=variable.st_planning&((!talent.apocalypse|cooldown.apocalypse.remains)&talent.morbidity|!talent.morbidity)|variable.adds_remain|fight_remains<21;
-	if talents[UH.UnholyBlight] and cooldown[UH.UnholyBlight].ready and runes >= 1 and runicPower >= -10 and (stPlanning and ( ( not talents[UH.Apocalypse] or cooldown[UH.Apocalypse].remains ) and talents[UH.Morbidity] or not talents[UH.Morbidity] ) or addsRemain or timeToDie < 21) then
+	if talents[UH.UnholyBlight] and cooldown[UH.UnholyBlight].ready and runes >= 1 and runicPower >= 10 and (stPlanning and ( ( not talents[UH.Apocalypse] or cooldown[UH.Apocalypse].remains ) and talents[UH.Morbidity] or not talents[UH.Morbidity] ) or addsRemain or timeToDie < 21) then
 		return UH.UnholyBlight;
 	end
 
 	-- outbreak,target_if=target.time_to_die>dot.virulent_plague.remains&(dot.virulent_plague.refreshable|talent.superstrain&(dot.frost_fever_superstrain.refreshable|dot.blood_plague_superstrain.refreshable))&(!talent.unholy_blight|talent.unholy_blight&cooldown.unholy_blight.remains>15%((talent.superstrain*3)+(talent.plaguebringer*2)+(talent.ebon_fever*2)));
-	if talents[UH.Outbreak] and runes >= 1 and runicPower >= -10 and () then
+	if talents[UH.Outbreak] and runes >= 1 and runicPower >= 10 and () then
 		return UH.Outbreak;
 	end
 end
@@ -629,7 +629,7 @@ function DeathKnight:UnholySt()
 	end
 
 	-- festering_strike,target_if=min:debuff.festering_wound.stack,if=!variable.pop_wounds&debuff.festering_wound.stack<4;
-	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= -20 and (not popWounds and debuff[UH.FesteringWound].count < 4) then
+	if talents[UH.FesteringStrike] and runes >= 2 and runicPower >= 20 and (not popWounds and debuff[UH.FesteringWound].count < 4) then
 		return UH.FesteringStrike;
 	end
 

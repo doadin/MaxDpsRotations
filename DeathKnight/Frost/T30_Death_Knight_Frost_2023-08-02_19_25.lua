@@ -163,12 +163,12 @@ function DeathKnight:FrostAoe()
 	local runeforge = fd.runeforge;
 
 	-- remorseless_winter;
-	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= -10 then
+	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= 10 then
 		return FR.RemorselessWinter;
 	end
 
 	-- howling_blast,if=buff.rime.react|!dot.frost_fever.ticking;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (buff[FR.Rime].count or not debuff[FR.FrostFever].up) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (buff[FR.Rime].count or not debuff[FR.FrostFever].up) then
 		return FR.HowlingBlast;
 	end
 
@@ -233,12 +233,12 @@ function DeathKnight:FrostBreath()
 	local runeforge = fd.runeforge;
 
 	-- remorseless_winter,if=variable.rw_buffs|variable.adds_remain;
-	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= -10 and (rwBuffs or addsRemain) then
+	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= 10 and (rwBuffs or addsRemain) then
 		return FR.RemorselessWinter;
 	end
 
 	-- howling_blast,if=variable.rime_buffs&runic_power>(45-talent.rage_of_the_frozen_champion*8);
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (rimeBuffs and runicPower > ( 45 - (talents[FR.RageOfTheFrozenChampion] and 1 or 0) * 8 )) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (rimeBuffs and runicPower > ( 45 - (talents[FR.RageOfTheFrozenChampion] and 1 or 0) * 8 )) then
 		return FR.HowlingBlast;
 	end
 
@@ -268,17 +268,17 @@ function DeathKnight:FrostBreath()
 	end
 
 	-- death_and_decay,if=runic_power<36&rune.time_to_2>runic_power%18;
-	if cooldown[FR.DeathAndDecay].ready and runes >= 1 and runicPower >= -10 and (runicPower < 36 and runesTimeTo2 > runicPower / 18) then
+	if cooldown[FR.DeathAndDecay].ready and runes >= 1 and runicPower >= 10 and (runicPower < 36 and runesTimeTo2 > runicPower / 18) then
 		return FR.DeathAndDecay;
 	end
 
 	-- remorseless_winter,if=runic_power<36&rune.time_to_2>runic_power%18;
-	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= -10 and (runicPower < 36 and runesTimeTo2 > runicPower / 18) then
+	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= 10 and (runicPower < 36 and runesTimeTo2 > runicPower / 18) then
 		return FR.RemorselessWinter;
 	end
 
 	-- howling_blast,if=runic_power<36&rune.time_to_2>runic_power%18;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (runicPower < 36 and runesTimeTo2 > runicPower / 18) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (runicPower < 36 and runesTimeTo2 > runicPower / 18) then
 		return FR.HowlingBlast;
 	end
 
@@ -288,7 +288,7 @@ function DeathKnight:FrostBreath()
 	end
 
 	-- howling_blast,if=buff.rime.react;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (buff[FR.Rime].count) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (buff[FR.Rime].count) then
 		return FR.HowlingBlast;
 	end
 end
@@ -328,12 +328,12 @@ function DeathKnight:FrostBreathOblit()
 	end
 
 	-- howling_blast,if=buff.rime.react;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (buff[FR.Rime].count) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (buff[FR.Rime].count) then
 		return FR.HowlingBlast;
 	end
 
 	-- howling_blast,if=!buff.killing_machine.up;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (not buff[FR.KillingMachine].up) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (not buff[FR.KillingMachine].up) then
 		return FR.HowlingBlast;
 	end
 
@@ -369,27 +369,27 @@ function DeathKnight:FrostColdHeart()
 	local runeforge = fd.runeforge;
 
 	-- chains_of_ice,if=fight_remains<gcd&(rune<2|!buff.killing_machine.up&(!variable.2h_check&buff.cold_heart.stack>=4|variable.2h_check&buff.cold_heart.stack>8)|buff.killing_machine.up&(!variable.2h_check&buff.cold_heart.stack>8|variable.2h_check&buff.cold_heart.stack>10));
-	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= -10 and (timeToDie < gcd and ( runes < 2 or not buff[FR.KillingMachine].up and ( not TwoHanderWepCheck and buff[FR.ColdHeart].count >= 4 or TwoHanderWepCheck and buff[FR.ColdHeart].count > 8 ) or buff[FR.KillingMachine].up and ( not TwoHanderWepCheck and buff[FR.ColdHeart].count > 8 or TwoHanderWepCheck and buff[FR.ColdHeart].count > 10 ) )) then
+	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= 10 and (timeToDie < gcd and ( runes < 2 or not buff[FR.KillingMachine].up and ( not TwoHanderWepCheck and buff[FR.ColdHeart].count >= 4 or TwoHanderWepCheck and buff[FR.ColdHeart].count > 8 ) or buff[FR.KillingMachine].up and ( not TwoHanderWepCheck and buff[FR.ColdHeart].count > 8 or TwoHanderWepCheck and buff[FR.ColdHeart].count > 10 ) )) then
 		return FR.ChainsOfIce;
 	end
 
 	-- chains_of_ice,if=!talent.obliteration&buff.pillar_of_frost.up&buff.cold_heart.stack>=10&(buff.pillar_of_frost.remains<gcd*(1+(talent.frostwyrms_fury&cooldown.frostwyrms_fury.ready))|buff.unholy_strength.up&buff.unholy_strength.remains<gcd);
-	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= -10 and (not talents[FR.Obliteration] and buff[FR.PillarOfFrost].up and buff[FR.ColdHeart].count >= 10 and ( buff[FR.PillarOfFrost].remains < gcd * ( 1 + ( talents[FR.FrostwyrmsFury] and cooldown[FR.FrostwyrmsFury].ready ) ) or buff[FR.UnholyStrength].up and buff[FR.UnholyStrength].remains < gcd )) then
+	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= 10 and (not talents[FR.Obliteration] and buff[FR.PillarOfFrost].up and buff[FR.ColdHeart].count >= 10 and ( buff[FR.PillarOfFrost].remains < gcd * ( 1 + ( talents[FR.FrostwyrmsFury] and cooldown[FR.FrostwyrmsFury].ready ) ) or buff[FR.UnholyStrength].up and buff[FR.UnholyStrength].remains < gcd )) then
 		return FR.ChainsOfIce;
 	end
 
 	-- chains_of_ice,if=!talent.obliteration&death_knight.runeforge.fallen_crusader&!buff.pillar_of_frost.up&cooldown.pillar_of_frost.remains_expected>15&(buff.cold_heart.stack>=10&buff.unholy_strength.up|buff.cold_heart.stack>=13);
-	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= -10 and (not talents[FR.Obliteration] and runeforge[FR.FallenCrusader] and not buff[FR.PillarOfFrost].up and cooldown[FR.PillarOfFrost].remains > 15 and ( buff[FR.ColdHeart].count >= 10 and buff[FR.UnholyStrength].up or buff[FR.ColdHeart].count >= 13 )) then
+	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= 10 and (not talents[FR.Obliteration] and runeforge[FR.FallenCrusader] and not buff[FR.PillarOfFrost].up and cooldown[FR.PillarOfFrost].remains > 15 and ( buff[FR.ColdHeart].count >= 10 and buff[FR.UnholyStrength].up or buff[FR.ColdHeart].count >= 13 )) then
 		return FR.ChainsOfIce;
 	end
 
 	-- chains_of_ice,if=!talent.obliteration&!death_knight.runeforge.fallen_crusader&buff.cold_heart.stack>=10&!buff.pillar_of_frost.up&cooldown.pillar_of_frost.remains_expected>20;
-	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= -10 and (not talents[FR.Obliteration] and not runeforge[FR.FallenCrusader] and buff[FR.ColdHeart].count >= 10 and not buff[FR.PillarOfFrost].up and cooldown[FR.PillarOfFrost].remains > 20) then
+	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= 10 and (not talents[FR.Obliteration] and not runeforge[FR.FallenCrusader] and buff[FR.ColdHeart].count >= 10 and not buff[FR.PillarOfFrost].up and cooldown[FR.PillarOfFrost].remains > 20) then
 		return FR.ChainsOfIce;
 	end
 
 	-- chains_of_ice,if=talent.obliteration&!buff.pillar_of_frost.up&(buff.cold_heart.stack>=14&(buff.unholy_strength.up|buff.chaos_bane.up)|buff.cold_heart.stack>=19|cooldown.pillar_of_frost.remains_expected<3&buff.cold_heart.stack>=14);
-	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= -10 and (talents[FR.Obliteration] and not buff[FR.PillarOfFrost].up and ( buff[FR.ColdHeart].count >= 14 and ( buff[FR.UnholyStrength].up or buff[FR.ChaosBane].up ) or buff[FR.ColdHeart].count >= 19 or cooldown[FR.PillarOfFrost].remains < 3 and buff[FR.ColdHeart].count >= 14 )) then
+	if talents[FR.ChainsOfIce] and runes >= 1 and runicPower >= 10 and (talents[FR.Obliteration] and not buff[FR.PillarOfFrost].up and ( buff[FR.ColdHeart].count >= 14 and ( buff[FR.UnholyStrength].up or buff[FR.ChaosBane].up ) or buff[FR.ColdHeart].count >= 19 or cooldown[FR.PillarOfFrost].remains < 3 and buff[FR.ColdHeart].count >= 14 )) then
 		return FR.ChainsOfIce;
 	end
 end
@@ -452,7 +452,7 @@ function DeathKnight:FrostCooldowns()
 	end
 
 	-- chill_streak,if=active_enemies>=2&(!death_and_decay.ticking&talent.cleaving_strikes|!talent.cleaving_strikes|active_enemies<=5);
-	if talents[FR.ChillStreak] and cooldown[FR.ChillStreak].ready and runes >= 1 and runicPower >= -10 and (targets >= 2 and ( not debuff[FR.DeathAndDecay].up and talents[FR.CleavingStrikes] or not talents[FR.CleavingStrikes] or targets <= 5 )) then
+	if talents[FR.ChillStreak] and cooldown[FR.ChillStreak].ready and runes >= 1 and runicPower >= 10 and (targets >= 2 and ( not debuff[FR.DeathAndDecay].up and talents[FR.CleavingStrikes] or not talents[FR.CleavingStrikes] or targets <= 5 )) then
 		return FR.ChillStreak;
 	end
 
@@ -497,7 +497,7 @@ function DeathKnight:FrostCooldowns()
 	end
 
 	-- soul_reaper,if=fight_remains>5&target.time_to_pct_35<5&active_enemies<=2&(talent.obliteration&(buff.pillar_of_frost.up&!buff.killing_machine.react|!buff.pillar_of_frost.up)|talent.breath_of_sindragosa&(buff.breath_of_sindragosa.up&runic_power>40|!buff.breath_of_sindragosa.up)|!talent.breath_of_sindragosa&!talent.obliteration);
-	if talents[FR.SoulReaper] and cooldown[FR.SoulReaper].ready and runes >= 1 and runicPower >= -10 and (timeToDie > 5 and timeTo35 < 5 and targets <= 2 and ( talents[FR.Obliteration] and ( buff[FR.PillarOfFrost].up and not buff[FR.KillingMachine].count or not buff[FR.PillarOfFrost].up ) or talents[FR.BreathOfSindragosa] and ( buff[FR.BreathOfSindragosa].up and runicPower > 40 or not buff[FR.BreathOfSindragosa].up ) or not talents[FR.BreathOfSindragosa] and not talents[FR.Obliteration] )) then
+	if talents[FR.SoulReaper] and cooldown[FR.SoulReaper].ready and runes >= 1 and runicPower >= 10 and (timeToDie > 5 and timeTo35 < 5 and targets <= 2 and ( talents[FR.Obliteration] and ( buff[FR.PillarOfFrost].up and not buff[FR.KillingMachine].count or not buff[FR.PillarOfFrost].up ) or talents[FR.BreathOfSindragosa] and ( buff[FR.BreathOfSindragosa].up and runicPower > 40 or not buff[FR.BreathOfSindragosa].up ) or not talents[FR.BreathOfSindragosa] and not talents[FR.Obliteration] )) then
 		return FR.SoulReaper;
 	end
 
@@ -548,7 +548,7 @@ function DeathKnight:FrostHighPrioActions()
 	end
 
 	-- howling_blast,if=!dot.frost_fever.ticking&active_enemies>=2&(!talent.obliteration|talent.obliteration&(!cooldown.pillar_of_frost.ready|buff.pillar_of_frost.up&!buff.killing_machine.react));
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (not debuff[FR.FrostFever].up and targets >= 2 and ( not talents[FR.Obliteration] or talents[FR.Obliteration] and ( not cooldown[FR.PillarOfFrost].ready or buff[FR.PillarOfFrost].up and not buff[FR.KillingMachine].count ) )) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (not debuff[FR.FrostFever].up and targets >= 2 and ( not talents[FR.Obliteration] or talents[FR.Obliteration] and ( not cooldown[FR.PillarOfFrost].ready or buff[FR.PillarOfFrost].up and not buff[FR.KillingMachine].count ) )) then
 		return FR.HowlingBlast;
 	end
 
@@ -583,12 +583,12 @@ function DeathKnight:FrostHighPrioActions()
 	end
 
 	-- remorseless_winter,if=!talent.breath_of_sindragosa&!talent.obliteration&variable.rw_buffs;
-	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= -10 and (not talents[FR.BreathOfSindragosa] and not talents[FR.Obliteration] and rwBuffs) then
+	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= 10 and (not talents[FR.BreathOfSindragosa] and not talents[FR.Obliteration] and rwBuffs) then
 		return FR.RemorselessWinter;
 	end
 
 	-- remorseless_winter,if=talent.obliteration&active_enemies>=3&variable.adds_remain;
-	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= -10 and (talents[FR.Obliteration] and targets >= 3 and addsRemain) then
+	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= 10 and (talents[FR.Obliteration] and targets >= 3 and addsRemain) then
 		return FR.RemorselessWinter;
 	end
 end
@@ -620,12 +620,12 @@ function DeathKnight:FrostObliteration()
 	local runeforge = fd.runeforge;
 
 	-- remorseless_winter,if=active_enemies>3;
-	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= -10 and (targets > 3) then
+	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= 10 and (targets > 3) then
 		return FR.RemorselessWinter;
 	end
 
 	-- howling_blast,if=buff.killing_machine.stack<2&buff.pillar_of_frost.remains<gcd&buff.rime.react;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (buff[FR.KillingMachine].count < 2 and buff[FR.PillarOfFrost].remains < gcd and buff[FR.Rime].count) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (buff[FR.KillingMachine].count < 2 and buff[FR.PillarOfFrost].remains < gcd and buff[FR.Rime].count) then
 		return FR.HowlingBlast;
 	end
 
@@ -650,7 +650,7 @@ function DeathKnight:FrostObliteration()
 	end
 
 	-- howling_blast,if=!buff.killing_machine.react&(!dot.frost_fever.ticking|buff.rime.react&set_bonus.tier30_2pc&!variable.rp_buffs);
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (not buff[FR.KillingMachine].count and ( not debuff[FR.FrostFever].up or buff[FR.Rime].count and MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and not rpBuffs )) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (not buff[FR.KillingMachine].count and ( not debuff[FR.FrostFever].up or buff[FR.Rime].count and MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and not rpBuffs )) then
 		return FR.HowlingBlast;
 	end
 
@@ -665,7 +665,7 @@ function DeathKnight:FrostObliteration()
 	end
 
 	-- howling_blast,if=buff.rime.react&!buff.killing_machine.react;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (buff[FR.Rime].count and not buff[FR.KillingMachine].count) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (buff[FR.Rime].count and not buff[FR.KillingMachine].count) then
 		return FR.HowlingBlast;
 	end
 
@@ -680,7 +680,7 @@ function DeathKnight:FrostObliteration()
 	end
 
 	-- howling_blast,if=!buff.killing_machine.react&runic_power<25;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (not buff[FR.KillingMachine].count and runicPower < 25) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (not buff[FR.KillingMachine].count and runicPower < 25) then
 		return FR.HowlingBlast;
 	end
 
@@ -695,7 +695,7 @@ function DeathKnight:FrostObliteration()
 	end
 
 	-- howling_blast,if=buff.rime.react;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (buff[FR.Rime].count) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (buff[FR.Rime].count) then
 		return FR.HowlingBlast;
 	end
 
@@ -739,7 +739,7 @@ function DeathKnight:FrostSingleTarget()
 	local runeforge = fd.runeforge;
 
 	-- remorseless_winter,if=variable.rw_buffs|variable.adds_remain;
-	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= -10 and (rwBuffs or addsRemain) then
+	if cooldown[FR.RemorselessWinter].ready and runes >= 1 and runicPower >= 10 and (rwBuffs or addsRemain) then
 		return FR.RemorselessWinter;
 	end
 
@@ -749,7 +749,7 @@ function DeathKnight:FrostSingleTarget()
 	end
 
 	-- howling_blast,if=buff.rime.react&set_bonus.tier30_2pc&buff.killing_machine.stack<2;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (buff[FR.Rime].count and MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and buff[FR.KillingMachine].count < 2) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (buff[FR.Rime].count and MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and buff[FR.KillingMachine].count < 2) then
 		return FR.HowlingBlast;
 	end
 
@@ -764,7 +764,7 @@ function DeathKnight:FrostSingleTarget()
 	end
 
 	-- howling_blast,if=buff.rime.react&talent.icebreaker.rank=2;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (buff[FR.Rime].count and talents[FR.Icebreaker] == 2) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (buff[FR.Rime].count and talents[FR.Icebreaker] == 2) then
 		return FR.HowlingBlast;
 	end
 
@@ -779,7 +779,7 @@ function DeathKnight:FrostSingleTarget()
 	end
 
 	-- howling_blast,if=variable.rime_buffs;
-	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= -10 and (rimeBuffs) then
+	if talents[FR.HowlingBlast] and runes >= 1 and runicPower >= 10 and (rimeBuffs) then
 		return FR.HowlingBlast;
 	end
 

@@ -112,12 +112,12 @@ function DeathKnight:Blood()
 	end
 
 	-- deaths_caress,if=!buff.bone_shield.up;
-	if talents[BL.DeathsCaress] and cooldown[BL.DeathsCaress].ready and runes >= 1 and runicPower >= -10 and (not buff[BL.BoneShield].up) then
+	if talents[BL.DeathsCaress] and cooldown[BL.DeathsCaress].ready and runes >= 1 and runicPower >= 10 and (not buff[BL.BoneShield].up) then
 		return BL.DeathsCaress;
 	end
 
 	-- death_and_decay,if=!death_and_decay.ticking&(talent.unholy_ground|talent.sanguine_ground|spell_targets.death_and_decay>3|buff.crimson_scourge.up);
-	if cooldown[BL.DeathAndDecay].ready and runes >= 1 and runicPower >= -10 and (not debuff[BL.DeathAndDecay].up and ( talents[BL.UnholyGround] or talents[BL.SanguineGround] or targets > 3 or buff[BL.CrimsonScourge].up )) then
+	if cooldown[BL.DeathAndDecay].ready and runes >= 1 and runicPower >= 10 and (not debuff[BL.DeathAndDecay].up and ( talents[BL.UnholyGround] or talents[BL.SanguineGround] or targets > 3 or buff[BL.CrimsonScourge].up )) then
 		return BL.DeathAndDecay;
 	end
 
@@ -127,7 +127,7 @@ function DeathKnight:Blood()
 	end
 
 	-- blooddrinker,if=!buff.dancing_rune_weapon.up;
-	if talents[BL.Blooddrinker] and cooldown[BL.Blooddrinker].ready and runes >= 1 and runicPower >= -10 and (not buff[BL.DancingRuneWeapon].up) then
+	if talents[BL.Blooddrinker] and cooldown[BL.Blooddrinker].ready and runes >= 1 and runicPower >= 10 and (not buff[BL.DancingRuneWeapon].up) then
 		return BL.Blooddrinker;
 	end
 
@@ -224,22 +224,22 @@ function DeathKnight:BloodDrwUp()
 	end
 
 	-- marrowrend,if=(buff.bone_shield.remains<=4|buff.bone_shield.stack<variable.bone_shield_refresh_value)&runic_power.deficit>20;
-	if talents[BL.Marrowrend] and runes >= 2 and runicPower >= -20 and (( buff[BL.BoneShield].remains <= 4 or buff[BL.BoneShield].count < boneShieldRefreshValue ) and runicPowerDeficit > 20) then
+	if talents[BL.Marrowrend] and runes >= 2 and runicPower >= 20 and (( buff[BL.BoneShield].remains <= 4 or buff[BL.BoneShield].count < boneShieldRefreshValue ) and runicPowerDeficit > 20) then
 		return BL.Marrowrend;
 	end
 
 	-- soul_reaper,if=active_enemies=1&target.time_to_pct_35<5&target.time_to_die>(dot.soul_reaper.remains+5);
-	if talents[BL.SoulReaper] and cooldown[BL.SoulReaper].ready and runes >= 1 and runicPower >= -10 and (targets == 1 and timeTo35 < 5 and timeToDie > ( debuff[BL.SoulReaper].remains + 5 )) then
+	if talents[BL.SoulReaper] and cooldown[BL.SoulReaper].ready and runes >= 1 and runicPower >= 10 and (targets == 1 and timeTo35 < 5 and timeToDie > ( debuff[BL.SoulReaper].remains + 5 )) then
 		return BL.SoulReaper;
 	end
 
 	-- soul_reaper,target_if=min:dot.soul_reaper.remains,if=target.time_to_pct_35<5&active_enemies>=2&target.time_to_die>(dot.soul_reaper.remains+5);
-	if talents[BL.SoulReaper] and cooldown[BL.SoulReaper].ready and runes >= 1 and runicPower >= -10 and (timeTo35 < 5 and targets >= 2 and timeToDie > ( debuff[BL.SoulReaper].remains + 5 )) then
+	if talents[BL.SoulReaper] and cooldown[BL.SoulReaper].ready and runes >= 1 and runicPower >= 10 and (timeTo35 < 5 and targets >= 2 and timeToDie > ( debuff[BL.SoulReaper].remains + 5 )) then
 		return BL.SoulReaper;
 	end
 
 	-- death_and_decay,if=!death_and_decay.ticking&(talent.sanguine_ground|talent.unholy_ground);
-	if cooldown[BL.DeathAndDecay].ready and runes >= 1 and runicPower >= -10 and (not debuff[BL.DeathAndDecay].up and ( talents[BL.SanguineGround] or talents[BL.UnholyGround] )) then
+	if cooldown[BL.DeathAndDecay].ready and runes >= 1 and runicPower >= 10 and (not debuff[BL.DeathAndDecay].up and ( talents[BL.SanguineGround] or talents[BL.UnholyGround] )) then
 		return BL.DeathAndDecay;
 	end
 
@@ -267,7 +267,7 @@ function DeathKnight:BloodDrwUp()
 	end
 
 	-- heart_strike,if=rune.time_to_2<gcd|runic_power.deficit>=variable.heart_strike_rp_drw;
-	if talents[BL.HeartStrike] and runes >= 1 and runicPower >= -15 and health >= 0 and (runesTimeTo2 < gcd or runicPowerDeficit >= heartStrikeRpDrw) then
+	if talents[BL.HeartStrike] and runes >= 1 and runicPower >= 15 and health >= 0 and (runesTimeTo2 < gcd or runicPowerDeficit >= heartStrikeRpDrw) then
 		return BL.HeartStrike;
 	end
 end
@@ -328,12 +328,12 @@ function DeathKnight:BloodStandard()
 	end
 
 	-- deaths_caress,if=(buff.bone_shield.remains<=4|(buff.bone_shield.stack<variable.bone_shield_refresh_value+1))&runic_power.deficit>10&!(talent.insatiable_blade&cooldown.dancing_rune_weapon.remains<buff.bone_shield.remains)&!talent.consumption.enabled&!talent.blooddrinker.enabled&rune.time_to_3>gcd;
-	if talents[BL.DeathsCaress] and cooldown[BL.DeathsCaress].ready and runes >= 1 and runicPower >= -10 and (( buff[BL.BoneShield].remains <= 4 or ( buff[BL.BoneShield].count < boneShieldRefreshValue + 1 ) ) and runicPowerDeficit > 10 and not ( talents[BL.InsatiableBlade] and cooldown[BL.DancingRuneWeapon].remains < buff[BL.BoneShield].remains ) and not talents[BL.Consumption] and not talents[BL.Blooddrinker] and runesTimeTo3 > gcd) then
+	if talents[BL.DeathsCaress] and cooldown[BL.DeathsCaress].ready and runes >= 1 and runicPower >= 10 and (( buff[BL.BoneShield].remains <= 4 or ( buff[BL.BoneShield].count < boneShieldRefreshValue + 1 ) ) and runicPowerDeficit > 10 and not ( talents[BL.InsatiableBlade] and cooldown[BL.DancingRuneWeapon].remains < buff[BL.BoneShield].remains ) and not talents[BL.Consumption] and not talents[BL.Blooddrinker] and runesTimeTo3 > gcd) then
 		return BL.DeathsCaress;
 	end
 
 	-- marrowrend,if=(buff.bone_shield.remains<=4|buff.bone_shield.stack<variable.bone_shield_refresh_value)&runic_power.deficit>20&!(talent.insatiable_blade&cooldown.dancing_rune_weapon.remains<buff.bone_shield.remains);
-	if talents[BL.Marrowrend] and runes >= 2 and runicPower >= -20 and (( buff[BL.BoneShield].remains <= 4 or buff[BL.BoneShield].count < boneShieldRefreshValue ) and runicPowerDeficit > 20 and not ( talents[BL.InsatiableBlade] and cooldown[BL.DancingRuneWeapon].remains < buff[BL.BoneShield].remains )) then
+	if talents[BL.Marrowrend] and runes >= 2 and runicPower >= 20 and (( buff[BL.BoneShield].remains <= 4 or buff[BL.BoneShield].count < boneShieldRefreshValue ) and runicPowerDeficit > 20 and not ( talents[BL.InsatiableBlade] and cooldown[BL.DancingRuneWeapon].remains < buff[BL.BoneShield].remains )) then
 		return BL.Marrowrend;
 	end
 
@@ -343,12 +343,12 @@ function DeathKnight:BloodStandard()
 	end
 
 	-- soul_reaper,if=active_enemies=1&target.time_to_pct_35<5&target.time_to_die>(dot.soul_reaper.remains+5);
-	if talents[BL.SoulReaper] and cooldown[BL.SoulReaper].ready and runes >= 1 and runicPower >= -10 and (targets == 1 and timeTo35 < 5 and timeToDie > ( debuff[BL.SoulReaper].remains + 5 )) then
+	if talents[BL.SoulReaper] and cooldown[BL.SoulReaper].ready and runes >= 1 and runicPower >= 10 and (targets == 1 and timeTo35 < 5 and timeToDie > ( debuff[BL.SoulReaper].remains + 5 )) then
 		return BL.SoulReaper;
 	end
 
 	-- soul_reaper,target_if=min:dot.soul_reaper.remains,if=target.time_to_pct_35<5&active_enemies>=2&target.time_to_die>(dot.soul_reaper.remains+5);
-	if talents[BL.SoulReaper] and cooldown[BL.SoulReaper].ready and runes >= 1 and runicPower >= -10 and (timeTo35 < 5 and targets >= 2 and timeToDie > ( debuff[BL.SoulReaper].remains + 5 )) then
+	if talents[BL.SoulReaper] and cooldown[BL.SoulReaper].ready and runes >= 1 and runicPower >= 10 and (timeTo35 < 5 and targets >= 2 and timeToDie > ( debuff[BL.SoulReaper].remains + 5 )) then
 		return BL.SoulReaper;
 	end
 
@@ -363,7 +363,7 @@ function DeathKnight:BloodStandard()
 	end
 
 	-- heart_strike,if=rune.time_to_4<gcd;
-	if talents[BL.HeartStrike] and runes >= 1 and runicPower >= -15 and health >= 0 and (runesTimeTo4 < gcd) then
+	if talents[BL.HeartStrike] and runes >= 1 and runicPower >= 15 and health >= 0 and (runesTimeTo4 < gcd) then
 		return BL.HeartStrike;
 	end
 
@@ -373,7 +373,7 @@ function DeathKnight:BloodStandard()
 	end
 
 	-- heart_strike,if=(rune>1&(rune.time_to_3<gcd|buff.bone_shield.stack>7));
-	if talents[BL.HeartStrike] and runes >= 1 and runicPower >= -15 and health >= 0 and (( runes > 1 and ( runesTimeTo3 < gcd or buff[BL.BoneShield].count > 7 ) )) then
+	if talents[BL.HeartStrike] and runes >= 1 and runicPower >= 15 and health >= 0 and (( runes > 1 and ( runesTimeTo3 < gcd or buff[BL.BoneShield].count > 7 ) )) then
 		return BL.HeartStrike;
 	end
 end

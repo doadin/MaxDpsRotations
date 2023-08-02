@@ -218,8 +218,8 @@ function Mage:ArcaneAoeRotation()
 		return AR.NetherTempest;
 	end
 
-	-- arcane_barrage,if=active_enemies=4&buff.arcane_charge.stack=3;
-	if targets == 4 and buff[AR.ArcaneCharge].count == 3 then
+	-- arcane_barrage,if=(active_enemies<=4|buff.clearcasting.up)&buff.arcane_charge.stack=3;
+	if ( targets <= 4 or buff[AR.Clearcasting].up ) and buff[AR.ArcaneCharge].count == 3 then
 		return AR.ArcaneBarrage;
 	end
 
@@ -338,8 +338,8 @@ function Mage:ArcaneAoeTouchPhase()
 		local conserveMana = 1 - conserveMana;
 	end
 
-	-- arcane_barrage,if=(active_enemies=4&buff.arcane_charge.stack=3)|buff.arcane_charge.stack=buff.arcane_charge.max_stack;
-	if ( targets == 4 and buff[AR.ArcaneCharge].count == 3 ) or buff[AR.ArcaneCharge].count == buff[AR.ArcaneCharge].maxStacks then
+	-- arcane_barrage,if=(active_enemies<=4&buff.arcane_charge.stack=3)|buff.arcane_charge.stack=buff.arcane_charge.max_stack;
+	if ( targets <= 4 and buff[AR.ArcaneCharge].count == 3 ) or buff[AR.ArcaneCharge].count == buff[AR.ArcaneCharge].maxStacks then
 		return AR.ArcaneBarrage;
 	end
 
@@ -366,7 +366,6 @@ function Mage:ArcaneCooldownPhase()
 	local spellHistory = fd.spellHistory;
 	local talents = fd.talents;
 	local gcd = fd.gcd;
-	local gcdRemains = fd.gcdRemains;
 	local mana = UnitPower('player', Enum.PowerType.Mana);
 	local manaMax = UnitPowerMax('player', Enum.PowerType.Mana);
 	local manaPct = UnitPower('player')/UnitPowerMax('player') * 100;
@@ -375,8 +374,8 @@ function Mage:ArcaneCooldownPhase()
 	local manaDeficit = UnitPowerMax('player', Enum.PowerType.Mana) - mana;
 	local manaTimeToMax = manaMax - mana / manaRegen;
 
-	-- touch_of_the_magi,use_off_gcd=1,if=prev_gcd.1.arcane_barrage&(action.arcane_barrage.in_flight_remains<=0.2|gcd.remains<=0.2);
-	if talents[AR.TouchOfTheMagi] and cooldown[AR.TouchOfTheMagi].ready and mana >= 2500 and (spellHistory[1] == AR.ArcaneBarrage and ( cooldown[AR.ArcaneBarrage].in_flight_remains <= 0.2 or gcdRemains <= 0.2 )) then
+	-- touch_of_the_magi,use_off_gcd=1,if=prev_gcd.1.arcane_barrage;
+	if talents[AR.TouchOfTheMagi] and cooldown[AR.TouchOfTheMagi].ready and mana >= 2500 and (spellHistory[1] == AR.ArcaneBarrage) then
 		return AR.TouchOfTheMagi;
 	end
 

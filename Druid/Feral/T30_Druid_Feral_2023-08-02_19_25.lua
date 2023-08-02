@@ -24,28 +24,32 @@ local FR = {
 	NaturesVigil = 124974,
 	AdaptiveSwarm = 391888,
 	AdaptiveSwarmDamage = 325733,
-	AdaptiveSwarmHeal = 325748,
+	UnbridledSwarm = 391951,
 	FeralFrenzy = 274837,
 	FerociousBite = 22568,
 	ApexPredatorsCraving = 391881,
 	PrimalWrath = 285381,
 	Sabertooth = 202031,
 	Bloodtalons = 319439,
+	Regrowth = 8936,
+	PredatorySwiftness = 16974,
+	Clearcasting = 16870,
 	BrutalSlash = 202028,
 	Thrash = 106832,
-	Clearcasting = 16870,
 	ThrashingClaws = 405300,
 	SuddenAmbush = 384667,
 	Moonfire = 8921,
 	Swipe = 213771,
 	Shred = 5221,
+	WildSlashes = 390864,
 	Rip = 1079,
 	OverflowingPower = 405189,
-	WildSlashes = 390864,
+	DireFixation = 417710,
 	Incarnation = 102543,
 	Berserk = 106951,
 	CircleOfLifeAndDeath = 400320,
 	TearOpenWounds = 391785,
+	RampantFerocity = 391709,
 	SoulOfTheForest = 158476,
 	AshamanesGuidance = 391548,
 	BerserkHeartOfTheLion = 391174,
@@ -60,6 +64,7 @@ function Druid:Feral()
 	local cooldown = fd.cooldown;
 	local buff = fd.buff;
 	local debuff = fd.debuff;
+	local currentSpell = fd.currentSpell;
 	local talents = fd.talents;
 	local targets = fd.targets and fd.targets or 1;
 	local timeToDie = fd.timeToDie;
@@ -85,8 +90,8 @@ function Druid:Feral()
 	local comboPointsDeficit = UnitPowerMax('player', Enum.PowerType.ComboPoints) - comboPoints;
 	local comboPointsTimeToMax = comboPointsMax - comboPoints / comboPointsRegen;
 
-	-- prowl,if=buff.bs_inc.down&!buff.prowl.up;
-	if cooldown[FR.Prowl].ready and (not buff[FR.BsInc].up and not buff[FR.Prowl].up) then
+	-- prowl,if=(buff.bs_inc.down|!in_combat)&!buff.prowl.up;
+	if cooldown[FR.Prowl].ready and (( not buff[FR.BsInc].up or not InCombatLockdown() ) and not buff[FR.Prowl].up) then
 		return FR.Prowl;
 	end
 
@@ -116,13 +121,18 @@ function Druid:Feral()
 		return FR.Rake;
 	end
 
-	-- natures_vigil;
-	if talents[FR.NaturesVigil] and cooldown[FR.NaturesVigil].ready then
+	-- natures_vigil,if=in_combat;
+	if talents[FR.NaturesVigil] and cooldown[FR.NaturesVigil].ready and (InCombatLockdown()) then
 		return FR.NaturesVigil;
 	end
 
-	-- adaptive_swarm,target_if=((!dot.adaptive_swarm_damage.ticking|dot.adaptive_swarm_damage.remains<2)&(dot.adaptive_swarm_damage.stack<3|!dot.adaptive_swarm_heal.stack>1)&!action.adaptive_swarm_heal.in_flight&!action.adaptive_swarm_damage.in_flight&!action.adaptive_swarm.in_flight)&target.time_to_die>5|active_enemies>2&!dot.adaptive_swarm_damage.ticking&energy<35&target.time_to_die>5,if=!(variable.need_bt&active_bt_triggers=2);
-	if talents[FR.AdaptiveSwarm] and cooldown[FR.AdaptiveSwarm].ready and mana >= 2500 and (not ( needBt and == 2 )) then
+	-- adaptive_swarm,target_if=((!dot.adaptive_swarm_damage.ticking|dot.adaptive_swarm_damage.remains<2)&(dot.adaptive_swarm_damage.stack<3)&!action.adaptive_swarm_damage.in_flight&!action.adaptive_swarm.in_flight)&target.time_to_die>5,if=!(variable.need_bt&active_bt_triggers=2)&(!talent.unbridled_swarm.enabled|spell_targets.swipe_cat=1);
+	if talents[FR.AdaptiveSwarm] and cooldown[FR.AdaptiveSwarm].ready and mana >= 2500 and (not ( needBt and == 2 ) and ( not talents[FR.UnbridledSwarm] or targets == 1 )) then
+		return FR.AdaptiveSwarm;
+	end
+
+	-- adaptive_swarm,target_if=max:(dot.adaptive_swarm_damage.stack*dot.adaptive_swarm_damage.stack<3*time_to_die),if=dot.adaptive_swarm_damage.stack<3&talent.unbridled_swarm.enabled&spell_targets.swipe_cat>1&!(variable.need_bt&active_bt_triggers=2);
+	if talents[FR.AdaptiveSwarm] and cooldown[FR.AdaptiveSwarm].ready and mana >= 2500 and (debuff[FR.AdaptiveSwarmDamage].count < 3 and talents[FR.UnbridledSwarm] and targets > 1 and not ( needBt and == 2 )) then
 		return FR.AdaptiveSwarm;
 	end
 
@@ -166,17 +176,25 @@ function Druid:Feral()
 		end
 	end
 
-	-- run_action_list,name=aoe_builder,if=spell_targets.swipe_cat>1&talent.primal_wrath.enabled;
+	-- call_action_list,name=aoe_builder,if=spell_targets.swipe_cat>1&talent.primal_wrath.enabled;
 	if targets > 1 and talents[FR.PrimalWrath] then
-		return Druid:FeralAoeBuilder();
+		local result = Druid:FeralAoeBuilder();
+		if result then
+			return result;
+		end
 	end
 
-	-- call_action_list,name=builder,if=combo_points<5&!buff.bs_inc.up;
-	if comboPoints < 5 and not buff[FR.BsInc].up then
+	-- call_action_list,name=builder,if=!buff.bs_inc.up&combo_points<5;
+	if not buff[FR.BsInc].up and comboPoints < 5 then
 		local result = Druid:FeralBuilder();
 		if result then
 			return result;
 		end
+	end
+
+	-- regrowth,if=energy<20&buff.predatory_swiftness.up&!buff.clearcasting.up&variable.regrowth;
+	if mana >= 0 and currentSpell ~= FR.Regrowth and (energy < 20 and buff[FR.PredatorySwiftness].up and not buff[FR.Clearcasting].up and regrowth) then
+		return FR.Regrowth;
 	end
 end
 function Druid:FeralAoeBuilder()
@@ -248,8 +266,8 @@ function Druid:FeralAoeBuilder()
 		return FR.Moonfire;
 	end
 
-	-- shred,target_if=max:target.time_to_die,if=action.shred.damage>action.thrash_cat.damage&!buff.sudden_ambush.up;
-	if energy >= 40 and (cooldown[FR.Shred].damage > cooldown[FR.ThrashCat].damage and not buff[FR.SuddenAmbush].up) then
+	-- shred,target_if=max:target.time_to_die,if=action.shred.damage>action.thrash_cat.damage&!buff.sudden_ambush.up&!(variable.lazy_swipe&talent.wild_slashes);
+	if energy >= 40 and (cooldown[FR.Shred].damage > cooldown[FR.ThrashCat].damage and not buff[FR.SuddenAmbush].up and not ( lazySwipe and talents[FR.WildSlashes] )) then
 		return FR.Shred;
 	end
 
@@ -432,8 +450,8 @@ function Druid:FeralBloodtalons()
 		return FR.Thrash;
 	end
 
-	-- shred,if=buff.bt_shred.down&spell_targets.swipe_cat=1&!talent.wild_slashes.enabled;
-	if energy >= 40 and (not buff[FR.BtShred].up and targets == 1 and not talents[FR.WildSlashes]) then
+	-- shred,if=buff.bt_shred.down&spell_targets.swipe_cat=1&(!talent.wild_slashes.enabled|(!debuff.dire_fixation.up&talent.dire_fixation.enabled));
+	if energy >= 40 and (not buff[FR.BtShred].up and targets == 1 and ( not talents[FR.WildSlashes] or ( not debuff[FR.DireFixation].up and talents[FR.DireFixation] ) )) then
 		return FR.Shred;
 	end
 
@@ -457,14 +475,19 @@ function Druid:FeralBloodtalons()
 		return FR.Moonfire;
 	end
 
-	-- shred,target_if=max:target.time_to_die,if=action.shred.damage>action.thrash_cat.damage&buff.bt_shred.down&!buff.sudden_ambush.up;
-	if energy >= 40 and (cooldown[FR.Shred].damage > cooldown[FR.ThrashCat].damage and not buff[FR.BtShred].up and not buff[FR.SuddenAmbush].up) then
+	-- shred,target_if=max:target.time_to_die,if=action.shred.damage>action.thrash_cat.damage&buff.bt_shred.down&!buff.sudden_ambush.up&!(variable.lazy_swipe&talent.wild_slashes);
+	if energy >= 40 and (cooldown[FR.Shred].damage > cooldown[FR.ThrashCat].damage and not buff[FR.BtShred].up and not buff[FR.SuddenAmbush].up and not ( lazySwipe and talents[FR.WildSlashes] )) then
 		return FR.Shred;
 	end
 
 	-- thrash_cat,if=buff.bt_thrash.down;
 	if talents[FR.Thrash] and (not buff[FR.BtThrash].up) then
 		return FR.Thrash;
+	end
+
+	-- rake,target_if=min:(25*(persistent_multiplier<dot.rake.pmultiplier)+dot.rake.remains),if=buff.bt_rake.down&variable.lazy_swipe&talent.wild_slashes;
+	if talents[FR.Rake] and energy >= 35 and (not buff[FR.BtRake].up and lazySwipe and talents[FR.WildSlashes]) then
+		return FR.Rake;
 	end
 end
 
@@ -528,8 +551,8 @@ function Druid:FeralBuilder()
 		return FR.BrutalSlash;
 	end
 
-	-- swipe_cat,if=spell_targets.swipe_cat>1|talent.wild_slashes.enabled;
-	if targets > 1 or talents[FR.WildSlashes] then
+	-- swipe_cat,if=spell_targets.swipe_cat>1|(talent.wild_slashes.enabled&(debuff.dire_fixation.up|!talent.dire_fixation.enabled));
+	if targets > 1 or ( talents[FR.WildSlashes] and ( debuff[FR.DireFixation].up or not talents[FR.DireFixation] ) ) then
 		return FR.Swipe;
 	end
 
@@ -636,8 +659,8 @@ function Druid:FeralFinisher()
 	local comboPointsDeficit = UnitPowerMax('player', Enum.PowerType.ComboPoints) - comboPoints;
 	local comboPointsTimeToMax = comboPointsMax - comboPoints / comboPointsRegen;
 
-	-- primal_wrath,if=((dot.primal_wrath.refreshable&!talent.circle_of_life_and_death.enabled)|dot.primal_wrath.remains<6|talent.tear_open_wounds.enabled)&spell_targets.primal_wrath>1&talent.primal_wrath.enabled;
-	if talents[FR.PrimalWrath] and energy >= 20 and comboPoints >= 5 and (( ( debuff[FR.PrimalWrath].refreshable and not talents[FR.CircleOfLifeAndDeath] ) or debuff[FR.PrimalWrath].remains < 6 or talents[FR.TearOpenWounds] ) and targets > 1 and talents[FR.PrimalWrath]) then
+	-- primal_wrath,if=((dot.primal_wrath.refreshable&!talent.circle_of_life_and_death.enabled)|dot.primal_wrath.remains<6|(talent.tear_open_wounds.enabled|(spell_targets.swipe_cat>4&!talent.rampant_ferocity.enabled)))&spell_targets.primal_wrath>1&talent.primal_wrath.enabled;
+	if talents[FR.PrimalWrath] and energy >= 20 and comboPoints >= 5 and (( ( debuff[FR.PrimalWrath].refreshable and not talents[FR.CircleOfLifeAndDeath] ) or debuff[FR.PrimalWrath].remains < 6 or ( talents[FR.TearOpenWounds] or ( targets > 4 and not talents[FR.RampantFerocity] ) ) ) and targets > 1 and talents[FR.PrimalWrath]) then
 		return FR.PrimalWrath;
 	end
 
@@ -655,6 +678,16 @@ function Druid:FeralFinisher()
 	if energy >= 25 and comboPoints >= 5 and (( buff[FR.BsInc].up and talents[FR.SoulOfTheForest] ) or buff[FR.ApexPredatorsCraving].up) then
 		return FR.FerociousBite;
 	end
+end
+
+function Druid:FeralVariable()
+	local fd = MaxDps.FrameData;
+	local timeTo35 = fd.timeToDie;
+	local timeTo20 = fd.timeToDie;
+	local targetHp = MaxDps:TargetPercentHealth() * 100;
+
+	-- variable,name=lazy_swipe,op=reset;
+	local lazySwipe = ;
 end
 
 function Druid:FeralVariables()
@@ -682,5 +715,8 @@ function Druid:FeralVariables()
 
 	-- variable,name=zerk_biteweave,op=reset;
 	local zerkBiteweave = ;
+
+	-- variable,name=regrowth,op=reset;
+	local regrowth = ;
 end
 

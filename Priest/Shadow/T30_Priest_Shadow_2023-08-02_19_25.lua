@@ -121,7 +121,7 @@ function Priest:ShadowAoe()
 		return SH.ShadowCrash;
 	end
 
-	-- call_action_list,name=cds,if=fight_remains<30|time_to_die>15&(!variable.holding_crash|active_enemies>2);
+	-- call_action_list,name=cds,if=fight_remains<30|target.time_to_die>15&(!variable.holding_crash|active_enemies>2);
 	if timeToDie < 30 or timeToDie > 15 and ( not holdingCrash or targets > 2 ) then
 		local result = Priest:ShadowCds();
 		if result then
@@ -129,7 +129,7 @@ function Priest:ShadowAoe()
 		end
 	end
 
-	-- mindbender,if=(dot.shadow_word_pain.ticking&variable.vts_applied|action.shadow_crash.in_flight&talent.whispering_shadows)&(fight_remains<30|time_to_die>15)&(!talent.dark_ascension|cooldown.dark_ascension.remains<gcd.max|fight_remains<15);
+	-- mindbender,if=(dot.shadow_word_pain.ticking&variable.vts_applied|action.shadow_crash.in_flight&talent.whispering_shadows)&(fight_remains<30|target.time_to_die>15)&(!talent.dark_ascension|cooldown.dark_ascension.remains<gcd.max|fight_remains<15);
 	if talents[SH.Mindbender] and cooldown[SH.Mindbender].ready and (( debuff[SH.ShadowWordPain].up and vtsApplied or inFlight and talents[SH.WhisperingShadows] ) and ( timeToDie < 30 or timeToDie > 15 ) and ( not talents[SH.DarkAscension] or cooldown[SH.DarkAscension].remains < gcd or timeToDie < 15 )) then
 		return SH.Mindbender;
 	end
@@ -407,7 +407,7 @@ function Priest:ShadowMain()
 		return result;
 	end
 
-	-- call_action_list,name=cds,if=fight_remains<30|time_to_die>15&(!variable.holding_crash|active_enemies>2);
+	-- call_action_list,name=cds,if=fight_remains<30|target.time_to_die>15&(!variable.holding_crash|active_enemies>2);
 	if timeToDie < 30 or timeToDie > 15 and ( not holdingCrash or targets > 2 ) then
 		local result = Priest:ShadowCds();
 		if result then
@@ -415,7 +415,7 @@ function Priest:ShadowMain()
 		end
 	end
 
-	-- mindbender,if=variable.dots_up&(fight_remains<30|time_to_die>15)&(!talent.dark_ascension|cooldown.dark_ascension.remains<gcd.max|fight_remains<15);
+	-- mindbender,if=variable.dots_up&(fight_remains<30|target.time_to_die>15)&(!talent.dark_ascension|cooldown.dark_ascension.remains<gcd.max|fight_remains<15);
 	if talents[SH.Mindbender] and cooldown[SH.Mindbender].ready and (dotsUp and ( timeToDie < 30 or timeToDie > 15 ) and ( not talents[SH.DarkAscension] or cooldown[SH.DarkAscension].remains < gcd or timeToDie < 15 )) then
 		return SH.Mindbender;
 	end

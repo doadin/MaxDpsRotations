@@ -30,6 +30,7 @@ local DV = {
 	PowerSwell = 370839,
 	BlazingShards = 409848,
 	DeepBreath = 357210,
+	EssenceBurst = 359565,
 	ArcaneVigor = 386342,
 	Pyre = 357211,
 	Volatility = 369089,
@@ -151,12 +152,12 @@ function Evoker:DevastationAoe()
 	end
 
 	-- pyre,target_if=max:target.health.pct,if=talent.volatility&(active_enemies>=4|(talent.charged_blast&!buff.essence_burst.up&!buff.iridescence_blue.up)|(!talent.charged_blast&(!buff.essence_burst.up|!buff.iridescence_blue.up))|(buff.charged_blast.stack>=15)|(talent.raging_inferno&debuff.in_firestorm.up));
-	if talents[DV.Pyre] and essence >= 3 and (talents[DV.Volatility] and ( targets >= 4 or ( talents[DV.ChargedBlast] and not buff[DV.EssenceBurst].up and not buff[DV.IridescenceBlue].up ) or ( not talents[DV.ChargedBlast] and ( not buff[DV.EssenceBurst].up or not buff[DV.IridescenceBlue].up ) ) or ( buff[DV.ChargedBlast].count >= 15 ) or ( talents[DV.RagingInferno] and debuff[DV.InFirestorm].up ) )) then
+	if talents[DV.Pyre] and essence >= 2 and (talents[DV.Volatility] and ( targets >= 4 or ( talents[DV.ChargedBlast] and not buff[DV.EssenceBurst].up and not buff[DV.IridescenceBlue].up ) or ( not talents[DV.ChargedBlast] and ( not buff[DV.EssenceBurst].up or not buff[DV.IridescenceBlue].up ) ) or ( buff[DV.ChargedBlast].count >= 15 ) or ( talents[DV.RagingInferno] and debuff[DV.InFirestorm].up ) )) then
 		return DV.Pyre;
 	end
 
 	-- pyre,target_if=max:target.health.pct,if=(talent.raging_inferno&debuff.in_firestorm.up)|(active_enemies==3&buff.charged_blast.stack>=15)|active_enemies>=4;
-	if talents[DV.Pyre] and essence >= 3 and (( talents[DV.RagingInferno] and debuff[DV.InFirestorm].up ) or ( targets == == 3 and buff[DV.ChargedBlast].count >= 15 ) or targets >= 4) then
+	if talents[DV.Pyre] and essence >= 2 and (( talents[DV.RagingInferno] and debuff[DV.InFirestorm].up ) or ( targets == == 3 and buff[DV.ChargedBlast].count >= 15 ) or targets >= 4) then
 		return DV.Pyre;
 	end
 
@@ -314,7 +315,7 @@ function Evoker:DevastationSt()
 	end
 
 	-- pyre,if=debuff.in_firestorm.up&talent.raging_inferno&buff.charged_blast.stack==20&active_enemies>=2;
-	if talents[DV.Pyre] and essence >= 3 and (debuff[DV.InFirestorm].up and talents[DV.RagingInferno] and buff[DV.ChargedBlast].count == == 20 and targets >= 2) then
+	if talents[DV.Pyre] and essence >= 2 and (debuff[DV.InFirestorm].up and talents[DV.RagingInferno] and buff[DV.ChargedBlast].count == == 20 and targets >= 2) then
 		return DV.Pyre;
 	end
 

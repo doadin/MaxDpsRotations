@@ -276,6 +276,7 @@ function Demonhunter:VengeanceMaintenance()
 	local talents = fd.talents;
 	local timeShift = fd.timeShift;
 	local gcdRemains = fd.gcdRemains;
+	local timeToDie = fd.timeToDie;
 	local fury = UnitPower('player', Enum.PowerType.Fury);
 	local furyMax = UnitPowerMax('player', Enum.PowerType.Fury);
 	local furyPct = UnitPower('player')/UnitPowerMax('player') * 100;
@@ -284,12 +285,12 @@ function Demonhunter:VengeanceMaintenance()
 	local furyDeficit = UnitPowerMax('player', Enum.PowerType.Fury) - fury;
 	local furyTimeToMax = furyMax - fury / furyRegen;
 
-	-- call_action_list,name=trinkets;
-
-	-- metamorphosis,if=talent.first_of_the_illidari;
-	if cooldown[VG.Metamorphosis].ready and (talents[VG.FirstOfTheIllidari]) then
+	-- metamorphosis,if=talent.first_of_the_illidari&trinket.beacon_to_the_beyond.cooldown.remains<10|fight_remains<20;
+	if cooldown[VG.Metamorphosis].ready and (talents[VG.FirstOfTheIllidari] and 10 or timeToDie < 20) then
 		return VG.Metamorphosis;
 	end
+
+	-- call_action_list,name=trinkets;
 
 	-- fiery_brand,if=charges>=2|(!ticking&((variable.next_fire_cd_time<7)|(variable.next_fire_cd_time>28)));
 	if talents[VG.FieryBrand] and cooldown[VG.FieryBrand].ready and (cooldown[VG.FieryBrand].charges >= 2 or ( not debuff[VG.Fiery Brand].up and ( ( nextFireCdTime < 7 ) or ( nextFireCdTime > 28 ) ) )) then
@@ -303,11 +304,6 @@ function Demonhunter:VengeanceMaintenance()
 
 	-- fracture,target_if=max:dot.fiery_brand.remains,if=dot.fiery_brand.ticking&buff.recrimination.up;
 	if talents[VG.Fracture] and cooldown[VG.Fracture].ready and (debuff[VG.FieryBrand].up and buff[VG.Recrimination].up) then
-		return VG.Fracture;
-	end
-
-	-- fracture,if=buff.recrimination.up;
-	if talents[VG.Fracture] and cooldown[VG.Fracture].ready and (buff[VG.Recrimination].up) then
 		return VG.Fracture;
 	end
 
@@ -384,6 +380,11 @@ function Demonhunter:VengeanceSingleTarget()
 		return VG.FelDevastation;
 	end
 
+	-- sigil_of_flame,if=fury<70;
+	if talents[VG.SigilOfFlame] and cooldown[VG.SigilOfFlame].ready and (fury < 70) then
+		return VG.SigilOfFlame;
+	end
+
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=4)|soul_fragments>=5);
 	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 4 ) or soulFragments >= 5 )) then
 		return VG.SpiritBomb;
@@ -394,13 +395,18 @@ function Demonhunter:VengeanceSingleTarget()
 		return VG.Fracture;
 	end
 
+	-- soul_cleave,if=talent.focused_cleave;
+	if fury >= 30 and (talents[VG.FocusedCleave]) then
+		return VG.SoulCleave;
+	end
+
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=3)|soul_fragments>=4);
 	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 3 ) or soulFragments >= 4 )) then
 		return VG.SpiritBomb;
 	end
 
-	-- soul_cleave,if=talent.focused_cleave;
-	if fury >= 30 and (talents[VG.FocusedCleave]) then
+	-- soul_cleave;
+	if fury >= 30 then
 		return VG.SoulCleave;
 	end
 
@@ -417,11 +423,6 @@ function Demonhunter:VengeanceSingleTarget()
 	-- sigil_of_flame;
 	if talents[VG.SigilOfFlame] and cooldown[VG.SigilOfFlame].ready then
 		return VG.SigilOfFlame;
-	end
-
-	-- soul_cleave;
-	if fury >= 30 then
-		return VG.SoulCleave;
 	end
 
 	-- call_action_list,name=filler;

@@ -25,7 +25,7 @@ local GR = {
 	ToothAndClaw = 135288,
 	Berserk = 50334,
 	Thrash = 106832,
-	Mangle = 231064,
+	Mangle = 33917,
 	Moonfire = 8921,
 	FuryOfNature = 370695,
 	FlashingClaws = 393427,
@@ -40,7 +40,7 @@ local GR = {
 	Ironfur = 192081,
 	ToothAndClawDebuff = 135601,
 	Gore = 210706,
-	Swipe = 213764,
+	Swipe = 213771,
 	SoulOfTheForest = 158477,
 	Pulverize = 80313,
 	GalacticGuardian = 203964,
@@ -116,7 +116,7 @@ function Druid:GuardianBear()
 		return GR.Moonfire;
 	end
 
-	-- thrash_bear,target_if=refreshable|(dot.thrash_bear.stack<5&talent.flashing_claws.enabled|dot.thrash_bear.stack<3&!talent.flashing_claws.enabled);
+	-- thrash_bear,target_if=refreshable|(dot.thrash_bear.stack<5&talent.flashing_claws.rank=2|dot.thrash_bear.stack<4&talent.flashing_claws.rank=1|dot.thrash_bear.stack<3&!talent.flashing_claws.enabled);
 	if talents[GR.Thrash] and () then
 		return GR.Thrash;
 	end
@@ -195,7 +195,7 @@ function Druid:GuardianBear()
 	end
 
 	-- mangle,if=buff.gore.up&active_enemies<11|buff.vicious_cycle_mangle.stack=3;
-	if talents[GR.Mangle] and (buff[GR.Gore].up and targets < 11 or buff[GR.ViciousCycleMangle].count == 3) then
+	if cooldown[GR.Mangle].ready and (buff[GR.Gore].up and targets < 11 or buff[GR.ViciousCycleMangle].count == 3) then
 		return GR.Mangle;
 	end
 
@@ -220,7 +220,7 @@ function Druid:GuardianBear()
 	end
 
 	-- mangle,if=(buff.incarnation.up&active_enemies<=4)|(buff.incarnation.up&talent.soul_of_the_forest.enabled&active_enemies<=5)|((rage<90)&active_enemies<11)|((rage<85)&active_enemies<11&talent.soul_of_the_forest.enabled);
-	if talents[GR.Mangle] and (( buff[GR.Incarnation].up and targets <= 4 ) or ( buff[GR.Incarnation].up and talents[GR.SoulOfTheForest] and targets <= 5 ) or ( ( rage < 90 ) and targets < 11 ) or ( ( rage < 85 ) and targets < 11 and talents[GR.SoulOfTheForest] )) then
+	if cooldown[GR.Mangle].ready and (( buff[GR.Incarnation].up and targets <= 4 ) or ( buff[GR.Incarnation].up and talents[GR.SoulOfTheForest] and targets <= 5 ) or ( ( rage < 90 ) and targets < 11 ) or ( ( rage < 85 ) and targets < 11 and talents[GR.SoulOfTheForest] )) then
 		return GR.Mangle;
 	end
 

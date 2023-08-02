@@ -19,7 +19,6 @@ local FT = {
 	Blizzard = 190356,
 	Frostbolt = 116,
 	Counterspell = 2139,
-	WaterJet = 135029,
 	Tier302pc = 393657,
 	IceCaller = 236662,
 	ConeOfCold = 120,
@@ -55,9 +54,6 @@ function Mage:Frost()
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 	local talents = fd.talents;
 	local targets = fd.targets and fd.targets or 1;
-
-	-- water_jet;
-	-- FT.WaterJet;
 
 	-- call_action_list,name=cds;
 	local result = Mage:FrostCds();
@@ -99,13 +95,13 @@ function Mage:FrostAoe()
 		return FT.ConeOfCold;
 	end
 
-	-- frozen_orb,if=!prev_gcd.1.glacial_spike|target.level>=level+3&!target.is_add;
-	if talents[FT.FrozenOrb] and cooldown[FT.FrozenOrb].ready and mana >= 500 and (not spellHistory[1] == FT.GlacialSpike or 3 and not) then
+	-- frozen_orb,if=!prev_gcd.1.glacial_spike|!freezable;
+	if talents[FT.FrozenOrb] and cooldown[FT.FrozenOrb].ready and mana >= 500 and (not spellHistory[1] == FT.GlacialSpike or not) then
 		return FT.FrozenOrb;
 	end
 
-	-- blizzard,if=!prev_gcd.1.glacial_spike|target.level>=level+3&!target.is_add;
-	if cooldown[FT.Blizzard].ready and mana >= 1250 and currentSpell ~= FT.Blizzard and (not spellHistory[1] == FT.GlacialSpike or 3 and not) then
+	-- blizzard,if=!prev_gcd.1.glacial_spike|!freezable;
+	if cooldown[FT.Blizzard].ready and mana >= 1250 and currentSpell ~= FT.Blizzard and (not spellHistory[1] == FT.GlacialSpike or not) then
 		return FT.Blizzard;
 	end
 
@@ -114,18 +110,18 @@ function Mage:FrostAoe()
 		return FT.CometStorm;
 	end
 
-	-- freeze,if=(target.level<level+3|target.is_add)&debuff.frozen.down&(!talent.glacial_spike&!talent.snowstorm|prev_gcd.1.glacial_spike|cooldown.cone_of_cold.ready&buff.snowstorm.stack=buff.snowstorm.max_stack);
-	if ( 3 or ) and not debuff[FT.Frozen].up and ( not talents[FT.GlacialSpike] and not talents[FT.Snowstorm] or spellHistory[1] == FT.GlacialSpike or cooldown[FT.ConeOfCold].ready and buff[FT.Snowstorm].count == buff[FT.Snowstorm].maxStacks ) then
+	-- freeze,if=freezable&debuff.frozen.down&(!talent.glacial_spike&!talent.snowstorm|prev_gcd.1.glacial_spike|cooldown.cone_of_cold.ready&buff.snowstorm.stack=buff.snowstorm.max_stack);
+	if not debuff[FT.Frozen].up and ( not talents[FT.GlacialSpike] and not talents[FT.Snowstorm] or spellHistory[1] == FT.GlacialSpike or cooldown[FT.ConeOfCold].ready and buff[FT.Snowstorm].count == buff[FT.Snowstorm].maxStacks ) then
 		return FT.Freeze;
 	end
 
-	-- ice_nova,if=(target.level<level+3|target.is_add)&!prev_off_gcd.freeze&(prev_gcd.1.glacial_spike|cooldown.cone_of_cold.ready&buff.snowstorm.stack=buff.snowstorm.max_stack&gcd.max<1);
-	if talents[FT.IceNova] and cooldown[FT.IceNova].ready and (( 3 or ) and not spellHistory[1] == FT.Freeze and ( spellHistory[1] == FT.GlacialSpike or cooldown[FT.ConeOfCold].ready and buff[FT.Snowstorm].count == buff[FT.Snowstorm].maxStacks and gcd < 1 )) then
+	-- ice_nova,if=freezable&!prev_off_gcd.freeze&(prev_gcd.1.glacial_spike|cooldown.cone_of_cold.ready&buff.snowstorm.stack=buff.snowstorm.max_stack&gcd.max<1);
+	if talents[FT.IceNova] and cooldown[FT.IceNova].ready and (not spellHistory[1] == FT.Freeze and ( spellHistory[1] == FT.GlacialSpike or cooldown[FT.ConeOfCold].ready and buff[FT.Snowstorm].count == buff[FT.Snowstorm].maxStacks and gcd < 1 )) then
 		return FT.IceNova;
 	end
 
-	-- frost_nova,if=(target.level<level+3|target.is_add)&!prev_off_gcd.freeze&(prev_gcd.1.glacial_spike&!remaining_winters_chill|cooldown.cone_of_cold.ready&buff.snowstorm.stack=buff.snowstorm.max_stack&gcd.max<1);
-	if cooldown[FT.FrostNova].ready and mana >= 1000 and (( 3 or ) and not spellHistory[1] == FT.Freeze and ( spellHistory[1] == FT.GlacialSpike and not cooldown[FT.ConeOfCold].ready and buff[FT.Snowstorm].count == buff[FT.Snowstorm].maxStacks and gcd < 1 )) then
+	-- frost_nova,if=freezable&!prev_off_gcd.freeze&(prev_gcd.1.glacial_spike&!remaining_winters_chill|cooldown.cone_of_cold.ready&buff.snowstorm.stack=buff.snowstorm.max_stack&gcd.max<1);
+	if cooldown[FT.FrostNova].ready and mana >= 1000 and (not spellHistory[1] == FT.Freeze and ( spellHistory[1] == FT.GlacialSpike and not cooldown[FT.ConeOfCold].ready and buff[FT.Snowstorm].count == buff[FT.Snowstorm].maxStacks and gcd < 1 )) then
 		return FT.FrostNova;
 	end
 
@@ -144,8 +140,8 @@ function Mage:FrostAoe()
 		return FT.GlacialSpike;
 	end
 
-	-- flurry,if=target.level>=level+3&!target.is_add&cooldown_react&!debuff.winters_chill.remains&(prev_gcd.1.glacial_spike|charges_fractional>1.8);
-	if talents[FT.Flurry] and cooldown[FT.Flurry].ready and mana >= 500 and (3 and not and cooldownReact and not debuff[FT.WintersChill].remains and ( spellHistory[1] == FT.GlacialSpike or cooldown[FT.Flurry].charges > 1.8 )) then
+	-- flurry,if=!freezable&cooldown_react&!debuff.winters_chill.remains&(prev_gcd.1.glacial_spike|charges_fractional>1.8);
+	if talents[FT.Flurry] and cooldown[FT.Flurry].ready and mana >= 500 and (not cooldownReact and not debuff[FT.WintersChill].remains and ( spellHistory[1] == FT.GlacialSpike or cooldown[FT.Flurry].charges > 1.8 )) then
 		return FT.Flurry;
 	end
 
@@ -159,8 +155,8 @@ function Mage:FrostAoe()
 		return FT.IceLance;
 	end
 
-	-- ice_nova,if=active_enemies>=4&(!talent.snowstorm&!talent.glacial_spike|target.level>=level+3&!target.is_add);
-	if talents[FT.IceNova] and cooldown[FT.IceNova].ready and (targets >= 4 and ( not talents[FT.Snowstorm] and not talents[FT.GlacialSpike] or 3 and not )) then
+	-- ice_nova,if=active_enemies>=4&(!talent.snowstorm&!talent.glacial_spike|!freezable);
+	if talents[FT.IceNova] and cooldown[FT.IceNova].ready and (targets >= 4 and ( not talents[FT.Snowstorm] and not talents[FT.GlacialSpike] or not )) then
 		return FT.IceNova;
 	end
 

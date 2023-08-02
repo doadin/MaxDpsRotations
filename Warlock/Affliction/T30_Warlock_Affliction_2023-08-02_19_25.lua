@@ -26,11 +26,11 @@ local AF = {
 	Agony = 980,
 	Corruption = 172,
 	SiphonLife = 63106,
+	PhantomSingularity = 205179,
+	VileTaint = 278350,
+	SoulRot = 386997,
 	DrainSoul = 198590,
 	ShadowEmbrace = 32388,
-	PhantomSingularity = 205179,
-	SoulRot = 386997,
-	VileTaint = 278350,
 	SouleatersGluttony = 389630,
 	SummonDarkglare = 205180,
 	TormentedCrescendo = 387075,
@@ -108,8 +108,8 @@ function Warlock:Affliction()
 		return result;
 	end
 
-	-- malefic_rapture,if=talent.dread_touch&debuff.dread_touch.remains<2&debuff.dread_touch.up;
-	if talents[AF.MaleficRapture] and soulShards >= 1 and currentSpell ~= AF.MaleficRapture and (talents[AF.DreadTouch] and debuff[AF.DreadTouch].remains < 2 and debuff[AF.DreadTouch].up) then
+	-- malefic_rapture,if=talent.dread_touch&debuff.dread_touch.remains<2&(dot.agony.ticking&dot.corruption.ticking&(!talent.siphon_life|dot.siphon_life.ticking))&(!talent.phantom_singularity|!cooldown.phantom_singularity.ready)&(!talent.vile_taint|!cooldown.vile_taint.ready)&(!talent.soul_rot|!cooldown.soul_rot.ready);
+	if talents[AF.MaleficRapture] and soulShards >= 1 and currentSpell ~= AF.MaleficRapture and (talents[AF.DreadTouch] and debuff[AF.DreadTouch].remains < 2 and ( debuff[AF.Agony].up and debuff[AF.Corruption].up and ( not talents[AF.SiphonLife] or debuff[AF.SiphonLife].up ) ) and ( not talents[AF.PhantomSingularity] or not cooldown[AF.PhantomSingularity].ready ) and ( not talents[AF.VileTaint] or not cooldown[AF.VileTaint].ready ) and ( not talents[AF.SoulRot] or not cooldown[AF.SoulRot].ready )) then
 		return AF.MaleficRapture;
 	end
 
@@ -170,11 +170,6 @@ function Warlock:Affliction()
 
 	-- malefic_rapture,if=soul_shard>4|(talent.tormented_crescendo&buff.tormented_crescendo.stack=1&soul_shard>3);
 	if talents[AF.MaleficRapture] and soulShards >= 1 and currentSpell ~= AF.MaleficRapture and (soulShards > 4 or ( talents[AF.TormentedCrescendo] and buff[AF.TormentedCrescendo].count == 1 and soulShards > 3 )) then
-		return AF.MaleficRapture;
-	end
-
-	-- malefic_rapture,if=talent.malefic_affliction&buff.malefic_affliction.stack<3;
-	if talents[AF.MaleficRapture] and soulShards >= 1 and currentSpell ~= AF.MaleficRapture and (talents[AF.MaleficAffliction] and buff[AF.MaleficAffliction].count < 3) then
 		return AF.MaleficRapture;
 	end
 
