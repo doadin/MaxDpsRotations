@@ -14,6 +14,13 @@ local mainHandSubClassID = itemID and  select(13, GetItemInfo(itemID));
 
 local TwoHanderWepCheck = mainHandSubClassID and (mainHandSubClassID == 1 or mainHandSubClassID == 5 or mainHandSubClassID == 8 or mainHandSubClassID == 10);
 
+local needBt
+local align3minutes
+local lastConvoke
+local lastZerk
+local zerkBiteweave;
+local regrowth;
+
 local FR = {
 	CatForm = 768,
 	HeartOfTheWild = 319454,
@@ -127,12 +134,12 @@ function Druid:Feral()
 	end
 
 	-- adaptive_swarm,target_if=((!dot.adaptive_swarm_damage.ticking|dot.adaptive_swarm_damage.remains<2)&(dot.adaptive_swarm_damage.stack<3)&!action.adaptive_swarm_damage.in_flight&!action.adaptive_swarm.in_flight)&target.time_to_die>5,if=!(variable.need_bt&active_bt_triggers=2)&(!talent.unbridled_swarm.enabled|spell_targets.swipe_cat=1);
-	if talents[FR.AdaptiveSwarm] and cooldown[FR.AdaptiveSwarm].ready and mana >= 2500 and (not ( needBt and == 2 ) and ( not talents[FR.UnbridledSwarm] or targets == 1 )) then
+	if talents[FR.AdaptiveSwarm] and cooldown[FR.AdaptiveSwarm].ready and mana >= 2500 and (not ( needBt ) and ( not talents[FR.UnbridledSwarm] or targets == 1 )) then
 		return FR.AdaptiveSwarm;
 	end
 
 	-- adaptive_swarm,target_if=max:(dot.adaptive_swarm_damage.stack*dot.adaptive_swarm_damage.stack<3*time_to_die),if=dot.adaptive_swarm_damage.stack<3&talent.unbridled_swarm.enabled&spell_targets.swipe_cat>1&!(variable.need_bt&active_bt_triggers=2);
-	if talents[FR.AdaptiveSwarm] and cooldown[FR.AdaptiveSwarm].ready and mana >= 2500 and (debuff[FR.AdaptiveSwarmDamage].count < 3 and talents[FR.UnbridledSwarm] and targets > 1 and not ( needBt and == 2 )) then
+	if talents[FR.AdaptiveSwarm] and cooldown[FR.AdaptiveSwarm].ready and mana >= 2500 and (debuff[FR.AdaptiveSwarmDamage].count < 3 and talents[FR.UnbridledSwarm] and targets > 1 and not ( needBt )) then
 		return FR.AdaptiveSwarm;
 	end
 
@@ -148,7 +155,7 @@ function Druid:Feral()
 	end
 
 	-- ferocious_bite,target_if=max:target.time_to_die,if=buff.apex_predators_craving.up&(spell_targets.swipe_cat=1|!talent.primal_wrath.enabled|!buff.sabertooth.up)&!(variable.need_bt&active_bt_triggers=2);
-	if energy >= 25 and comboPoints >= 5 and (buff[FR.ApexPredatorsCraving].up and ( targets == 1 or not talents[FR.PrimalWrath] or not buff[FR.Sabertooth].up ) and not ( needBt and == 2 )) then
+	if energy >= 25 and comboPoints >= 5 and (buff[FR.ApexPredatorsCraving].up and ( targets == 1 or not talents[FR.PrimalWrath] or not buff[FR.Sabertooth].up ) and not ( needBt )) then
 		return FR.FerociousBite;
 	end
 
@@ -161,7 +168,7 @@ function Druid:Feral()
 	end
 
 	-- call_action_list,name=finisher,if=combo_points>=4&!(combo_points=4&buff.bloodtalons.stack<=1&active_bt_triggers=2&spell_targets.swipe_cat=1);
-	if comboPoints >= 4 and not ( comboPoints == 4 and buff[FR.Bloodtalons].count <= 1 and == 2 and targets == 1 ) then
+	if comboPoints >= 4 and not ( comboPoints == 4 and buff[FR.Bloodtalons].count <= 1 and targets == 1 ) then
 		local result = Druid:FeralFinisher();
 		if result then
 			return result;
@@ -234,17 +241,17 @@ function Druid:FeralAoeBuilder()
 	end
 
 	-- rake,target_if=max:druid.rake.ticks_gained_on_refresh,if=buff.sudden_ambush.up&persistent_multiplier>dot.rake.pmultiplier;
-	if talents[FR.Rake] and energy >= 35 and (buff[FR.SuddenAmbush].up and persistentMultiplier >) then
+	if talents[FR.Rake] and energy >= 35 and (buff[FR.SuddenAmbush].up) then
 		return FR.Rake;
 	end
 
 	-- rake,target_if=buff.sudden_ambush.up&persistent_multiplier>dot.rake.pmultiplier|refreshable;
-	if talents[FR.Rake] and energy >= 35 and () then
+	if talents[FR.Rake] and energy >= 35 then
 		return FR.Rake;
 	end
 
 	-- thrash_cat,target_if=refreshable;
-	if talents[FR.Thrash] and () then
+	if talents[FR.Thrash] then
 		return FR.Thrash;
 	end
 
@@ -262,7 +269,7 @@ function Druid:FeralAoeBuilder()
 	-- FR.Swipe;
 
 	-- moonfire_cat,target_if=refreshable;
-	if mana >= 0 and () then
+	if mana >= 0 then
 		return FR.Moonfire;
 	end
 
@@ -317,7 +324,7 @@ function Druid:FeralBerserk()
 	end
 
 	-- call_action_list,name=finisher,if=combo_points=5&!(buff.overflowing_power.stack<=1&active_bt_triggers=2&buff.bloodtalons.stack<=1);
-	if comboPoints == 5 and not ( buff[FR.OverflowingPower].count <= 1 and == 2 and buff[FR.Bloodtalons].count <= 1 ) then
+	if comboPoints == 5 and not ( buff[FR.OverflowingPower].count <= 1 and buff[FR.Bloodtalons].count <= 1 ) then
 		local result = Druid:FeralFinisher();
 		if result then
 			return result;
@@ -333,32 +340,32 @@ function Druid:FeralBerserk()
 	end
 
 	-- prowl,if=!(buff.bt_rake.up&active_bt_triggers=2)&(action.rake.ready&gcd.remains=0&!buff.sudden_ambush.up&(dot.rake.refreshable|dot.rake.pmultiplier<1.4)&!buff.shadowmeld.up&cooldown.feral_frenzy.remains<44&!buff.apex_predators_craving.up);
-	if cooldown[FR.Prowl].ready and (not ( buff[FR.BtRake].up and == 2 ) and ( cooldown[FR.Rake].ready and gcdRemains == 0 and not buff[FR.SuddenAmbush].up and ( debuff[FR.Rake].refreshable or ) and not buff[FR.Shadowmeld].up and cooldown[FR.FeralFrenzy].remains < 44 and not buff[FR.ApexPredatorsCraving].up )) then
+	if cooldown[FR.Prowl].ready and (not ( buff[FR.BtRake].up ) and ( cooldown[FR.Rake].ready and gcdRemains == 0 and not buff[FR.SuddenAmbush].up and ( debuff[FR.Rake].refreshable ) and not buff[FR.Shadowmeld].up and cooldown[FR.FeralFrenzy].remains < 44 and not buff[FR.ApexPredatorsCraving].up )) then
 		return FR.Prowl;
 	end
 
 	-- rake,if=!(buff.bt_rake.up&active_bt_triggers=2)&(refreshable|(buff.sudden_ambush.up&persistent_multiplier>dot.rake.pmultiplier&!dot.rake.refreshable));
-	if talents[FR.Rake] and energy >= 35 and (not ( buff[FR.BtRake].up and == 2 ) and ( debuff[FR.Rake].refreshable or ( buff[FR.SuddenAmbush].up and and not debuff[FR.Rake].refreshable ) )) then
+	if talents[FR.Rake] and energy >= 35 and (not ( buff[FR.BtRake].up ) and ( debuff[FR.Rake].refreshable or ( buff[FR.SuddenAmbush].up and not debuff[FR.Rake].refreshable ) )) then
 		return FR.Rake;
 	end
 
 	-- shred,if=active_bt_triggers=2&buff.bt_shred.down;
-	if energy >= 40 and (== 2 and not buff[FR.BtShred].up) then
+	if energy >= 40 and (not buff[FR.BtShred].up) then
 		return FR.Shred;
 	end
 
 	-- brutal_slash,if=active_bt_triggers=2&buff.bt_brutal_slash.down;
-	if talents[FR.BrutalSlash] and cooldown[FR.BrutalSlash].ready and energy >= 25 and (== 2 and not buff[FR.BtBrutalSlash].up) then
+	if talents[FR.BrutalSlash] and cooldown[FR.BrutalSlash].ready and energy >= 25 and (not buff[FR.BtBrutalSlash].up) then
 		return FR.BrutalSlash;
 	end
 
 	-- moonfire_cat,if=active_bt_triggers=2&buff.bt_moonfire.down;
-	if mana >= 0 and (== 2 and not buff[FR.BtMoonfire].up) then
+	if mana >= 0 and (not buff[FR.BtMoonfire].up) then
 		return FR.Moonfire;
 	end
 
 	-- thrash_cat,if=active_bt_triggers=2&buff.bt_thrash.down&!talent.thrashing_claws&variable.need_bt&(refreshable|talent.brutal_slash.enabled);
-	if talents[FR.Thrash] and (== 2 and not buff[FR.BtThrash].up and not talents[FR.ThrashingClaws] and needBt and ( debuff[FR.Thrash].refreshable or talents[FR.BrutalSlash] )) then
+	if talents[FR.Thrash] and (not buff[FR.BtThrash].up and not talents[FR.ThrashingClaws] and needBt and ( debuff[FR.Thrash].refreshable or talents[FR.BrutalSlash] )) then
 		return FR.Thrash;
 	end
 
@@ -411,17 +418,17 @@ function Druid:FeralBloodtalons()
 	end
 
 	-- prowl,if=action.rake.ready&gcd.remains=0&!buff.sudden_ambush.up&(dot.rake.refreshable|dot.rake.pmultiplier<1.4)&!buff.shadowmeld.up&buff.bt_rake.down&!buff.prowl.up&!buff.apex_predators_craving.up;
-	if cooldown[FR.Prowl].ready and (cooldown[FR.Rake].ready and gcdRemains == 0 and not buff[FR.SuddenAmbush].up and ( debuff[FR.Rake].refreshable or ) and not buff[FR.Shadowmeld].up and not buff[FR.BtRake].up and not buff[FR.Prowl].up and not buff[FR.ApexPredatorsCraving].up) then
+	if cooldown[FR.Prowl].ready and (cooldown[FR.Rake].ready and gcdRemains == 0 and not buff[FR.SuddenAmbush].up and ( debuff[FR.Rake].refreshable ) and not buff[FR.Shadowmeld].up and not buff[FR.BtRake].up and not buff[FR.Prowl].up and not buff[FR.ApexPredatorsCraving].up) then
 		return FR.Prowl;
 	end
 
 	-- rake,target_if=max:druid.rake.ticks_gained_on_refresh,if=(refreshable|buff.sudden_ambush.up&persistent_multiplier>dot.rake.pmultiplier)&buff.bt_rake.down;
-	if talents[FR.Rake] and energy >= 35 and (( debuff[FR.Rake].refreshable or buff[FR.SuddenAmbush].up and ) and not buff[FR.BtRake].up) then
+	if talents[FR.Rake] and energy >= 35 and (( debuff[FR.Rake].refreshable or buff[FR.SuddenAmbush].up ) and not buff[FR.BtRake].up) then
 		return FR.Rake;
 	end
 
 	-- rake,target_if=buff.sudden_ambush.up&persistent_multiplier>dot.rake.pmultiplier&buff.bt_rake.down;
-	if talents[FR.Rake] and energy >= 35 and () then
+	if talents[FR.Rake] and energy >= 35 then
 		return FR.Rake;
 	end
 
@@ -527,7 +534,7 @@ function Druid:FeralBuilder()
 	end
 
 	-- rake,if=refreshable|(buff.sudden_ambush.up&persistent_multiplier>dot.rake.pmultiplier&dot.rake.remains>6);
-	if talents[FR.Rake] and energy >= 35 and (debuff[FR.Rake].refreshable or ( buff[FR.SuddenAmbush].up and and debuff[FR.Rake].remains > 6 )) then
+	if talents[FR.Rake] and energy >= 35 and (debuff[FR.Rake].refreshable or ( buff[FR.SuddenAmbush].up and debuff[FR.Rake].remains > 6 )) then
 		return FR.Rake;
 	end
 
@@ -537,12 +544,12 @@ function Druid:FeralBuilder()
 	end
 
 	-- moonfire_cat,target_if=refreshable;
-	if mana >= 0 and () then
+	if mana >= 0 then
 		return FR.Moonfire;
 	end
 
 	-- thrash_cat,target_if=refreshable&!talent.thrashing_claws.enabled;
-	if talents[FR.Thrash] and () then
+	if talents[FR.Thrash] then
 		return FR.Thrash;
 	end
 
@@ -665,7 +672,7 @@ function Druid:FeralFinisher()
 	end
 
 	-- rip,target_if=refreshable;
-	if talents[FR.Rip] and energy >= 20 and comboPoints >= 5 and () then
+	if talents[FR.Rip] and energy >= 20 and comboPoints >= 5 then
 		return FR.Rip;
 	end
 
@@ -687,7 +694,7 @@ function Druid:FeralVariable()
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 
 	-- variable,name=lazy_swipe,op=reset;
-	local lazySwipe = ;
+	local lazySwipe;
 end
 
 function Druid:FeralVariables()
@@ -702,21 +709,21 @@ function Druid:FeralVariables()
 	local timeToDie = fd.timeToDie;
 
 	-- variable,name=need_bt,value=talent.bloodtalons.enabled&buff.bloodtalons.stack<2;
-	local needBt = talents[FR.Bloodtalons] and buff[FR.Bloodtalons].count < 2;
+	needBt = talents[FR.Bloodtalons] and buff[FR.Bloodtalons].count < 2;
 
 	-- variable,name=align_3minutes,value=spell_targets.swipe_cat=1&!fight_style.dungeonslice;
-	local align3minutes = targets == 1 and not;
+	align3minutes = targets == 1;
 
 	-- variable,name=lastConvoke,value=fight_remains>cooldown.convoke_the_spirits.remains+3&((talent.ashamanes_guidance.enabled&fight_remains<(cooldown.convoke_the_spirits.remains+60))|(!talent.ashamanes_guidance.enabled&fight_remains<(cooldown.convoke_the_spirits.remains+120)));
-	local lastConvoke = timeToDie > cooldown[FR.ConvokeTheSpirits].remains + 3 and ( ( talents[FR.AshamanesGuidance] and timeToDie < ( cooldown[FR.ConvokeTheSpirits].remains + 60 ) ) or ( not talents[FR.AshamanesGuidance] and timeToDie < ( cooldown[FR.ConvokeTheSpirits].remains + 120 ) ) );
+	lastConvoke = timeToDie > cooldown[FR.ConvokeTheSpirits].remains + 3 and ( ( talents[FR.AshamanesGuidance] and timeToDie < ( cooldown[FR.ConvokeTheSpirits].remains + 60 ) ) or ( not talents[FR.AshamanesGuidance] and timeToDie < ( cooldown[FR.ConvokeTheSpirits].remains + 120 ) ) );
 
 	-- variable,name=lastZerk,value=fight_remains>(30+(cooldown.bs_inc.remains%1.6))&((talent.berserk_heart_of_the_lion.enabled&fight_remains<(90+(cooldown.bs_inc.remains%1.6)))|(!talent.berserk_heart_of_the_lion.enabled&fight_remains<(180+cooldown.bs_inc.remains)));
-	local lastZerk = timeToDie > ( 30 + ( cooldown[FR.BsInc].remains / 1.6 ) ) and ( ( talents[FR.BerserkHeartOfTheLion] and timeToDie < ( 90 + ( cooldown[FR.BsInc].remains / 1.6 ) ) ) or ( not talents[FR.BerserkHeartOfTheLion] and timeToDie < ( 180 + cooldown[FR.BsInc].remains ) ) );
+	lastZerk = timeToDie > ( 30 + ( cooldown[FR.BsInc].remains / 1.6 ) ) and ( ( talents[FR.BerserkHeartOfTheLion] and timeToDie < ( 90 + ( cooldown[FR.BsInc].remains / 1.6 ) ) ) or ( not talents[FR.BerserkHeartOfTheLion] and timeToDie < ( 180 + cooldown[FR.BsInc].remains ) ) );
 
 	-- variable,name=zerk_biteweave,op=reset;
-	local zerkBiteweave = ;
+	--zerkBiteweave;
 
 	-- variable,name=regrowth,op=reset;
-	local regrowth = ;
+	--regrowth;
 end
 

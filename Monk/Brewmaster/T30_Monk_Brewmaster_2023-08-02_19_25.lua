@@ -146,7 +146,7 @@ function Monk:BrewmasterRotationBoc()
 	end
 
 	-- keg_smash,if=time-action.weapons_of_order.last_used<2&talent.weapons_of_order.enabled;
-	if talents[BR.KegSmash] and cooldown[BR.KegSmash].ready and energy >= 40 and (GetTime() - < 2 and talents[BR.WeaponsOfOrder]) then
+	if talents[BR.KegSmash] and cooldown[BR.KegSmash].ready and energy >= 40 and (talents[BR.WeaponsOfOrder]) then
 		return BR.KegSmash;
 	end
 

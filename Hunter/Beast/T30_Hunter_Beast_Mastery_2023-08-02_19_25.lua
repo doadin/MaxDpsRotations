@@ -183,7 +183,7 @@ function Hunter:BeastMasteryCleave()
 	end
 
 	-- serpent_sting,target_if=min:remains,if=refreshable&target.time_to_die>duration;
-	if talents[BM.SerpentSting] and focus >= 10 and (debuff[BM.Serpent Sting].refreshable and timeToDie > cooldown[BM.SerpentSting].duration) then
+	if talents[BM.SerpentSting] and focus >= 10 and (debuff[BM.SerpentSting].refreshable and timeToDie > cooldown[BM.SerpentSting].duration) then
 		return BM.SerpentSting;
 	end
 
@@ -305,7 +305,7 @@ function Hunter:BeastMasterySt()
 	end
 
 	-- serpent_sting,target_if=min:remains,if=refreshable&target.time_to_die>duration;
-	if talents[BM.SerpentSting] and focus >= 10 and (debuff[BM.Serpent Sting].refreshable and timeToDie > cooldown[BM.SerpentSting].duration) then
+	if talents[BM.SerpentSting] and focus >= 10 and (debuff[BM.SerpentSting].refreshable and timeToDie > cooldown[BM.SerpentSting].duration) then
 		return BM.SerpentSting;
 	end
 
@@ -351,9 +351,9 @@ function Hunter:BeastMasteryTrinkets()
 	end
 
 	-- variable,name=trinket_1_stronger,value=!trinket.2.has_cooldown|trinket.1.has_use_buff&(!trinket.2.has_use_buff|trinket.2.cooldown.duration<trinket.1.cooldown.duration|trinket.2.cast_time<trinket.1.cast_time|trinket.2.cast_time=trinket.1.cast_time&trinket.2.cooldown.duration=trinket.1.cooldown.duration)|!trinket.1.has_use_buff&(!trinket.2.has_use_buff&(trinket.2.cooldown.duration<trinket.1.cooldown.duration|trinket.2.cast_time<trinket.1.cast_time|trinket.2.cast_time=trinket.1.cast_time&trinket.2.cooldown.duration=trinket.1.cooldown.duration));
-	local trinket1Stronger = not ( not == == ) or not ( not ( == == ) );
+	--local trinket1Stronger = not ( not == == ) or not ( not ( == == ) );
 
 	-- variable,name=trinket_2_stronger,value=!trinket.1.has_cooldown|trinket.2.has_use_buff&(!trinket.1.has_use_buff|trinket.1.cooldown.duration<trinket.2.cooldown.duration|trinket.1.cast_time<trinket.2.cast_time|trinket.1.cast_time=trinket.2.cast_time&trinket.1.cooldown.duration=trinket.2.cooldown.duration)|!trinket.2.has_use_buff&(!trinket.1.has_use_buff&(trinket.1.cooldown.duration<trinket.2.cooldown.duration|trinket.1.cast_time<trinket.2.cast_time|trinket.1.cast_time=trinket.2.cast_time&trinket.1.cooldown.duration=trinket.2.cooldown.duration));
-	local trinket2Stronger = not ( not == == ) or not ( not ( == == ) );
+	--local trinket2Stronger = not ( not == == ) or not ( not ( == == ) );
 end
 

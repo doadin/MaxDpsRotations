@@ -114,7 +114,7 @@ function Mage:Arcane()
 	end
 
 	-- conjure_mana_gem,if=debuff.touch_of_the_magi.down&buff.arcane_surge.down&cooldown.arcane_surge.remains<fight_remains&!mana_gem_charges;
-	if talents[AR.ConjureManaGem] and mana >= 9000 and currentSpell ~= AR.ConjureManaGem and (not debuff[AR.TouchOfTheMagi].up and not buff[AR.ArcaneSurge].up and cooldown[AR.ArcaneSurge].remains < timeToDie and not) then
+	if talents[AR.ConjureManaGem] and mana >= 9000 and currentSpell ~= AR.ConjureManaGem and (not debuff[AR.TouchOfTheMagi].up and not buff[AR.ArcaneSurge].up and cooldown[AR.ArcaneSurge].remains < timeToDie ) then
 		return AR.ConjureManaGem;
 	end
 
@@ -214,7 +214,7 @@ function Mage:ArcaneAoeRotation()
 	end
 
 	-- nether_tempest,if=(refreshable|!ticking)&buff.arcane_charge.stack=buff.arcane_charge.max_stack&buff.arcane_surge.down&(active_enemies>6|!talent.orb_barrage);
-	if talents[AR.NetherTempest] and mana >= 750 and (( debuff[AR.Nether Tempest].refreshable or not debuff[AR.Nether Tempest].up ) and buff[AR.ArcaneCharge].count == buff[AR.ArcaneCharge].maxStacks and not buff[AR.ArcaneSurge].up and ( targets > 6 or not talents[AR.OrbBarrage] )) then
+	if talents[AR.NetherTempest] and mana >= 750 and (( debuff[AR.NetherTempest].refreshable or not debuff[AR.NetherTempest].up ) and buff[AR.ArcaneCharge].count == buff[AR.ArcaneCharge].maxStacks and not buff[AR.ArcaneSurge].up and ( targets > 6 or not talents[AR.OrbBarrage] )) then
 		return AR.NetherTempest;
 	end
 
@@ -505,7 +505,7 @@ function Mage:ArcaneRotation()
 	end
 
 	-- nether_tempest,if=(refreshable|!ticking)&buff.arcane_charge.stack=buff.arcane_charge.max_stack&(buff.temporal_warp.up|mana.pct<10|!talent.shifting_power)&buff.arcane_surge.down&fight_remains>=12;
-	if talents[AR.NetherTempest] and mana >= 750 and (( debuff[AR.Nether Tempest].refreshable or not debuff[AR.Nether Tempest].up ) and buff[AR.ArcaneCharge].count == buff[AR.ArcaneCharge].maxStacks and ( buff[AR.TemporalWarp].up or manaPct < 10 or not talents[AR.ShiftingPower] ) and not buff[AR.ArcaneSurge].up and timeToDie >= 12) then
+	if talents[AR.NetherTempest] and mana >= 750 and (( debuff[AR.NetherTempest].refreshable or not debuff[AR.NetherTempest].up ) and buff[AR.ArcaneCharge].count == buff[AR.ArcaneCharge].maxStacks and ( buff[AR.TemporalWarp].up or manaPct < 10 or not talents[AR.ShiftingPower] ) and not buff[AR.ArcaneSurge].up and timeToDie >= 12) then
 		return AR.NetherTempest;
 	end
 
@@ -571,7 +571,7 @@ function Mage:ArcaneSparkPhase()
 	local manaTimeToMax = manaMax - mana / manaRegen;
 
 	-- nether_tempest,if=!ticking&variable.opener&buff.bloodlust.up,line_cd=45;
-	if talents[AR.NetherTempest] and mana >= 750 and (not debuff[AR.Nether Tempest].up and opener and buff[AR.Bloodlust].up) then
+	if talents[AR.NetherTempest] and mana >= 750 and (not debuff[AR.NetherTempest].up and opener and buff[AR.Bloodlust].up) then
 		return AR.NetherTempest;
 	end
 

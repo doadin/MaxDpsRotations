@@ -74,7 +74,7 @@ function Warrior:Fury()
 	end
 
 	-- avatar,if=talent.titans_torment&buff.enrage.up&raid_event.adds.in>15|talent.berserkers_torment&buff.enrage.up&!buff.avatar.up&raid_event.adds.in>15|!talent.titans_torment&!talent.berserkers_torment&(buff.recklessness.up|target.time_to_die<20);
-	if talents[FR.Avatar] and cooldown[FR.Avatar].ready and (talents[FR.TitansTorment] and buff[FR.Enrage].up and raid_event.adds.in > 15 or talents[FR.BerserkersTorment] and buff[FR.Enrage].up and not buff[FR.Avatar].up and raid_event.adds.in > 15 or not talents[FR.TitansTorment] and not talents[FR.BerserkersTorment] and ( buff[FR.Recklessness].up or timeToDie < 20 )) then
+	if talents[FR.Avatar] and cooldown[FR.Avatar].ready and (talents[FR.TitansTorment] and buff[FR.Enrage].up or talents[FR.BerserkersTorment] and buff[FR.Enrage].up and not buff[FR.Avatar].up or not talents[FR.TitansTorment] and not talents[FR.BerserkersTorment] and ( buff[FR.Recklessness].up or timeToDie < 20 )) then
 		return FR.Avatar;
 	end
 
@@ -89,7 +89,7 @@ function Warrior:Fury()
 	end
 
 	-- spear_of_bastion,if=buff.enrage.up&(buff.recklessness.up|buff.avatar.up|target.time_to_die<20|active_enemies>1)&raid_event.adds.in>15;
-	if talents[FR.SpearOfBastion] and cooldown[FR.SpearOfBastion].ready and (buff[FR.Enrage].up and ( buff[FR.Recklessness].up or buff[FR.Avatar].up or timeToDie < 20 or targets > 1 ) and raid_event.adds.in > 15) then
+	if talents[FR.SpearOfBastion] and cooldown[FR.SpearOfBastion].ready and (buff[FR.Enrage].up and ( buff[FR.Recklessness].up or buff[FR.Avatar].up or timeToDie < 20 or targets > 1 ) ) then
 		return FR.SpearOfBastion;
 	end
 
@@ -130,7 +130,7 @@ function Warrior:FuryMultiTarget()
 	local canExecute = ((talents[FR.Massacre] and targetHp < 35) or targetHp < 20) or buff[FR.SuddenDeathAura].up;
 
 	-- recklessness,if=raid_event.adds.in>15|active_enemies>1|target.time_to_die<12;
-	if talents[FR.Recklessness] and cooldown[FR.Recklessness].ready and (raid_event.adds.in > 15 or targets > 1 or timeToDie < 12) then
+	if talents[FR.Recklessness] and cooldown[FR.Recklessness].ready and (targets > 1 or timeToDie < 12) then
 		return FR.Recklessness;
 	end
 
@@ -140,7 +140,7 @@ function Warrior:FuryMultiTarget()
 	end
 
 	-- whirlwind,if=spell_targets.whirlwind>1&talent.improved_whirlwind&!buff.meat_cleaver.up|raid_event.adds.in<2&talent.improved_whirlwind&!buff.meat_cleaver.up;
-	if targets > 1 and talents[FR.ImprovedWhirlwind] and not buff[FR.MeatCleaver].up or raid_event.adds.in < 2 and talents[FR.ImprovedWhirlwind] and not buff[FR.MeatCleaver].up then
+	if targets > 1 and talents[FR.ImprovedWhirlwind] and not buff[FR.MeatCleaver].up or talents[FR.ImprovedWhirlwind] and not buff[FR.MeatCleaver].up then
 		return FR.Whirlwind;
 	end
 
@@ -150,22 +150,22 @@ function Warrior:FuryMultiTarget()
 	end
 
 	-- thunderous_roar,if=buff.enrage.up&(spell_targets.whirlwind>1|raid_event.adds.in>15);
-	if talents[FR.ThunderousRoar] and cooldown[FR.ThunderousRoar].ready and (buff[FR.Enrage].up and ( targets > 1 or raid_event.adds.in > 15 )) then
+	if talents[FR.ThunderousRoar] and cooldown[FR.ThunderousRoar].ready and (buff[FR.Enrage].up and ( targets > 1 )) then
 		return FR.ThunderousRoar;
 	end
 
 	-- odyns_fury,if=active_enemies>1&buff.enrage.up&raid_event.adds.in>15;
-	if talents[FR.OdynsFury] and cooldown[FR.OdynsFury].ready and (targets > 1 and buff[FR.Enrage].up and raid_event.adds.in > 15) then
+	if talents[FR.OdynsFury] and cooldown[FR.OdynsFury].ready and (targets > 1 and buff[FR.Enrage].up) then
 		return FR.OdynsFury;
 	end
 
 	-- bloodbath,if=set_bonus.tier30_4pc&action.bloodthirst.crit_pct_current>=95;
-	if MaxDps:FindSpell(FR.Bloodbath) and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and >= 95) then
+	if MaxDps:FindSpell(FR.Bloodbath) and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and buff[FR.Tier304pc].count >= 9) then
 		return FR.Bloodbath;
 	end
 
 	-- bloodthirst,if=set_bonus.tier30_4pc&action.bloodthirst.crit_pct_current>=95;
-	if talents[FR.Bloodthirst] and cooldown[FR.Bloodthirst].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and >= 95) then
+	if talents[FR.Bloodthirst] and cooldown[FR.Bloodthirst].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and buff[FR.Tier304pc].count >= 9) then
 		return FR.Bloodthirst;
 	end
 
@@ -180,7 +180,7 @@ function Warrior:FuryMultiTarget()
 	end
 
 	-- odyns_fury,if=buff.enrage.up&raid_event.adds.in>15;
-	if talents[FR.OdynsFury] and cooldown[FR.OdynsFury].ready and (buff[FR.Enrage].up and raid_event.adds.in > 15) then
+	if talents[FR.OdynsFury] and cooldown[FR.OdynsFury].ready and (buff[FR.Enrage].up) then
 		return FR.OdynsFury;
 	end
 
@@ -288,7 +288,7 @@ function Warrior:FurySingleTarget()
 	local canExecute = ((talents[FR.Massacre] and targetHp < 35) or targetHp < 20) or buff[FR.SuddenDeathAura].up;
 
 	-- whirlwind,if=spell_targets.whirlwind>1&talent.improved_whirlwind&!buff.meat_cleaver.up|raid_event.adds.in<2&talent.improved_whirlwind&!buff.meat_cleaver.up;
-	if targets > 1 and talents[FR.ImprovedWhirlwind] and not buff[FR.MeatCleaver].up or raid_event.adds.in < 2 and talents[FR.ImprovedWhirlwind] and not buff[FR.MeatCleaver].up then
+	if targets > 1 and talents[FR.ImprovedWhirlwind] and not buff[FR.MeatCleaver].up or talents[FR.ImprovedWhirlwind] and not buff[FR.MeatCleaver].up then
 		return FR.Whirlwind;
 	end
 
@@ -298,12 +298,12 @@ function Warrior:FurySingleTarget()
 	end
 
 	-- thunderous_roar,if=buff.enrage.up&(spell_targets.whirlwind>1|raid_event.adds.in>15);
-	if talents[FR.ThunderousRoar] and cooldown[FR.ThunderousRoar].ready and (buff[FR.Enrage].up and ( targets > 1 or raid_event.adds.in > 15 )) then
+	if talents[FR.ThunderousRoar] and cooldown[FR.ThunderousRoar].ready and (buff[FR.Enrage].up and ( targets > 1 )) then
 		return FR.ThunderousRoar;
 	end
 
 	-- odyns_fury,if=buff.enrage.up&(spell_targets.whirlwind>1|raid_event.adds.in>15)&(talent.dancing_blades&buff.dancing_blades.remains<5|!talent.dancing_blades);
-	if talents[FR.OdynsFury] and cooldown[FR.OdynsFury].ready and (buff[FR.Enrage].up and ( targets > 1 or raid_event.adds.in > 15 ) and ( talents[FR.DancingBlades] and buff[FR.DancingBlades].remains < 5 or not talents[FR.DancingBlades] )) then
+	if talents[FR.OdynsFury] and cooldown[FR.OdynsFury].ready and (buff[FR.Enrage].up and ( targets > 1 ) and ( talents[FR.DancingBlades] and buff[FR.DancingBlades].remains < 5 or not talents[FR.DancingBlades] )) then
 		return FR.OdynsFury;
 	end
 
@@ -313,12 +313,12 @@ function Warrior:FurySingleTarget()
 	end
 
 	-- bloodbath,if=set_bonus.tier30_4pc&action.bloodthirst.crit_pct_current>=95;
-	if MaxDps:FindSpell(FR.Bloodbath) and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and >= 95) then
+	if MaxDps:FindSpell(FR.Bloodbath) and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and buff[FR.Tier304pc].count >= 9) then
 		return FR.Bloodbath;
 	end
 
 	-- bloodthirst,if=set_bonus.tier30_4pc&action.bloodthirst.crit_pct_current>=95;
-	if talents[FR.Bloodthirst] and cooldown[FR.Bloodthirst].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and >= 95) then
+	if talents[FR.Bloodthirst] and cooldown[FR.Bloodthirst].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and buff[FR.Tier304pc].count >= 9) then
 		return FR.Bloodthirst;
 	end
 

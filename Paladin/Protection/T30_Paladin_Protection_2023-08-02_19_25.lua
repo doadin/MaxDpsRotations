@@ -157,7 +157,7 @@ function Paladin:ProtectionStandard()
 	end
 
 	-- divine_toll,if=(time>20&(!raid_event.adds.exists|raid_event.adds.in>10))|((buff.avenging_wrath.up|!talent.avenging_wrath.enabled)&(buff.moment_of_glory.up|!talent.moment_of_glory.enabled));
-	if talents[PR.DivineToll] and cooldown[PR.DivineToll].ready and mana >= 7500 and (( GetTime() > 20 and ( not targets > 1 or raid_event.adds.in > 10 ) ) or ( ( buff[PR.AvengingWrath].up or not talents[PR.AvengingWrath] ) and ( buff[PR.MomentOfGlory].up or not talents[PR.MomentOfGlory] ) )) then
+	if talents[PR.DivineToll] and cooldown[PR.DivineToll].ready and mana >= 7500 and (( GetTime() > 20 and ( not targets > 1  ) ) or ( ( buff[PR.AvengingWrath].up or not talents[PR.AvengingWrath] ) and ( buff[PR.MomentOfGlory].up or not talents[PR.MomentOfGlory] ) )) then
 		return PR.DivineToll;
 	end
 
@@ -172,7 +172,7 @@ function Paladin:ProtectionStandard()
 	end
 
 	-- judgment,target_if=min:debuff.judgment.remains;
-	if cooldown[PR.Judgment].ready and mana >= 1500 and () then
+	if cooldown[PR.Judgment].ready and mana >= 1500 then
 		return PR.Judgment;
 	end
 
@@ -182,7 +182,7 @@ function Paladin:ProtectionStandard()
 	end
 
 	-- eye_of_tyr,if=talent.inmost_light.enabled&raid_event.adds.in>=45;
-	if talents[PR.EyeOfTyr] and cooldown[PR.EyeOfTyr].ready and (talents[PR.InmostLight] and raid_event.adds.in >= 45) then
+	if talents[PR.EyeOfTyr] and cooldown[PR.EyeOfTyr].ready and (talents[PR.InmostLight]) then
 		return PR.EyeOfTyr;
 	end
 
@@ -200,7 +200,7 @@ function Paladin:ProtectionStandard()
 	-- PR.CrusaderStrike;
 
 	-- eye_of_tyr,if=!talent.inmost_light.enabled&raid_event.adds.in>=60;
-	if talents[PR.EyeOfTyr] and cooldown[PR.EyeOfTyr].ready and (not talents[PR.InmostLight] and raid_event.adds.in >= 60) then
+	if talents[PR.EyeOfTyr] and cooldown[PR.EyeOfTyr].ready and (not talents[PR.InmostLight]) then
 		return PR.EyeOfTyr;
 	end
 

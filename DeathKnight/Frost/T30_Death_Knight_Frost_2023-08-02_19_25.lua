@@ -2,7 +2,7 @@ local _, addonTable = ...;
 
 -- @type MaxDps;
 if not MaxDps then return end;
-local Deathknight = addonTable.Deathknight;
+local DeathKnight = addonTable.Deathknight;
 local MaxDps = MaxDps;
 
 local UnitPower = UnitPower;
@@ -13,6 +13,18 @@ local itemID = GetInventoryItemID('player', INVSLOT_MAINHAND);
 local mainHandSubClassID = itemID and  select(13, GetItemInfo(itemID));
 
 local TwoHanderWepCheck = mainHandSubClassID and (mainHandSubClassID == 1 or mainHandSubClassID == 5 or mainHandSubClassID == 8 or mainHandSubClassID == 10);
+
+
+local stPlanning
+local addsRemain
+local rimeBuffs
+local rpBuffs
+local cooldownCheck
+local frostscythePriority
+local oblitPoolingTime
+local breathPoolingTime
+local poolingRunes
+local poolingRunicPower
 
 local FR = {
 	PillarOfFrost = 51271,
@@ -477,12 +489,12 @@ function DeathKnight:FrostCooldowns()
 	end
 
 	-- frostwyrms_fury,if=active_enemies=1&(talent.pillar_of_frost&buff.pillar_of_frost.remains<gcd*2&buff.pillar_of_frost.up&!talent.obliteration|!talent.pillar_of_frost)&(!raid_event.adds.exists|(raid_event.adds.in>15+raid_event.adds.duration|talent.absolute_zero&raid_event.adds.in>15+raid_event.adds.duration))|fight_remains<3;
-	if talents[FR.FrostwyrmsFury] and cooldown[FR.FrostwyrmsFury].ready and (targets == 1 and ( talents[FR.PillarOfFrost] and buff[FR.PillarOfFrost].remains < gcd * 2 and buff[FR.PillarOfFrost].up and not talents[FR.Obliteration] or not talents[FR.PillarOfFrost] ) and ( not targets > 1 or ( raid_event.adds.in > 15 + raid_event.adds.duration or talents[FR.AbsoluteZero] and raid_event.adds.in > 15 + raid_event.adds.duration ) ) or timeToDie < 3) then
+	if talents[FR.FrostwyrmsFury] and cooldown[FR.FrostwyrmsFury].ready and (targets == 1 and ( talents[FR.PillarOfFrost] and buff[FR.PillarOfFrost].remains < gcd * 2 and buff[FR.PillarOfFrost].up and not talents[FR.Obliteration] or not talents[FR.PillarOfFrost] ) and ( not targets > 1  ) or timeToDie < 3) then
 		return FR.FrostwyrmsFury;
 	end
 
 	-- frostwyrms_fury,if=active_enemies>=2&(talent.pillar_of_frost&buff.pillar_of_frost.up|raid_event.adds.exists&raid_event.adds.up&raid_event.adds.in>cooldown.pillar_of_frost.remains_expected-raid_event.adds.in-raid_event.adds.duration)&(buff.pillar_of_frost.remains<gcd*2|raid_event.adds.exists&raid_event.adds.remains<gcd*2);
-	if talents[FR.FrostwyrmsFury] and cooldown[FR.FrostwyrmsFury].ready and (targets >= 2 and ( talents[FR.PillarOfFrost] and buff[FR.PillarOfFrost].up or targets > 1 and raid_event.adds.up and raid_event.adds.in > cooldown[FR.PillarOfFrost].remains - raid_event.adds.in - raid_event.adds.duration ) and ( buff[FR.PillarOfFrost].remains < gcd * 2 or targets > 1 and raid_event.adds.remains < gcd * 2 )) then
+	if talents[FR.FrostwyrmsFury] and cooldown[FR.FrostwyrmsFury].ready and (targets >= 2 and ( talents[FR.PillarOfFrost] and buff[FR.PillarOfFrost].up or targets > 1 ) and ( buff[FR.PillarOfFrost].remains < gcd * 2 or targets > 1 )) then
 		return FR.FrostwyrmsFury;
 	end
 
@@ -700,7 +712,7 @@ function DeathKnight:FrostObliteration()
 	end
 
 	-- obliterate,target_if=max:(debuff.razorice.stack+1)%(debuff.razorice.remains+1)*death_knight.runeforge.razorice;
-	if talents[FR.Obliterate] and runes >= 2 and () then
+	if talents[FR.Obliterate] and runes >= 2 then
 		return FR.Obliterate;
 	end
 end
@@ -839,41 +851,41 @@ function DeathKnight:FrostVariables()
 	local runeforge = fd.runeforge;
 
 	-- variable,name=st_planning,value=active_enemies=1&(raid_event.adds.in>15|!raid_event.adds.exists);
-	local stPlanning = targets == 1 and ( raid_event.adds.in > 15 or not targets > 1 );
+	stPlanning = targets == 1 and ( not targets > 1 );
 
 	-- variable,name=adds_remain,value=active_enemies>=2&(!raid_event.adds.exists|raid_event.adds.exists&raid_event.adds.remains>5);
-	local addsRemain = targets >= 2 and ( not targets > 1 or targets > 1 and raid_event.adds.remains > 5 );
+	addsRemain = targets >= 2 and ( not targets > 1 or targets > 1 and raid_event.adds.remains > 5 );
 
 	-- variable,name=rime_buffs,value=buff.rime.react&(talent.rage_of_the_frozen_champion|talent.avalanche|talent.icebreaker);
-	local rimeBuffs = buff[FR.Rime].count and ( talents[FR.RageOfTheFrozenChampion] or talents[FR.Avalanche] or talents[FR.Icebreaker] );
+	rimeBuffs = buff[FR.Rime].count and ( talents[FR.RageOfTheFrozenChampion] or talents[FR.Avalanche] or talents[FR.Icebreaker] );
 
 	-- variable,name=rp_buffs,value=talent.unleashed_frenzy&(buff.unleashed_frenzy.remains<gcd.max*3|buff.unleashed_frenzy.stack<3)|talent.icy_talons&(buff.icy_talons.remains<gcd.max*3|buff.icy_talons.stack<3);
-	local rpBuffs = talents[FR.UnleashedFrenzy] and ( buff[FR.UnleashedFrenzy].remains < gcd * 3 or buff[FR.UnleashedFrenzy].count < 3 ) or talents[FR.IcyTalons] and ( buff[FR.IcyTalons].remains < gcd * 3 or buff[FR.IcyTalons].count < 3 );
+	rpBuffs = talents[FR.UnleashedFrenzy] and ( buff[FR.UnleashedFrenzy].remains < gcd * 3 or buff[FR.UnleashedFrenzy].count < 3 ) or talents[FR.IcyTalons] and ( buff[FR.IcyTalons].remains < gcd * 3 or buff[FR.IcyTalons].count < 3 );
 
 	-- variable,name=cooldown_check,value=talent.pillar_of_frost&buff.pillar_of_frost.up&(talent.obliteration&buff.pillar_of_frost.remains<6|!talent.obliteration)|!talent.pillar_of_frost&buff.empower_rune_weapon.up|!talent.pillar_of_frost&!talent.empower_rune_weapon|active_enemies>=2&buff.pillar_of_frost.up;
-	local cooldownCheck = talents[FR.PillarOfFrost] and buff[FR.PillarOfFrost].up and ( talents[FR.Obliteration] and buff[FR.PillarOfFrost].remains < 6 or not talents[FR.Obliteration] ) or not talents[FR.PillarOfFrost] and buff[FR.EmpowerRuneWeapon].up or not talents[FR.PillarOfFrost] and not talents[FR.EmpowerRuneWeapon] or targets >= 2 and buff[FR.PillarOfFrost].up;
+	cooldownCheck = talents[FR.PillarOfFrost] and buff[FR.PillarOfFrost].up and ( talents[FR.Obliteration] and buff[FR.PillarOfFrost].remains < 6 or not talents[FR.Obliteration] ) or not talents[FR.PillarOfFrost] and buff[FR.EmpowerRuneWeapon].up or not talents[FR.PillarOfFrost] and not talents[FR.EmpowerRuneWeapon] or targets >= 2 and buff[FR.PillarOfFrost].up;
 
 	-- variable,name=frostscythe_priority,value=talent.frostscythe&(buff.killing_machine.react|active_enemies>=3)&(!talent.improved_obliterate&!talent.frigid_executioner&!talent.frostreaper&!talent.might_of_the_frozen_wastes|!talent.cleaving_strikes|talent.cleaving_strikes&(active_enemies>6|!death_and_decay.ticking&active_enemies>3));
-	local frostscythePriority = talents[FR.Frostscythe] and ( buff[FR.KillingMachine].count or targets >= 3 ) and ( not talents[FR.ImprovedObliterate] and not talents[FR.FrigidExecutioner] and not talents[FR.Frostreaper] and not talents[FR.MightOfTheFrozenWastes] or not talents[FR.CleavingStrikes] or talents[FR.CleavingStrikes] and ( targets > 6 or not debuff[FR.DeathAndDecay].up and targets > 3 ) );
+	frostscythePriority = talents[FR.Frostscythe] and ( buff[FR.KillingMachine].count or targets >= 3 ) and ( not talents[FR.ImprovedObliterate] and not talents[FR.FrigidExecutioner] and not talents[FR.Frostreaper] and not talents[FR.MightOfTheFrozenWastes] or not talents[FR.CleavingStrikes] or talents[FR.CleavingStrikes] and ( targets > 6 or not debuff[FR.DeathAndDecay].up and targets > 3 ) );
 
 	-- variable,name=oblit_pooling_time,op=setif,value=((cooldown.pillar_of_frost.remains_expected+1)%gcd.max)%((rune+3)*(runic_power+5))*100,value_else=3,condition=runic_power<35&rune<2&cooldown.pillar_of_frost.remains_expected<10;
 	if runicPower < 35 and runes < 2 and cooldown[FR.PillarOfFrost].remains < 10 then
-		local oblitPoolingTime = ( ( cooldown[FR.PillarOfFrost].remains + 1 ) / gcd ) / ( ( runes + 3 ) * ( runicPower + 5 ) ) * 100;
+		oblitPoolingTime = ( ( cooldown[FR.PillarOfFrost].remains + 1 ) / gcd ) / ( ( runes + 3 ) * ( runicPower + 5 ) ) * 100;
 	else
-		local oblitPoolingTime = 3;
+		oblitPoolingTime = 3;
 	end
 
 	-- variable,name=breath_pooling_time,op=setif,value=((cooldown.breath_of_sindragosa.remains+1)%gcd.max)%((rune+1)*(runic_power+20))*100,value_else=3,condition=runic_power.deficit>10&cooldown.breath_of_sindragosa.remains<10;
 	if runicPowerDeficit > 10 and cooldown[FR.BreathOfSindragosa].remains < 10 then
-		local breathPoolingTime = ( ( cooldown[FR.BreathOfSindragosa].remains + 1 ) / gcd ) / ( ( runes + 1 ) * ( runicPower + 20 ) ) * 100;
+		breathPoolingTime = ( ( cooldown[FR.BreathOfSindragosa].remains + 1 ) / gcd ) / ( ( runes + 1 ) * ( runicPower + 20 ) ) * 100;
 	else
-		local breathPoolingTime = 3;
+		breathPoolingTime = 3;
 	end
 
 	-- variable,name=pooling_runes,value=rune<4&talent.obliteration&cooldown.pillar_of_frost.remains_expected<variable.oblit_pooling_time;
-	local poolingRunes = runes < 4 and talents[FR.Obliteration] and cooldown[FR.PillarOfFrost].remains < oblitPoolingTime;
+	poolingRunes = runes < 4 and talents[FR.Obliteration] and cooldown[FR.PillarOfFrost].remains < oblitPoolingTime;
 
 	-- variable,name=pooling_runic_power,value=talent.breath_of_sindragosa&cooldown.breath_of_sindragosa.remains<variable.breath_pooling_time|talent.obliteration&runic_power<35&cooldown.pillar_of_frost.remains_expected<variable.oblit_pooling_time;
-	local poolingRunicPower = talents[FR.BreathOfSindragosa] and cooldown[FR.BreathOfSindragosa].remains < breathPoolingTime or talents[FR.Obliteration] and runicPower < 35 and cooldown[FR.PillarOfFrost].remains < oblitPoolingTime;
+	poolingRunicPower = talents[FR.BreathOfSindragosa] and cooldown[FR.BreathOfSindragosa].remains < breathPoolingTime or talents[FR.Obliteration] and runicPower < 35 and cooldown[FR.PillarOfFrost].remains < oblitPoolingTime;
 end
 

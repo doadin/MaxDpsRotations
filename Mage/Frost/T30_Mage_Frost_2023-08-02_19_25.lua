@@ -96,12 +96,12 @@ function Mage:FrostAoe()
 	end
 
 	-- frozen_orb,if=!prev_gcd.1.glacial_spike|!freezable;
-	if talents[FT.FrozenOrb] and cooldown[FT.FrozenOrb].ready and mana >= 500 and (not spellHistory[1] == FT.GlacialSpike or not) then
+	if talents[FT.FrozenOrb] and cooldown[FT.FrozenOrb].ready and mana >= 500 and (not spellHistory[1] == FT.GlacialSpike ) then
 		return FT.FrozenOrb;
 	end
 
 	-- blizzard,if=!prev_gcd.1.glacial_spike|!freezable;
-	if cooldown[FT.Blizzard].ready and mana >= 1250 and currentSpell ~= FT.Blizzard and (not spellHistory[1] == FT.GlacialSpike or not) then
+	if cooldown[FT.Blizzard].ready and mana >= 1250 and currentSpell ~= FT.Blizzard and (not spellHistory[1] == FT.GlacialSpike ) then
 		return FT.Blizzard;
 	end
 
@@ -156,7 +156,7 @@ function Mage:FrostAoe()
 	end
 
 	-- ice_nova,if=active_enemies>=4&(!talent.snowstorm&!talent.glacial_spike|!freezable);
-	if talents[FT.IceNova] and cooldown[FT.IceNova].ready and (targets >= 4 and ( not talents[FT.Snowstorm] and not talents[FT.GlacialSpike] or not )) then
+	if talents[FT.IceNova] and cooldown[FT.IceNova].ready and (targets >= 4 and ( not talents[FT.Snowstorm] and not talents[FT.GlacialSpike] )) then
 		return FT.IceNova;
 	end
 
@@ -290,7 +290,7 @@ function Mage:FrostSt()
 	end
 
 	-- flurry,if=cooldown_react&remaining_winters_chill=0&debuff.winters_chill.down&(prev_gcd.1.frostbolt|prev_gcd.1.glacial_spike|talent.glacial_spike&buff.icicles.react=4&!buff.fingers_of_frost.react);
-	if talents[FT.Flurry] and cooldown[FT.Flurry].ready and mana >= 500 and (cooldownReact and == 0 and not debuff[FT.WintersChill].up and ( spellHistory[1] == FT.Frostbolt or spellHistory[1] == FT.GlacialSpike or talents[FT.GlacialSpike] and buff[FT.Icicles].count == 4 and not buff[FT.FingersOfFrost].count )) then
+	if talents[FT.Flurry] and cooldown[FT.Flurry].ready and mana >= 500 and (cooldownReact and not debuff[FT.WintersChill].up and ( spellHistory[1] == FT.Frostbolt or spellHistory[1] == FT.GlacialSpike or talents[FT.GlacialSpike] and buff[FT.Icicles].count == 4 and not buff[FT.FingersOfFrost].count )) then
 		return FT.Flurry;
 	end
 
@@ -300,12 +300,12 @@ function Mage:FrostSt()
 	end
 
 	-- ray_of_frost,if=remaining_winters_chill=1;
-	if talents[FT.RayOfFrost] and cooldown[FT.RayOfFrost].ready and mana >= 1000 and (== 1) then
+	if talents[FT.RayOfFrost] and cooldown[FT.RayOfFrost].ready and mana >= 1000 then
 		return FT.RayOfFrost;
 	end
 
 	-- glacial_spike,if=buff.icicles.react=5&(action.flurry.cooldown_react|remaining_winters_chill);
-	if talents[FT.GlacialSpike] and mana >= 500 and currentSpell ~= FT.GlacialSpike and (buff[FT.Icicles].count == 5 and ( or )) then
+	if talents[FT.GlacialSpike] and mana >= 500 and currentSpell ~= FT.GlacialSpike and (buff[FT.Icicles].count == 5 ) then
 		return FT.GlacialSpike;
 	end
 
@@ -315,7 +315,7 @@ function Mage:FrostSt()
 	end
 
 	-- cone_of_cold,if=talent.coldest_snap&cooldown.comet_storm.remains>10&cooldown.frozen_orb.remains>10&remaining_winters_chill=0&active_enemies>=3;
-	if cooldown[FT.ConeOfCold].ready and mana >= 2000 and (talents[FT.ColdestSnap] and cooldown[FT.CometStorm].remains > 10 and cooldown[FT.FrozenOrb].remains > 10 and == 0 and targets >= 3) then
+	if cooldown[FT.ConeOfCold].ready and mana >= 2000 and (talents[FT.ColdestSnap] and cooldown[FT.CometStorm].remains > 10 and cooldown[FT.FrozenOrb].remains > 10 and targets >= 3) then
 		return FT.ConeOfCold;
 	end
 
@@ -330,7 +330,7 @@ function Mage:FrostSt()
 	end
 
 	-- ice_lance,if=buff.fingers_of_frost.react&!prev_gcd.1.glacial_spike|remaining_winters_chill;
-	if talents[FT.IceLance] and mana >= 500 and (buff[FT.FingersOfFrost].count and not spellHistory[1] == FT.GlacialSpike or) then
+	if talents[FT.IceLance] and mana >= 500 and (buff[FT.FingersOfFrost].count and not spellHistory[1] == FT.GlacialSpike ) then
 		return FT.IceLance;
 	end
 

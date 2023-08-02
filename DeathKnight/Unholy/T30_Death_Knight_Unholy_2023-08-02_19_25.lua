@@ -14,6 +14,15 @@ local mainHandSubClassID = itemID and  select(13, GetItemInfo(itemID));
 
 local TwoHanderWepCheck = mainHandSubClassID and (mainHandSubClassID == 1 or mainHandSubClassID == 5 or mainHandSubClassID == 8 or mainHandSubClassID == 10);
 
+local epidemicPriority
+local gargSetup
+local apocTiming
+local festermightTracker
+local popWounds
+local poolingRunicPower
+local stPlanning
+local addsRemain
+
 local UH = {
 	RaiseDead = 46584,
 	ArmyOfTheDead = 42650,
@@ -286,7 +295,7 @@ function DeathKnight:UnholyAoeCooldowns()
 	end
 
 	-- dark_transformation,if=(cooldown.any_dnd.remains<10&talent.infected_claws&((cooldown.vile_contagion.remains|raid_event.adds.exists&raid_event.adds.in>10)&death_knight.fwounded_targets<active_enemies|!talent.vile_contagion)&(raid_event.adds.remains>5|!raid_event.adds.exists)|!talent.infected_claws);
-	if talents[UH.DarkTransformation] and cooldown[UH.DarkTransformation].ready and (( cooldown[UH.AnyDnd].remains < 10 and talents[UH.InfectedClaws] and ( ( cooldown[UH.VileContagion].remains or targets > 1 and raid_event.adds.in > 10 ) and fwoundedTargets < targets or not talents[UH.VileContagion] ) and ( raid_event.adds.remains > 5 or not targets > 1 ) or not talents[UH.InfectedClaws] )) then
+	if talents[UH.DarkTransformation] and cooldown[UH.DarkTransformation].ready and (( cooldown[UH.AnyDnd].remains < 10 and talents[UH.InfectedClaws] and ( ( cooldown[UH.VileContagion].remains or targets > 1 ) and fwoundedTargets < targets or not talents[UH.VileContagion] ) and ( raid_event.adds.remains > 5 or not targets > 1 ) or not talents[UH.InfectedClaws] )) then
 		return UH.DarkTransformation;
 	end
 
@@ -569,7 +578,7 @@ function DeathKnight:UnholyHighPrioActions()
 	end
 
 	-- outbreak,target_if=target.time_to_die>dot.virulent_plague.remains&(dot.virulent_plague.refreshable|talent.superstrain&(dot.frost_fever_superstrain.refreshable|dot.blood_plague_superstrain.refreshable))&(!talent.unholy_blight|talent.unholy_blight&cooldown.unholy_blight.remains>15%((talent.superstrain*3)+(talent.plaguebringer*2)+(talent.ebon_fever*2)));
-	if talents[UH.Outbreak] and runes >= 1 and runicPower >= 10 and () then
+	if talents[UH.Outbreak] and runes >= 1 and runicPower >= 10 then
 		return UH.Outbreak;
 	end
 end
@@ -675,58 +684,58 @@ function DeathKnight:UnholyVariables()
 
 	-- variable,name=epidemic_priority,op=setif,value=1,value_else=0,condition=talent.improved_death_coil&!talent.coil_of_devastation&active_enemies>=3|talent.coil_of_devastation&active_enemies>=4|!talent.improved_death_coil&active_enemies>=2;
 	if talents[UH.ImprovedDeathCoil] and not talents[UH.CoilOfDevastation] and targets >= 3 or talents[UH.CoilOfDevastation] and targets >= 4 or not talents[UH.ImprovedDeathCoil] and targets >= 2 then
-		local epidemicPriority = 1;
+		epidemicPriority = 1;
 	else
-		local epidemicPriority = 0;
+		epidemicPriority = 0;
 	end
 
 	-- variable,name=garg_setup,op=setif,value=1,value_else=0,condition=active_enemies>=3|cooldown.summon_gargoyle.remains>1&cooldown.apocalypse.remains>1|!talent.apocalypse&cooldown.summon_gargoyle.remains>1|!talent.summon_gargoyle|time>20;
 	if targets >= 3 or cooldown[UH.SummonGargoyle].remains > 1 and cooldown[UH.Apocalypse].remains > 1 or not talents[UH.Apocalypse] and cooldown[UH.SummonGargoyle].remains > 1 or not talents[UH.SummonGargoyle] or GetTime() > 20 then
-		local gargSetup = 1;
+		gargSetup = 1;
 	else
-		local gargSetup = 0;
+		gargSetup = 0;
 	end
 
 	-- variable,name=apoc_timing,op=setif,value=7,value_else=2,condition=cooldown.apocalypse.remains<10&debuff.festering_wound.stack<=4&cooldown.unholy_assault.remains>10;
 	if cooldown[UH.Apocalypse].remains < 10 and debuff[UH.FesteringWound].count <= 4 and cooldown[UH.UnholyAssault].remains > 10 then
-		local apocTiming = 7;
+		apocTiming = 7;
 	else
-		local apocTiming = 2;
+		apocTiming = 2;
 	end
 
 	-- variable,name=festermight_tracker,op=setif,value=debuff.festering_wound.stack>=1,value_else=debuff.festering_wound.stack>=(3-talent.infected_claws),condition=!pet.gargoyle.active&talent.festermight&buff.festermight.up&(buff.festermight.remains%(5*gcd.max))>=1;
 	if not petGargoyle and talents[UH.Festermight] and buff[UH.Festermight].up and ( buff[UH.Festermight].remains / ( 5 * gcd ) ) >= 1 then
-		local festermightTracker = debuff[UH.FesteringWound].count >= 1;
+		festermightTracker = debuff[UH.FesteringWound].count >= 1;
 	else
-		local festermightTracker = debuff[UH.FesteringWound].count >= ( 3 - (talents[UH.InfectedClaws] and 1 or 0) );
+		festermightTracker = debuff[UH.FesteringWound].count >= ( 3 - (talents[UH.InfectedClaws] and 1 or 0) );
 	end
 
 	-- variable,name=pop_wounds,op=setif,value=1,value_else=0,condition=(cooldown.apocalypse.remains>variable.apoc_timing|!talent.apocalypse)&(variable.festermight_tracker|debuff.festering_wound.stack>=1&!talent.apocalypse|debuff.festering_wound.stack>=1&cooldown.unholy_assault.remains<20&talent.unholy_assault&variable.st_planning|debuff.rotten_touch.up&debuff.festering_wound.stack>=1|debuff.festering_wound.stack>4)|fight_remains<5&debuff.festering_wound.stack>=1;
 	if ( cooldown[UH.Apocalypse].remains > apocTiming or not talents[UH.Apocalypse] ) and ( festermightTracker or debuff[UH.FesteringWound].count >= 1 and not talents[UH.Apocalypse] or debuff[UH.FesteringWound].count >= 1 and cooldown[UH.UnholyAssault].remains < 20 and talents[UH.UnholyAssault] and stPlanning or debuff[UH.RottenTouch].up and debuff[UH.FesteringWound].count >= 1 or debuff[UH.FesteringWound].count > 4 ) or timeToDie < 5 and debuff[UH.FesteringWound].count >= 1 then
-		local popWounds = 1;
+		popWounds = 1;
 	else
-		local popWounds = 0;
+		popWounds = 0;
 	end
 
 	-- variable,name=pooling_runic_power,op=setif,value=1,value_else=0,condition=talent.vile_contagion&cooldown.vile_contagion.remains<3&runic_power<60&!variable.st_planning;
 	if talents[UH.VileContagion] and cooldown[UH.VileContagion].remains < 3 and runicPower < 60 and not stPlanning then
-		local poolingRunicPower = 1;
+		poolingRunicPower = 1;
 	else
-		local poolingRunicPower = 0;
+		poolingRunicPower = 0;
 	end
 
 	-- variable,name=st_planning,op=setif,value=1,value_else=0,condition=active_enemies=1&(!raid_event.adds.exists|raid_event.adds.in>15);
-	if targets == 1 and ( not targets > 1 or raid_event.adds.in > 15 ) then
-		local stPlanning = 1;
+	if targets == 1 and ( not targets > 1 ) then
+		stPlanning = 1;
 	else
-		local stPlanning = 0;
+		stPlanning = 0;
 	end
 
 	-- variable,name=adds_remain,op=setif,value=1,value_else=0,condition=active_enemies>=2&(!raid_event.adds.exists|raid_event.adds.exists&raid_event.adds.remains>6);
-	if targets >= 2 and ( not targets > 1 or targets > 1 and raid_event.adds.remains > 6 ) then
-		local addsRemain = 1;
+	if targets >= 2 and ( not targets > 1 or targets > 1) then
+		addsRemain = 1;
 	else
-		local addsRemain = 0;
+		addsRemain = 0;
 	end
 end
 

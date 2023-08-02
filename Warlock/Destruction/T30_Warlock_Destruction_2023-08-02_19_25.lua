@@ -85,10 +85,10 @@ function Warlock:Destruction()
 	local soulShardsTimeToMax = soulShardsMax - soulShards / soulShardsRegen;
 
 	-- variable,name=havoc_immo_time,op=reset;
-	local havocImmoTime = ;
+	local havocImmoTime
 
 	-- cycling_variable,name=havoc_immo_time,op=add,value=dot.immolate.remains*debuff.havoc.up;
-	return havoc_immo_time;
+	--return havoc_immo_time;
 
 	-- variable,name=infernal_active,op=set,value=pet.infernal.active|cooldown.summon_infernal.remains>160;
 	local infernalActive = petInfernal or cooldown[DS.SummonInfernal].remains > 160;
@@ -102,7 +102,7 @@ function Warlock:Destruction()
 	end
 
 	-- call_action_list,name=cleave,if=active_enemies!=1|variable.cleave_apl;
-	if targets not == 1 or cleaveApl then
+	if not targets == 1 or cleaveApl then
 		local result = Warlock:DestructionCleave();
 		if result then
 			return result;
@@ -132,7 +132,7 @@ function Warlock:Destruction()
 	end
 
 	-- cataclysm,if=raid_event.adds.in>15;
-	if talents[DS.Cataclysm] and cooldown[DS.Cataclysm].ready and mana >= 500 and currentSpell ~= DS.Cataclysm and (raid_event.adds.in > 15) then
+	if talents[DS.Cataclysm] and cooldown[DS.Cataclysm].ready and mana >= 500 and currentSpell ~= DS.Cataclysm then
 		return DS.Cataclysm;
 	end
 
@@ -142,7 +142,7 @@ function Warlock:Destruction()
 	end
 
 	-- soul_fire,if=soul_shard<=3.5&(debuff.conflagrate.remains>cast_time+travel_time|!talent.roaring_blaze&buff.backdraft.up);
-	if talents[DS.SoulFire] and cooldown[DS.SoulFire].ready and mana >= 1000 and currentSpell ~= DS.SoulFire and (soulShards <= 3.5 and ( debuff[DS.Conflagrate].remains > timeShift not talents[DS.RoaringBlaze] and buff[DS.Backdraft].up )) then
+	if talents[DS.SoulFire] and cooldown[DS.SoulFire].ready and mana >= 1000 and currentSpell ~= DS.SoulFire and (soulShards <= 3.5 and ( debuff[DS.Conflagrate].remains > timeShift or not talents[DS.RoaringBlaze] and buff[DS.Backdraft].up )) then
 		return DS.SoulFire;
 	end
 
@@ -167,7 +167,7 @@ function Warlock:Destruction()
 	end
 
 	-- chaos_bolt,if=pet.infernal.active|pet.blasphemy.active|soul_shard>=4&(variable.opti_cc&(cooldown.summon_infernal.remains<?trinket.spoils_of_neltharus.cooldown.remains)>2|!variable.opti_cc);
-	if talents[DS.ChaosBolt] and soulShards >= 2 and currentSpell ~= DS.ChaosBolt and (petInfernal or or soulShards >= 4 and ( optiCc and ( cooldown[DS.SummonInfernal].remains < ? ) > 2 or not optiCc )) then
+	if talents[DS.ChaosBolt] and soulShards >= 2 and currentSpell ~= DS.ChaosBolt and (petInfernal or soulShards >= 4 and ( optiCc and ( cooldown[DS.SummonInfernal].remains ) > 2 or not optiCc )) then
 		return DS.ChaosBolt;
 	end
 
@@ -197,7 +197,7 @@ function Warlock:Destruction()
 	end
 
 	-- chaos_bolt,if=buff.madness_cb.up&((cooldown.summon_infernal.remains<?trinket.spoils_of_neltharus.cooldown.remains)>10|!variable.opti_cc);
-	if talents[DS.ChaosBolt] and soulShards >= 2 and currentSpell ~= DS.ChaosBolt and (buff[DS.MadnessCb].up and ( ( cooldown[DS.SummonInfernal].remains < ? ) > 10 or not optiCc )) then
+	if talents[DS.ChaosBolt] and soulShards >= 2 and currentSpell ~= DS.ChaosBolt and (buff[DS.MadnessCb].up and ( ( cooldown[DS.SummonInfernal].remains ) > 10 or not optiCc )) then
 		return DS.ChaosBolt;
 	end
 
@@ -286,7 +286,7 @@ function Warlock:DestructionAoe()
 	end
 
 	-- rain_of_fire,if=pet.infernal.active|pet.blasphemy.active;
-	if talents[DS.RainOfFire] and soulShards >= 3 and (petInfernal or) then
+	if talents[DS.RainOfFire] and soulShards >= 3 and (petInfernal) then
 		return DS.RainOfFire;
 	end
 
@@ -311,7 +311,7 @@ function Warlock:DestructionAoe()
 	end
 
 	-- cataclysm,if=raid_event.adds.in>15;
-	if talents[DS.Cataclysm] and cooldown[DS.Cataclysm].ready and mana >= 500 and currentSpell ~= DS.Cataclysm and (raid_event.adds.in > 15) then
+	if talents[DS.Cataclysm] and cooldown[DS.Cataclysm].ready and mana >= 500 and currentSpell ~= DS.Cataclysm then
 		return DS.Cataclysm;
 	end
 
@@ -454,7 +454,7 @@ function Warlock:DestructionCleave()
 	end
 
 	-- cataclysm,if=raid_event.adds.in>15;
-	if talents[DS.Cataclysm] and cooldown[DS.Cataclysm].ready and mana >= 500 and currentSpell ~= DS.Cataclysm and (raid_event.adds.in > 15) then
+	if talents[DS.Cataclysm] and cooldown[DS.Cataclysm].ready and mana >= 500 and currentSpell ~= DS.Cataclysm then
 		return DS.Cataclysm;
 	end
 
@@ -464,7 +464,7 @@ function Warlock:DestructionCleave()
 	end
 
 	-- soul_fire,if=soul_shard<=3.5&(debuff.conflagrate.remains>cast_time+travel_time|!talent.roaring_blaze&buff.backdraft.up)&!variable.pool_soul_shards;
-	if talents[DS.SoulFire] and cooldown[DS.SoulFire].ready and mana >= 1000 and currentSpell ~= DS.SoulFire and (soulShards <= 3.5 and ( debuff[DS.Conflagrate].remains > timeShift not talents[DS.RoaringBlaze] and buff[DS.Backdraft].up ) and not poolSoulShards) then
+	if talents[DS.SoulFire] and cooldown[DS.SoulFire].ready and mana >= 1000 and currentSpell ~= DS.SoulFire and (soulShards <= 3.5 and ( debuff[DS.Conflagrate].remains > timeShift or not talents[DS.RoaringBlaze] and buff[DS.Backdraft].up ) and not poolSoulShards) then
 		return DS.SoulFire;
 	end
 
@@ -479,7 +479,7 @@ function Warlock:DestructionCleave()
 	end
 
 	-- chaos_bolt,if=pet.infernal.active|pet.blasphemy.active|soul_shard>=4;
-	if talents[DS.ChaosBolt] and soulShards >= 2 and currentSpell ~= DS.ChaosBolt and (petInfernal or or soulShards >= 4) then
+	if talents[DS.ChaosBolt] and soulShards >= 2 and currentSpell ~= DS.ChaosBolt and (petInfernal or soulShards >= 4) then
 		return DS.ChaosBolt;
 	end
 

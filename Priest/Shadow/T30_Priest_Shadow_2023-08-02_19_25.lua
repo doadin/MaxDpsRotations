@@ -63,10 +63,10 @@ function Priest:Shadow()
 	local gcd = fd.gcd;
 
 	-- variable,name=holding_crash,op=set,value=raid_event.adds.in<15;
-	local holdingCrash = raid_event.adds.in < 15;
+	--local holdingCrash = raid_event.adds.in < 15;
 
 	-- variable,name=pool_for_cds,op=set,value=(cooldown.void_eruption.remains<=gcd.max*3&talent.void_eruption|cooldown.dark_ascension.up&talent.dark_ascension)|talent.void_torrent&talent.psychic_link&cooldown.void_torrent.remains<=4&(!raid_event.adds.exists&spell_targets.vampiric_touch>1|raid_event.adds.in<=5|raid_event.adds.remains>=6&!variable.holding_crash)&!buff.voidform.up;
-	local poolForCds = ( cooldown[SH.VoidEruption].remains <= gcd * 3 and talents[SH.VoidEruption] or cooldown[SH.DarkAscension].up and talents[SH.DarkAscension] ) or talents[SH.VoidTorrent] and talents[SH.PsychicLink] and cooldown[SH.VoidTorrent].remains <= 4 and ( not targets > 1 and targets > 1 or raid_event.adds.in <= 5 or raid_event.adds.remains >= 6 and not holdingCrash ) and not buff[SH.Voidform].up;
+	local poolForCds = ( cooldown[SH.VoidEruption].remains <= gcd * 3 and talents[SH.VoidEruption] or cooldown[SH.DarkAscension].up and talents[SH.DarkAscension] ) or talents[SH.VoidTorrent] and talents[SH.PsychicLink] and cooldown[SH.VoidTorrent].remains <= 4 and ( not targets > 1 and targets > 1 and not holdingCrash ) and not buff[SH.Voidform].up;
 
 	-- run_action_list,name=aoe,if=active_enemies>2|spell_targets.vampiric_touch>3;
 	if targets > 2 or targets > 3 then
@@ -148,7 +148,7 @@ function Priest:ShadowAoe()
 	-- SH.VoidBolt;
 
 	-- devouring_plague,target_if=remains<=gcd.max|!talent.distorted_reality,if=remains<=gcd.max&!variable.pool_for_cds|insanity.deficit<=20|buff.voidform.up&cooldown.void_bolt.remains>buff.voidform.remains&cooldown.void_bolt.remains<=buff.voidform.remains+2;
-	if talents[SH.DevouringPlague] and insanity >= 50 and (debuff[SH.Devouring Plague].remains <= gcd and not poolForCds or insanityDeficit <= 20 or buff[SH.Voidform].up and cooldown[SH.VoidBolt].remains > buff[SH.Voidform].remains and cooldown[SH.VoidBolt].remains <= buff[SH.Voidform].remains + 2) then
+	if talents[SH.DevouringPlague] and insanity >= 50 and (debuff[SH.DevouringPlague].remains <= gcd and not poolForCds or insanityDeficit <= 20 or buff[SH.Voidform].up and cooldown[SH.VoidBolt].remains > buff[SH.Voidform].remains and cooldown[SH.VoidBolt].remains <= buff[SH.Voidform].remains + 2) then
 		return SH.DevouringPlague;
 	end
 
@@ -218,7 +218,7 @@ function Priest:ShadowAoeVariables()
 	local timeToDie = fd.timeToDie;
 
 	-- variable,name=max_vts,op=set,default=12,value=spell_targets.vampiric_touch>?12;
-	local maxVts = targets > ? 12;
+	local maxVts = targets >= 12;
 
 	-- variable,name=is_vt_possible,op=set,value=0,default=1;
 	local isVtPossible = 0;
@@ -233,7 +233,7 @@ function Priest:ShadowAoeVariables()
 
 	-- variable,name=holding_crash,op=set,value=(variable.max_vts-active_dot.vampiric_touch)<4|raid_event.adds.in<10&raid_event.adds.count>(variable.max_vts-active_dot.vampiric_touch),if=variable.holding_crash&talent.whispering_shadows;
 	if holdingCrash and talents[SH.WhisperingShadows] then
-		local holdingCrash = ( maxVts - activeDot[SH.VampiricTouch] ) < 4 or raid_event.adds.in < 10 and raid_event.adds.count > ( maxVts - activeDot[SH.VampiricTouch] );
+		local holdingCrash = ( maxVts - activeDot[SH.VampiricTouch] ) < 4 or targets > ( maxVts - activeDot[SH.VampiricTouch] );
 	end
 
 	-- variable,name=manual_vts_applied,op=set,value=(active_dot.vampiric_touch+8*!variable.holding_crash)>=variable.max_vts|!variable.is_vt_possible;
@@ -306,7 +306,7 @@ function Priest:ShadowFiller()
 	end
 
 	-- shadow_word_death,target_if=target.health.pct<20|buff.deathspeaker.up;
-	if talents[SH.ShadowWordDeath] and cooldown[SH.ShadowWordDeath].ready and mana >= 250 and () then
+	if talents[SH.ShadowWordDeath] and cooldown[SH.ShadowWordDeath].ready and mana >= 250 then
 		return SH.ShadowWordDeath;
 	end
 
@@ -319,7 +319,7 @@ function Priest:ShadowFiller()
 	end
 
 	-- halo,if=raid_event.adds.in>20;
-	if talents[SH.Halo] and cooldown[SH.Halo].ready and mana >= 2000 and currentSpell ~= SH.Halo and (raid_event.adds.in > 20) then
+	if talents[SH.Halo] and cooldown[SH.Halo].ready and mana >= 2000 and currentSpell ~= SH.Halo then
 		return SH.Halo;
 	end
 
@@ -329,7 +329,7 @@ function Priest:ShadowFiller()
 	end
 
 	-- divine_star,if=raid_event.adds.in>10;
-	if talents[SH.DivineStar] and cooldown[SH.DivineStar].ready and mana >= 1000 and (raid_event.adds.in > 10) then
+	if talents[SH.DivineStar] and cooldown[SH.DivineStar].ready and mana >= 1000 then
 		return SH.DivineStar;
 	end
 
@@ -344,15 +344,15 @@ function Priest:ShadowFiller()
 	end
 
 	-- mind_flay,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2;
-	return SH.MindFlay;
+	--return SH.MindFlay;
 
 	-- shadow_crash,if=raid_event.adds.in>20;
-	if talents[SH.ShadowCrash] and cooldown[SH.ShadowCrash].ready and (raid_event.adds.in > 20) then
+	if talents[SH.ShadowCrash] and cooldown[SH.ShadowCrash].ready then
 		return SH.ShadowCrash;
 	end
 
 	-- shadow_word_death,target_if=target.health.pct<20;
-	if talents[SH.ShadowWordDeath] and cooldown[SH.ShadowWordDeath].ready and mana >= 250 and () then
+	if talents[SH.ShadowWordDeath] and cooldown[SH.ShadowWordDeath].ready and mana >= 250 then
 		return SH.ShadowWordDeath;
 	end
 
@@ -367,7 +367,7 @@ function Priest:ShadowFiller()
 	end
 
 	-- shadow_word_pain,target_if=min:remains;
-	if mana >= 0 and () then
+	if mana >= 0 then
 		return SH.ShadowWordPain;
 	end
 end
@@ -421,12 +421,12 @@ function Priest:ShadowMain()
 	end
 
 	-- mind_blast,target_if=(dot.devouring_plague.ticking&(cooldown.mind_blast.full_recharge_time<=gcd.max+cast_time)|pet.fiend.remains<=cast_time+gcd.max)&pet.fiend.active&talent.inescapable_torment&pet.fiend.remains>cast_time&active_enemies<=7;
-	if cooldown[SH.MindBlast].ready and mana >= 0 and currentSpell ~= SH.MindBlast and () then
+	if cooldown[SH.MindBlast].ready and mana >= 0 and currentSpell ~= SH.MindBlast then
 		return SH.MindBlast;
 	end
 
 	-- shadow_word_death,target_if=dot.devouring_plague.ticking&pet.fiend.remains<=2&pet.fiend.active&talent.inescapable_torment&active_enemies<=7;
-	if talents[SH.ShadowWordDeath] and cooldown[SH.ShadowWordDeath].ready and mana >= 250 and () then
+	if talents[SH.ShadowWordDeath] and cooldown[SH.ShadowWordDeath].ready and mana >= 250 then
 		return SH.ShadowWordDeath;
 	end
 
@@ -441,7 +441,7 @@ function Priest:ShadowMain()
 	end
 
 	-- devouring_plague,target_if=!talent.distorted_reality|active_enemies=1|remains<=gcd.max,if=(remains<=gcd.max|remains<3&cooldown.void_torrent.up)|insanity.deficit<=20|buff.voidform.up&cooldown.void_bolt.remains>buff.voidform.remains&cooldown.void_bolt.remains<=buff.voidform.remains+2;
-	if talents[SH.DevouringPlague] and insanity >= 50 and (( debuff[SH.Devouring Plague].remains <= gcd or debuff[SH.Devouring Plague].remains < 3 and cooldown[SH.VoidTorrent].up ) or insanityDeficit <= 20 or buff[SH.Voidform].up and cooldown[SH.VoidBolt].remains > buff[SH.Voidform].remains and cooldown[SH.VoidBolt].remains <= buff[SH.Voidform].remains + 2) then
+	if talents[SH.DevouringPlague] and insanity >= 50 and (( debuff[SH.DevouringPlague].remains <= gcd or debuff[SH.DevouringPlague].remains < 3 and cooldown[SH.VoidTorrent].up ) or insanityDeficit <= 20 or buff[SH.Voidform].up and cooldown[SH.VoidBolt].remains > buff[SH.Voidform].remains and cooldown[SH.VoidBolt].remains <= buff[SH.Voidform].remains + 2) then
 		return SH.DevouringPlague;
 	end
 
@@ -451,7 +451,7 @@ function Priest:ShadowMain()
 	end
 
 	-- vampiric_touch,target_if=min:remains,if=refreshable&target.time_to_die>=12&(cooldown.shadow_crash.remains>=dot.vampiric_touch.remains&!action.shadow_crash.in_flight|variable.holding_crash|!talent.whispering_shadows);
-	if currentSpell ~= SH.VampiricTouch and (debuff[SH.Vampiric Touch].refreshable and timeToDie >= 12 and ( cooldown[SH.ShadowCrash].remains >= debuff[SH.VampiricTouch].remains and not inFlight or holdingCrash or not talents[SH.WhisperingShadows] )) then
+	if currentSpell ~= SH.VampiricTouch and (debuff[SH.VampiricTouch].refreshable and timeToDie >= 12 and ( cooldown[SH.ShadowCrash].remains >= debuff[SH.VampiricTouch].remains and not inFlight or holdingCrash or not talents[SH.WhisperingShadows] )) then
 		return SH.VampiricTouch;
 	end
 
@@ -481,7 +481,7 @@ function Priest:ShadowMain()
 	end
 
 	-- mindgames,target_if=variable.all_dots_up&dot.devouring_plague.remains>=cast_time;
-	if talents[SH.Mindgames] and cooldown[SH.Mindgames].ready and mana >= 1000 and currentSpell ~= SH.Mindgames and () then
+	if talents[SH.Mindgames] and cooldown[SH.Mindgames].ready and mana >= 1000 and currentSpell ~= SH.Mindgames then
 		return SH.Mindgames;
 	end
 
@@ -511,7 +511,7 @@ function Priest:ShadowMainVariables()
 	local allDotsUp = debuff[SH.ShadowWordPain].up and debuff[SH.VampiricTouch].up and debuff[SH.DevouringPlague].up;
 
 	-- variable,name=pool_for_cds,op=set,value=(cooldown.void_eruption.remains<=gcd.max*3&talent.void_eruption|cooldown.dark_ascension.up&talent.dark_ascension)|talent.void_torrent&talent.psychic_link&cooldown.void_torrent.remains<=4&(!raid_event.adds.exists&spell_targets.vampiric_touch>1|raid_event.adds.in<=5|raid_event.adds.remains>=6&!variable.holding_crash)&!buff.voidform.up;
-	local poolForCds = ( cooldown[SH.VoidEruption].remains <= gcd * 3 and talents[SH.VoidEruption] or cooldown[SH.DarkAscension].up and talents[SH.DarkAscension] ) or talents[SH.VoidTorrent] and talents[SH.PsychicLink] and cooldown[SH.VoidTorrent].remains <= 4 and ( not targets > 1 and targets > 1 or raid_event.adds.in <= 5 or raid_event.adds.remains >= 6 and not holdingCrash ) and not buff[SH.Voidform].up;
+	local poolForCds = ( cooldown[SH.VoidEruption].remains <= gcd * 3 and talents[SH.VoidEruption] or cooldown[SH.DarkAscension].up and talents[SH.DarkAscension] ) or talents[SH.VoidTorrent] and talents[SH.PsychicLink] and cooldown[SH.VoidTorrent].remains <= 4 and ( not targets > 1 and targets > 1 and not holdingCrash ) and not buff[SH.Voidform].up;
 end
 
 function Priest:ShadowPlTorrent()
@@ -545,12 +545,12 @@ function Priest:ShadowPlTorrent()
 	-- SH.VoidBolt;
 
 	-- vampiric_touch,if=remains<=6&cooldown.void_torrent.remains<gcd*2;
-	if currentSpell ~= SH.VampiricTouch and (debuff[SH.Vampiric Touch].remains <= 6 and cooldown[SH.VoidTorrent].remains < gcd * 2) then
+	if currentSpell ~= SH.VampiricTouch and (debuff[SH.VampiricTouch].remains <= 6 and cooldown[SH.VoidTorrent].remains < gcd * 2) then
 		return SH.VampiricTouch;
 	end
 
 	-- devouring_plague,if=remains<=4&cooldown.void_torrent.remains<gcd*2;
-	if talents[SH.DevouringPlague] and insanity >= 50 and (debuff[SH.Devouring Plague].remains <= 4 and cooldown[SH.VoidTorrent].remains < gcd * 2) then
+	if talents[SH.DevouringPlague] and insanity >= 50 and (debuff[SH.DevouringPlague].remains <= 4 and cooldown[SH.VoidTorrent].remains < gcd * 2) then
 		return SH.DevouringPlague;
 	end
 

@@ -57,7 +57,7 @@ local WW = {
 	InvokersDelight = 388661,
 	CraneVortex = 388848,
 	ShdaowboxingTreads = 392982,
-	JadeIgnition = ,
+	--JadeIgnition = ,
 	XuensBattlegear = 392993,
 };
 local A = {
@@ -231,7 +231,7 @@ function Monk:WindwalkerAoe()
 	local energyTimeToMax = energyMax - energy / energyRegen;
 
 	-- spinning_crane_kick,if=combo_strike&buff.dance_of_chiji.up&spinning_crane_kick.max;
-	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and buff[WW.DanceOfChiji].up and) then
+	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and buff[WW.DanceOfChiji].up ) then
 		return WW.SpinningCraneKick;
 	end
 
@@ -251,7 +251,7 @@ function Monk:WindwalkerAoe()
 	end
 
 	-- spinning_crane_kick,if=buff.bonedust_brew.up&combo_strike&spinning_crane_kick.max;
-	if chi >= 2 and mana >= 0 and energy >= 0 and (buff[WW.BonedustBrew].up and comboStrike and) then
+	if chi >= 2 and mana >= 0 and energy >= 0 and (buff[WW.BonedustBrew].up and comboStrike ) then
 		return WW.SpinningCraneKick;
 	end
 
@@ -281,7 +281,7 @@ function Monk:WindwalkerAoe()
 	end
 
 	-- spinning_crane_kick,if=combo_strike&(cooldown.fists_of_fury.remains>3|chi>4)&spinning_crane_kick.max;
-	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and ( cooldown[WW.FistsOfFury].remains > 3 or chi > 4 ) and) then
+	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and ( cooldown[WW.FistsOfFury].remains > 3 or chi > 4 ) ) then
 		return WW.SpinningCraneKick;
 	end
 
@@ -364,7 +364,7 @@ function Monk:WindwalkerBdbSetup()
 	end
 
 	-- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&!talent.whirling_dragon_punch&!spinning_crane_kick.max;
-	if cooldown[WW.BlackoutKick].ready and chi >= 1 and (comboStrike and not talents[WW.WhirlingDragonPunch] and not) then
+	if cooldown[WW.BlackoutKick].ready and chi >= 1 and (comboStrike and not talents[WW.WhirlingDragonPunch] ) then
 		return WW.BlackoutKick;
 	end
 
@@ -424,7 +424,7 @@ function Monk:WindwalkerCdSef()
 	end
 
 	-- bonedust_brew,if=(!buff.bonedust_brew.up&buff.storm_earth_and_fire.up&buff.storm_earth_and_fire.remains<11&spinning_crane_kick.max)|(!buff.bonedust_brew.up&fight_remains<30&fight_remains>10&spinning_crane_kick.max&chi>=4)|fight_remains<10|(!debuff.skyreach_exhaustion.up&active_enemies>=4&spinning_crane_kick.modifier>=2)|(pet.xuen_the_white_tiger.active&spinning_crane_kick.max&active_enemies>=4);
-	if talents[WW.BonedustBrew] and cooldown[WW.BonedustBrew].ready and (( not buff[WW.BonedustBrew].up and buff[WW.StormEarthAndFire].up and buff[WW.StormEarthAndFire].remains < 11 and ) or ( not buff[WW.BonedustBrew].up and timeToDie < 30 and timeToDie > 10 and chi >= 4 ) or timeToDie < 10 or ( not debuff[WW.SkyreachExhaustion].up and targets >= 4 and 2 ) or ( petXuen and targets >= 4 )) then
+	if talents[WW.BonedustBrew] and cooldown[WW.BonedustBrew].ready and (( not buff[WW.BonedustBrew].up and buff[WW.StormEarthAndFire].up and buff[WW.StormEarthAndFire].remains < 11 ) or ( not buff[WW.BonedustBrew].up and timeToDie < 30 and timeToDie > 10 and chi >= 4 ) or timeToDie < 10 or ( not debuff[WW.SkyreachExhaustion].up and targets >= 4 and 2 ) or ( petXuen and targets >= 4 )) then
 		return WW.BonedustBrew;
 	end
 
@@ -642,7 +642,7 @@ function Monk:WindwalkerCleave()
 	end
 
 	-- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&talent.shadowboxing_treads&!spinning_crane_kick.max;
-	if cooldown[WW.BlackoutKick].ready and chi >= 1 and (comboStrike and talents[WW.ShadowboxingTreads] and not) then
+	if cooldown[WW.BlackoutKick].ready and chi >= 1 and (comboStrike and talents[WW.ShadowboxingTreads] ) then
 		return WW.BlackoutKick;
 	end
 
@@ -708,7 +708,7 @@ function Monk:WindwalkerFallthru()
 	end
 
 	-- chi_burst,if=chi.max-chi>=1&active_enemies=1&raid_event.adds.in>20|chi.max-chi>=2&active_enemies>=2;
-	if talents[WW.ChiBurst] and cooldown[WW.ChiBurst].ready and currentSpell ~= WW.ChiBurst and (chiMax - chi >= 1 and targets == 1 and raid_event.adds.in > 20 or chiMax - chi >= 2 and targets >= 2) then
+	if talents[WW.ChiBurst] and cooldown[WW.ChiBurst].ready and currentSpell ~= WW.ChiBurst and (chiMax - chi >= 1 and targets == 1 or chiMax - chi >= 2 and targets >= 2) then
 		return WW.ChiBurst;
 	end
 
@@ -772,7 +772,7 @@ function Monk:WindwalkerHeavyAoe()
 	local energyTimeToMax = energyMax - energy / energyRegen;
 
 	-- spinning_crane_kick,if=combo_strike&buff.dance_of_chiji.up&spinning_crane_kick.max;
-	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and buff[WW.DanceOfChiji].up and) then
+	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and buff[WW.DanceOfChiji].up ) then
 		return WW.SpinningCraneKick;
 	end
 
@@ -792,7 +792,7 @@ function Monk:WindwalkerHeavyAoe()
 	end
 
 	-- spinning_crane_kick,if=buff.bonedust_brew.up&combo_strike&spinning_crane_kick.max;
-	if chi >= 2 and mana >= 0 and energy >= 0 and (buff[WW.BonedustBrew].up and comboStrike and) then
+	if chi >= 2 and mana >= 0 and energy >= 0 and (buff[WW.BonedustBrew].up and comboStrike ) then
 		return WW.SpinningCraneKick;
 	end
 
@@ -852,7 +852,7 @@ function Monk:WindwalkerHeavyAoe()
 	end
 
 	-- spinning_crane_kick,if=combo_strike&(cooldown.fists_of_fury.remains>3|chi>4)&spinning_crane_kick.max;
-	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and ( cooldown[WW.FistsOfFury].remains > 3 or chi > 4 ) and) then
+	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and ( cooldown[WW.FistsOfFury].remains > 3 or chi > 4 ) ) then
 		return WW.SpinningCraneKick;
 	end
 
@@ -872,12 +872,12 @@ function Monk:WindwalkerHeavyAoe()
 	end
 
 	-- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=talent.shadowboxing_treads&combo_strike&!spinning_crane_kick.max;
-	if cooldown[WW.BlackoutKick].ready and chi >= 1 and (talents[WW.ShadowboxingTreads] and comboStrike and not) then
+	if cooldown[WW.BlackoutKick].ready and chi >= 1 and (talents[WW.ShadowboxingTreads] and comboStrike ) then
 		return WW.BlackoutKick;
 	end
 
 	-- chi_burst,if=chi.max-chi>=1&active_enemies=1&raid_event.adds.in>20|chi.max-chi>=2;
-	if talents[WW.ChiBurst] and cooldown[WW.ChiBurst].ready and currentSpell ~= WW.ChiBurst and (chiMax - chi >= 1 and targets == 1 and raid_event.adds.in > 20 or chiMax - chi >= 2) then
+	if talents[WW.ChiBurst] and cooldown[WW.ChiBurst].ready and currentSpell ~= WW.ChiBurst and (chiMax - chi >= 1 and targets == 1 or chiMax - chi >= 2) then
 		return WW.ChiBurst;
 	end
 end
@@ -1044,7 +1044,7 @@ function Monk:WindwalkerSerenity()
 	end
 
 	-- fists_of_fury_cancel,target_if=max:target.time_to_die;
-	return WW.FistsOfFuryCancel;
+	--return WW.FistsOfFuryCancel;
 
 	-- strike_of_the_windlord,if=talent.thunderfist;
 	if talents[WW.StrikeOfTheWindlord] and cooldown[WW.StrikeOfTheWindlord].ready and chi >= 2 and (talents[WW.Thunderfist]) then
@@ -1067,7 +1067,7 @@ function Monk:WindwalkerSerenity()
 	end
 
 	-- spinning_crane_kick,if=combo_strike&active_enemies>=3&spinning_crane_kick.max;
-	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and targets >= 3 and) then
+	if chi >= 2 and mana >= 0 and energy >= 0 and (comboStrike and targets >= 3 ) then
 		return WW.SpinningCraneKick;
 	end
 
@@ -1122,7 +1122,7 @@ function Monk:WindwalkerSerenity()
 	end
 
 	-- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains;
-	if talents[WW.RisingSunKick] and cooldown[WW.RisingSunKick].ready and chi >= 2 and mana >= 0 and () then
+	if talents[WW.RisingSunKick] and cooldown[WW.RisingSunKick].ready and chi >= 2 and mana >= 0 then
 		return WW.RisingSunKick;
 	end
 
@@ -1362,7 +1362,7 @@ function Monk:WindwalkerStCleave()
 	end
 
 	-- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains;
-	if talents[WW.RisingSunKick] and cooldown[WW.RisingSunKick].ready and chi >= 2 and mana >= 0 and () then
+	if talents[WW.RisingSunKick] and cooldown[WW.RisingSunKick].ready and chi >= 2 and mana >= 0 then
 		return WW.RisingSunKick;
 	end
 

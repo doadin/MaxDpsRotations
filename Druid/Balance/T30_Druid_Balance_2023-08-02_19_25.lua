@@ -119,17 +119,17 @@ function Druid:BalanceAoe()
 	local manaTimeToMax = manaMax - mana / manaRegen;
 
 	-- moonfire,target_if=refreshable&(target.time_to_die-remains)>6&astral_power.deficit>variable.passive_asp+3,if=fight_style.dungeonroute;
-	if mana >= 0 and () then
+	if mana >= 0 then
 		return BL.Moonfire;
 	end
 
 	-- sunfire,target_if=refreshable&(target.time_to_die-remains)>6-(spell_targets%2)&astral_power.deficit>variable.passive_asp+3;
-	if talents[BL.Sunfire] and mana >= 0 and () then
+	if talents[BL.Sunfire] and mana >= 0 then
 		return BL.Sunfire;
 	end
 
 	-- moonfire,target_if=refreshable&(target.time_to_die-remains)>6&astral_power.deficit>variable.passive_asp+3,if=!fight_style.dungeonroute;
-	if mana >= 0 and (not) then
+	if mana >= 0 then
 		return BL.Moonfire;
 	end
 
@@ -287,7 +287,7 @@ function Druid:BalanceFallthru()
 	end
 
 	-- sunfire,target_if=dot.moonfire.remains>remains*22%18;
-	if talents[BL.Sunfire] and mana >= 0 and () then
+	if talents[BL.Sunfire] and mana >= 0 then
 		return BL.Sunfire;
 	end
 
@@ -327,17 +327,17 @@ function Druid:BalanceSt()
 	local lunarPowerTimeToMax = lunarPowerMax - lunarPower / lunarPowerRegen;
 
 	-- sunfire,target_if=refreshable&remains<2&(target.time_to_die-remains)>6;
-	if talents[BL.Sunfire] and mana >= 0 and () then
+	if talents[BL.Sunfire] and mana >= 0 then
 		return BL.Sunfire;
 	end
 
 	-- moonfire,target_if=refreshable&remains<2&(target.time_to_die-remains)>6;
-	if mana >= 0 and () then
+	if mana >= 0 then
 		return BL.Moonfire;
 	end
 
 	-- stellar_flare,target_if=refreshable&astral_power.deficit>variable.passive_asp+8&remains<2&(target.time_to_die-remains)>8;
-	if talents[BL.StellarFlare] and currentSpell ~= BL.StellarFlare and () then
+	if talents[BL.StellarFlare] and currentSpell ~= BL.StellarFlare then
 		return BL.StellarFlare;
 	end
 
@@ -427,17 +427,17 @@ function Druid:BalanceSt()
 	end
 
 	-- sunfire,target_if=refreshable&astral_power.deficit>variable.passive_asp+3;
-	if talents[BL.Sunfire] and mana >= 0 and () then
+	if talents[BL.Sunfire] and mana >= 0 then
 		return BL.Sunfire;
 	end
 
 	-- moonfire,target_if=refreshable&astral_power.deficit>variable.passive_asp+3;
-	if mana >= 0 and () then
+	if mana >= 0 then
 		return BL.Moonfire;
 	end
 
 	-- stellar_flare,target_if=refreshable&astral_power.deficit>variable.passive_asp+8;
-	if talents[BL.StellarFlare] and currentSpell ~= BL.StellarFlare and () then
+	if talents[BL.StellarFlare] and currentSpell ~= BL.StellarFlare then
 		return BL.StellarFlare;
 	end
 
@@ -457,7 +457,7 @@ function Druid:BalanceSt()
 	end
 
 	-- variable,name=starsurge_condition2,value=buff.starweavers_weft.up|astral_power.deficit<variable.passive_asp+action.wrath.energize_amount+(action.starfire.energize_amount+variable.passive_asp)*(buff.eclipse_solar.remains<(gcd.max*3))|talent.astral_communion&cooldown.astral_communion.remains<3|fight_remains<5;
-	local starsurgeCondition2 = buff[BL.StarweaversWeft].up or lunarPowerDeficit < passiveAsp + + ( + passiveAsp ) * ( buff[BL.EclipseSolar].remains < ( gcd * 3 ) ) or talents[BL.AstralCommunion] and cooldown[BL.AstralCommunion].remains < 3 or timeToDie < 5;
+	local starsurgeCondition2 = buff[BL.StarweaversWeft].up or lunarPowerDeficit < passiveAsp + ( passiveAsp ) * ( buff[BL.EclipseSolar].remains < ( gcd * 3 ) ) or talents[BL.AstralCommunion] and cooldown[BL.AstralCommunion].remains < 3 or timeToDie < 5;
 
 	-- starsurge,if=variable.starsurge_condition2;
 	if talents[BL.Starsurge] and lunarPower >= 40 and (starsurgeCondition2) then

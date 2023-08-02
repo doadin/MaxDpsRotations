@@ -14,6 +14,11 @@ local mainHandSubClassID = itemID and  select(13, GetItemInfo(itemID));
 
 local TwoHanderWepCheck = mainHandSubClassID and (mainHandSubClassID == 1 or mainHandSubClassID == 5 or mainHandSubClassID == 8 or mainHandSubClassID == 10);
 
+local nextCdTime
+local nextFireCdTime
+local fD
+local frailtyReady
+
 local VG = {
 	SigilOfFlame = 204596,
 	ImmolationAura = 258920,
@@ -55,36 +60,36 @@ function Demonhunter:Vengeance()
 	local targets = fd.targets and fd.targets or 1;
 
 	-- variable,name=next_cd_time,value=cooldown.fel_devastation.remains;
-	local nextCdTime = cooldown[VG.FelDevastation].remains;
+	nextCdTime = cooldown[VG.FelDevastation].remains;
 
 	-- variable,name=next_cd_time,op=min,value=cooldown.elysian_decree.remains,if=talent.elysian_decree;
 	if talents[VG.ElysianDecree] then
-		local nextCdTime = cooldown[VG.ElysianDecree].remains;
+		nextCdTime = cooldown[VG.ElysianDecree].remains;
 	end
 
 	-- variable,name=next_cd_time,op=min,value=cooldown.the_hunt.remains,if=talent.the_hunt;
 	if talents[VG.TheHunt] then
-		local nextCdTime = cooldown[VG.TheHunt].remains;
+		nextCdTime = cooldown[VG.TheHunt].remains;
 	end
 
 	-- variable,name=next_cd_time,op=min,value=cooldown.soul_carver.remains,if=talent.soul_carver;
 	if talents[VG.SoulCarver] then
-		local nextCdTime = cooldown[VG.SoulCarver].remains;
+		nextCdTime = cooldown[VG.SoulCarver].remains;
 	end
 
 	-- variable,name=next_fire_cd_time,value=cooldown.fel_devastation.remains;
-	local nextFireCdTime = cooldown[VG.FelDevastation].remains;
+	nextFireCdTime = cooldown[VG.FelDevastation].remains;
 
 	-- variable,name=next_fire_cd_time,op=min,value=cooldown.soul_carver.remains,if=talent.soul_carver;
 	if talents[VG.SoulCarver] then
-		local nextFireCdTime = cooldown[VG.SoulCarver].remains;
+		nextFireCdTime = cooldown[VG.SoulCarver].remains;
 	end
 
 	-- variable,name=fd,value=talent.fiery_demise&dot.fiery_brand.ticking;
-	local fd = talents[VG.FieryDemise] and debuff[VG.FieryBrand].up;
+	fD = talents[VG.FieryDemise] and debuff[VG.FieryBrand].up;
 
 	-- variable,name=frailty_ready,value=!talent.soulcrush|debuff.frailty.stack>=2;
-	local frailtyReady = not talents[VG.Soulcrush] or debuff[VG.Frailty].count >= 2;
+	frailtyReady = not talents[VG.Soulcrush] or debuff[VG.Frailty].count >= 2;
 
 	-- disrupt,if=target.debuff.casting.react;
 	if cooldown[VG.Disrupt].ready and (select(9,UnitCastingInfo("target")) == false) then
@@ -92,7 +97,7 @@ function Demonhunter:Vengeance()
 	end
 
 	-- infernal_strike,use_off_gcd=1;
-	if cooldown[VG.InfernalStrike].ready and () then
+	if cooldown[VG.InfernalStrike].ready then
 		return VG.InfernalStrike;
 	end
 
@@ -140,7 +145,7 @@ function Demonhunter:VengeanceBigAoe()
 	local furyTimeToMax = furyMax - fury / furyRegen;
 
 	-- fel_devastation,if=variable.frailty_ready&variable.fd&talent.stoke_the_flames&!(talent.demonic&buff.metamorphosis.up);
-	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and fd and talents[VG.StokeTheFlames] and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
+	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and fD and talents[VG.StokeTheFlames] and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
 		return VG.FelDevastation;
 	end
 
@@ -150,7 +155,7 @@ function Demonhunter:VengeanceBigAoe()
 	end
 
 	-- fel_devastation,if=variable.frailty_ready&(variable.fd|talent.stoke_the_flames)&!(talent.demonic&buff.metamorphosis.up);
-	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and ( fd or talents[VG.StokeTheFlames] ) and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
+	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and ( fD or talents[VG.StokeTheFlames] ) and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
 		return VG.FelDevastation;
 	end
 
@@ -165,7 +170,7 @@ function Demonhunter:VengeanceBigAoe()
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=4)|soul_fragments>=5);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 4 ) or soulFragments >= 5 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 4 ) or soulFragments >= 5 )) then
 		return VG.SpiritBomb;
 	end
 
@@ -175,12 +180,12 @@ function Demonhunter:VengeanceBigAoe()
 	end
 
 	-- soul_carver,if=variable.fd&variable.frailty_ready&soul_fragments<=3;
-	if talents[VG.SoulCarver] and cooldown[VG.SoulCarver].ready and (fd and frailtyReady and soulFragments <= 3) then
+	if talents[VG.SoulCarver] and cooldown[VG.SoulCarver].ready and (fD and frailtyReady and soulFragments <= 3) then
 		return VG.SoulCarver;
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=3)|soul_fragments>=4);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 3 ) or soulFragments >= 4 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 3 ) or soulFragments >= 4 )) then
 		return VG.SpiritBomb;
 	end
 
@@ -195,7 +200,7 @@ function Demonhunter:VengeanceBigAoe()
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=2)|soul_fragments>=3);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 2 ) or soulFragments >= 3 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 2 ) or soulFragments >= 3 )) then
 		return VG.SpiritBomb;
 	end
 
@@ -293,7 +298,7 @@ function Demonhunter:VengeanceMaintenance()
 	-- call_action_list,name=trinkets;
 
 	-- fiery_brand,if=charges>=2|(!ticking&((variable.next_fire_cd_time<7)|(variable.next_fire_cd_time>28)));
-	if talents[VG.FieryBrand] and cooldown[VG.FieryBrand].ready and (cooldown[VG.FieryBrand].charges >= 2 or ( not debuff[VG.Fiery Brand].up and ( ( nextFireCdTime < 7 ) or ( nextFireCdTime > 28 ) ) )) then
+	if talents[VG.FieryBrand] and cooldown[VG.FieryBrand].ready and (cooldown[VG.FieryBrand].charges >= 2 or ( not debuff[VG.FieryBrand].up and ( ( nextFireCdTime < 7 ) or ( nextFireCdTime > 28 ) ) )) then
 		return VG.FieryBrand;
 	end
 
@@ -346,7 +351,7 @@ function Demonhunter:VengeanceSingleTarget()
 	local furyTimeToMax = furyMax - fury / furyRegen;
 
 	-- soul_carver,if=variable.fd&variable.frailty_ready&soul_fragments<=3;
-	if talents[VG.SoulCarver] and cooldown[VG.SoulCarver].ready and (fd and frailtyReady and soulFragments <= 3) then
+	if talents[VG.SoulCarver] and cooldown[VG.SoulCarver].ready and (fD and frailtyReady and soulFragments <= 3) then
 		return VG.SoulCarver;
 	end
 
@@ -361,7 +366,7 @@ function Demonhunter:VengeanceSingleTarget()
 	end
 
 	-- fel_devastation,if=variable.frailty_ready&(variable.fd|talent.stoke_the_flames)&!(talent.demonic&buff.metamorphosis.up);
-	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and ( fd or talents[VG.StokeTheFlames] ) and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
+	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and ( fD or talents[VG.StokeTheFlames] ) and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
 		return VG.FelDevastation;
 	end
 
@@ -371,7 +376,7 @@ function Demonhunter:VengeanceSingleTarget()
 	end
 
 	-- fracture,if=set_bonus.tier30_4pc&variable.fd&(soul_fragments<=3|(buff.metamorphosis.up&soul_fragments<=2));
-	if talents[VG.Fracture] and cooldown[VG.Fracture].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and fd and ( soulFragments <= 3 or ( buff[VG.Metamorphosis].up and soulFragments <= 2 ) )) then
+	if talents[VG.Fracture] and cooldown[VG.Fracture].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and fD and ( soulFragments <= 3 or ( buff[VG.Metamorphosis].up and soulFragments <= 2 ) )) then
 		return VG.Fracture;
 	end
 
@@ -386,12 +391,12 @@ function Demonhunter:VengeanceSingleTarget()
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=4)|soul_fragments>=5);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 4 ) or soulFragments >= 5 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 4 ) or soulFragments >= 5 )) then
 		return VG.SpiritBomb;
 	end
 
 	-- fracture,if=set_bonus.tier30_4pc&variable.fd;
-	if talents[VG.Fracture] and cooldown[VG.Fracture].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and fd) then
+	if talents[VG.Fracture] and cooldown[VG.Fracture].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and fD) then
 		return VG.Fracture;
 	end
 
@@ -401,7 +406,7 @@ function Demonhunter:VengeanceSingleTarget()
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=3)|soul_fragments>=4);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 3 ) or soulFragments >= 4 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 3 ) or soulFragments >= 4 )) then
 		return VG.SpiritBomb;
 	end
 
@@ -416,7 +421,7 @@ function Demonhunter:VengeanceSingleTarget()
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=2)|soul_fragments>=3);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 2 ) or soulFragments >= 3 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 2 ) or soulFragments >= 3 )) then
 		return VG.SpiritBomb;
 	end
 
@@ -455,7 +460,7 @@ function Demonhunter:VengeanceSmallAoe()
 	end
 
 	-- fel_devastation,if=variable.frailty_ready&variable.fd&talent.stoke_the_flames&!(talent.demonic&buff.metamorphosis.up);
-	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and fd and talents[VG.StokeTheFlames] and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
+	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and fD and talents[VG.StokeTheFlames] and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
 		return VG.FelDevastation;
 	end
 
@@ -465,17 +470,17 @@ function Demonhunter:VengeanceSmallAoe()
 	end
 
 	-- fel_devastation,if=variable.frailty_ready&(variable.fd|talent.stoke_the_flames)&!(talent.demonic&buff.metamorphosis.up);
-	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and ( fd or talents[VG.StokeTheFlames] ) and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
+	if talents[VG.FelDevastation] and cooldown[VG.FelDevastation].ready and fury >= 50 and (frailtyReady and ( fD or talents[VG.StokeTheFlames] ) and not ( talents[VG.Demonic] and buff[VG.Metamorphosis].up )) then
 		return VG.FelDevastation;
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=4)|soul_fragments>=5);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 4 ) or soulFragments >= 5 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 4 ) or soulFragments >= 5 )) then
 		return VG.SpiritBomb;
 	end
 
 	-- soul_carver,if=variable.frailty_ready&variable.fd&soul_fragments<=3;
-	if talents[VG.SoulCarver] and cooldown[VG.SoulCarver].ready and (frailtyReady and fd and soulFragments <= 3) then
+	if talents[VG.SoulCarver] and cooldown[VG.SoulCarver].ready and (frailtyReady and fD and soulFragments <= 3) then
 		return VG.SoulCarver;
 	end
 
@@ -500,7 +505,7 @@ function Demonhunter:VengeanceSmallAoe()
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=3)|soul_fragments>=4);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 3 ) or soulFragments >= 4 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 3 ) or soulFragments >= 4 )) then
 		return VG.SpiritBomb;
 	end
 
@@ -510,7 +515,7 @@ function Demonhunter:VengeanceSmallAoe()
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=2)|soul_fragments>=3);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 2 ) or soulFragments >= 3 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 2 ) or soulFragments >= 3 )) then
 		return VG.SpiritBomb;
 	end
 
@@ -520,7 +525,7 @@ function Demonhunter:VengeanceSmallAoe()
 	end
 
 	-- spirit_bomb,if=((variable.fd&soul_fragments>=1)|soul_fragments>=2);
-	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fd and soulFragments >= 1 ) or soulFragments >= 2 )) then
+	if talents[VG.SpiritBomb] and fury >= 40 and (( ( fD and soulFragments >= 1 ) or soulFragments >= 2 )) then
 		return VG.SpiritBomb;
 	end
 
@@ -534,12 +539,5 @@ function Demonhunter:VengeanceSmallAoe()
 	if result then
 		return result;
 	end
-end
-
-function Demonhunter:VengeanceTrinkets()
-	local fd = MaxDps.FrameData;
-	local timeTo35 = fd.timeToDie;
-	local timeTo20 = fd.timeToDie;
-	local targetHp = MaxDps:TargetPercentHealth() * 100;
 end
 

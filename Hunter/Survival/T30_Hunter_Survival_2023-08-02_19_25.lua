@@ -109,7 +109,7 @@ function Hunter:SurvivalCds()
 	end
 
 	-- aspect_of_the_eagle,if=target.distance>=6;
-	if talents[SV.AspectOfTheEagle] and cooldown[SV.AspectOfTheEagle].ready and (>= 6) then
+	if talents[SV.AspectOfTheEagle] and cooldown[SV.AspectOfTheEagle].ready then
 		return SV.AspectOfTheEagle;
 	end
 end
@@ -253,17 +253,17 @@ function Hunter:SurvivalCleave()
 	end
 
 	-- serpent_sting,target_if=min:remains,if=refreshable&target.time_to_die>12&(!talent.vipers_venom|talent.hydras_bite);
-	if talents[SV.SerpentSting] and focus >= 10 and (debuff[SV.Serpent Sting].refreshable and timeToDie > 12 and ( not talents[SV.VipersVenom] or talents[SV.HydrasBite] )) then
+	if talents[SV.SerpentSting] and focus >= 10 and (debuff[SV.SerpentSting].refreshable and timeToDie > 12 and ( not talents[SV.VipersVenom] or talents[SV.HydrasBite] )) then
 		return SV.SerpentSting;
 	end
 
 	-- mongoose_bite,target_if=min:dot.serpent_sting.remains;
-	if talents[SV.MongooseBite] and focus >= 30 and () then
+	if talents[SV.MongooseBite] and focus >= 30 then
 		return SV.MongooseBite;
 	end
 
 	-- raptor_strike,target_if=min:dot.serpent_sting.remains;
-	if talents[SV.RaptorStrike] and focus >= 30 and () then
+	if talents[SV.RaptorStrike] and focus >= 30 then
 		return SV.RaptorStrike;
 	end
 end
@@ -311,7 +311,7 @@ function Hunter:SurvivalSt()
 	end
 
 	-- spearhead,if=focus+action.kill_command.cast_regen>focus.max-10&(cooldown.death_chakram.remains|!talent.death_chakram);
-	if talents[SV.Spearhead] and cooldown[SV.Spearhead].ready and (focus + > focusMax - 10 and ( cooldown[SV.DeathChakram].remains or not talents[SV.DeathChakram] )) then
+	if talents[SV.Spearhead] and cooldown[SV.Spearhead].ready and (focus > focusMax - 10 and ( cooldown[SV.DeathChakram].remains or not talents[SV.DeathChakram] )) then
 		return SV.Spearhead;
 	end
 
@@ -321,7 +321,7 @@ function Hunter:SurvivalSt()
 	end
 
 	-- wildfire_bomb,if=(raid_event.adds.in>cooldown.wildfire_bomb.full_recharge_time-(cooldown.wildfire_bomb.full_recharge_time%3.5)&debuff.shredded_armor.stack>0&(full_recharge_time<2*gcd|talent.bombardier&!cooldown.coordinated_assault.remains|talent.bombardier&buff.coordinated_assault.up&buff.coordinated_assault.remains<2*gcd)|!raid_event.adds.exists&time_to_die<7)&set_bonus.tier30_4pc;
-	if talents[SV.WildfireBomb] and cooldown[SV.WildfireBomb].ready and (( raid_event.adds.in > cooldown[SV.WildfireBomb].fullRecharge - ( cooldown[SV.WildfireBomb].fullRecharge / 3.5 ) and debuff[SV.ShreddedArmor].count > 0 and ( cooldown[SV.WildfireBomb].fullRecharge < 2 * gcd or talents[SV.Bombardier] and not cooldown[SV.CoordinatedAssault].remains or talents[SV.Bombardier] and buff[SV.CoordinatedAssault].up and buff[SV.CoordinatedAssault].remains < 2 * gcd ) or not targets > 1 and timeToDie < 7 ) and MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4)) then
+	if talents[SV.WildfireBomb] and cooldown[SV.WildfireBomb].ready and (MaxDps.tier[30].count and (MaxDps.tier[30].count == 4)) then
 		return SV.WildfireBomb;
 	end
 
@@ -361,7 +361,7 @@ function Hunter:SurvivalSt()
 	end
 
 	-- fury_of_the_eagle,if=buff.seething_rage.up&buff.seething_rage.remains<3*gcd&(!raid_event.adds.exists|active_enemies>1|raid_event.adds.exists&raid_event.adds.in>40);
-	if talents[SV.FuryOfTheEagle] and cooldown[SV.FuryOfTheEagle].ready and (buff[SV.SeethingRage].up and buff[SV.SeethingRage].remains < 3 * gcd and ( not targets > 1 or targets > 1 or targets > 1 and raid_event.adds.in > 40 )) then
+	if talents[SV.FuryOfTheEagle] and cooldown[SV.FuryOfTheEagle].ready and (buff[SV.SeethingRage].up and buff[SV.SeethingRage].remains < 3 * gcd and ( not targets > 1 or targets > 1 or targets > 1 )) then
 		return SV.FuryOfTheEagle;
 	end
 
@@ -381,7 +381,7 @@ function Hunter:SurvivalSt()
 	end
 
 	-- coordinated_assault,if=(!talent.coordinated_kill&target.health.pct<20&(!buff.spearhead.remains&cooldown.spearhead.remains|!talent.spearhead)|talent.coordinated_kill&(!buff.spearhead.remains&cooldown.spearhead.remains|!talent.spearhead))&(!raid_event.adds.exists|raid_event.adds.in>90);
-	if talents[SV.CoordinatedAssault] and cooldown[SV.CoordinatedAssault].ready and (( not talents[SV.CoordinatedKill] and targetHp < 20 and ( not buff[SV.Spearhead].remains and cooldown[SV.Spearhead].remains or not talents[SV.Spearhead] ) or talents[SV.CoordinatedKill] and ( not buff[SV.Spearhead].remains and cooldown[SV.Spearhead].remains or not talents[SV.Spearhead] ) ) and ( not targets > 1 or raid_event.adds.in > 90 )) then
+	if talents[SV.CoordinatedAssault] and cooldown[SV.CoordinatedAssault].ready and (( not talents[SV.CoordinatedKill] and targetHp < 20 and ( not buff[SV.Spearhead].remains and cooldown[SV.Spearhead].remains or not talents[SV.Spearhead] ) or talents[SV.CoordinatedKill] and ( not buff[SV.Spearhead].remains and cooldown[SV.Spearhead].remains or not talents[SV.Spearhead] ) ) and ( not targets > 1  )) then
 		return SV.CoordinatedAssault;
 	end
 
@@ -391,12 +391,12 @@ function Hunter:SurvivalSt()
 	end
 
 	-- serpent_sting,target_if=min:remains,if=refreshable&!talent.vipers_venom;
-	if talents[SV.SerpentSting] and focus >= 10 and (debuff[SV.Serpent Sting].refreshable and not talents[SV.VipersVenom]) then
+	if talents[SV.SerpentSting] and focus >= 10 and (debuff[SV.SerpentSting].refreshable and not talents[SV.VipersVenom]) then
 		return SV.SerpentSting;
 	end
 
 	-- wildfire_bomb,if=raid_event.adds.in>cooldown.wildfire_bomb.full_recharge_time-(cooldown.wildfire_bomb.full_recharge_time%3.5)&full_recharge_time<2*gcd;
-	if talents[SV.WildfireBomb] and cooldown[SV.WildfireBomb].ready and (raid_event.adds.in > cooldown[SV.WildfireBomb].fullRecharge - ( cooldown[SV.WildfireBomb].fullRecharge / 3.5 ) and cooldown[SV.WildfireBomb].fullRecharge < 2 * gcd) then
+	if talents[SV.WildfireBomb] and cooldown[SV.WildfireBomb].ready and (cooldown[SV.WildfireBomb].fullRecharge - ( cooldown[SV.WildfireBomb].fullRecharge / 3.5 ) and cooldown[SV.WildfireBomb].fullRecharge < 2 * gcd) then
 		return SV.WildfireBomb;
 	end
 
@@ -406,7 +406,7 @@ function Hunter:SurvivalSt()
 	end
 
 	-- wildfire_bomb,if=raid_event.adds.in>cooldown.wildfire_bomb.full_recharge_time-(cooldown.wildfire_bomb.full_recharge_time%3.5)&set_bonus.tier30_4pc&(!dot.wildfire_bomb.ticking&debuff.shredded_armor.stack>0&focus+cast_regen<focus.max|active_enemies>1);
-	if talents[SV.WildfireBomb] and cooldown[SV.WildfireBomb].ready and (raid_event.adds.in > cooldown[SV.WildfireBomb].fullRecharge - ( cooldown[SV.WildfireBomb].fullRecharge / 3.5 ) and MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and ( not debuff[SV.WildfireBomb].up and debuff[SV.ShreddedArmor].count > 0 and focus + castRegen < focusMax or targets > 1 )) then
+	if talents[SV.WildfireBomb] and cooldown[SV.WildfireBomb].ready and (cooldown[SV.WildfireBomb].fullRecharge - ( cooldown[SV.WildfireBomb].fullRecharge / 3.5 ) and MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4) and ( not debuff[SV.WildfireBomb].up and debuff[SV.ShreddedArmor].count > 0 and focus + castRegen < focusMax or targets > 1 )) then
 		return SV.WildfireBomb;
 	end
 
@@ -416,22 +416,22 @@ function Hunter:SurvivalSt()
 	end
 
 	-- explosive_shot,if=talent.ranger&(!raid_event.adds.exists|raid_event.adds.in>28);
-	if talents[SV.ExplosiveShot] and cooldown[SV.ExplosiveShot].ready and focus >= 20 and (talents[SV.Ranger] and ( not targets > 1 or raid_event.adds.in > 28 )) then
+	if talents[SV.ExplosiveShot] and cooldown[SV.ExplosiveShot].ready and focus >= 20 and (talents[SV.Ranger] and ( not targets > 1 )) then
 		return SV.ExplosiveShot;
 	end
 
 	-- fury_of_the_eagle,if=(!equipped.djaruun_pillar_of_the_elder_flame|cooldown.elder_flame_408821.remains>40)&target.health.pct<65&talent.ruthless_marauder&(!raid_event.adds.exists|raid_event.adds.exists&raid_event.adds.in>40);
-	if talents[SV.FuryOfTheEagle] and cooldown[SV.FuryOfTheEagle].ready and (( not IsEquippedItem(DjaruunPillarOfTheElderFlame) or cooldown[SV.ElderFlame408821].remains > 40 ) and targetHp < 65 and talents[SV.RuthlessMarauder] and ( not targets > 1 or targets > 1 and raid_event.adds.in > 40 )) then
+	if talents[SV.FuryOfTheEagle] and cooldown[SV.FuryOfTheEagle].ready and (( not IsEquippedItem(DjaruunPillarOfTheElderFlame) or cooldown[SV.ElderFlame408821].remains > 40 ) and targetHp < 65 and talents[SV.RuthlessMarauder] and ( not targets > 1 or targets > 1  )) then
 		return SV.FuryOfTheEagle;
 	end
 
 	-- mongoose_bite,target_if=max:debuff.latent_poison.stack,if=focus+action.kill_command.cast_regen>focus.max-10|set_bonus.tier30_4pc;
-	if talents[SV.MongooseBite] and focus >= 30 and (focus + > focusMax - 10 or MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4)) then
+	if talents[SV.MongooseBite] and focus >= 30 and (focus > focusMax - 10 or MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 4)) then
 		return SV.MongooseBite;
 	end
 
 	-- raptor_strike,target_if=max:debuff.latent_poison.stack;
-	if talents[SV.RaptorStrike] and focus >= 30 and () then
+	if talents[SV.RaptorStrike] and focus >= 30 then
 		return SV.RaptorStrike;
 	end
 
@@ -441,7 +441,7 @@ function Hunter:SurvivalSt()
 	end
 
 	-- wildfire_bomb,if=raid_event.adds.in>cooldown.wildfire_bomb.full_recharge_time-(cooldown.wildfire_bomb.full_recharge_time%3.5)&!dot.wildfire_bomb.ticking;
-	if talents[SV.WildfireBomb] and cooldown[SV.WildfireBomb].ready and (raid_event.adds.in > cooldown[SV.WildfireBomb].fullRecharge - ( cooldown[SV.WildfireBomb].fullRecharge / 3.5 ) and not debuff[SV.WildfireBomb].up) then
+	if talents[SV.WildfireBomb] and cooldown[SV.WildfireBomb].ready and (cooldown[SV.WildfireBomb].fullRecharge - ( cooldown[SV.WildfireBomb].fullRecharge / 3.5 ) and not debuff[SV.WildfireBomb].up) then
 		return SV.WildfireBomb;
 	end
 

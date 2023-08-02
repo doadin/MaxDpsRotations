@@ -85,7 +85,7 @@ function Warlock:Demonology()
 	end
 
 	-- hand_of_guldan,if=time<0.5&(fight_remains%%95>40|fight_remains%%95<15);
-	if soulShards >= 3 and currentSpell ~= DE.HandOfGuldan and (GetTime() < 0.5 and ( timeToDie / / 95 > 40 or timeToDie / / 95 < 15 )) then
+	if soulShards >= 3 and currentSpell ~= DE.HandOfGuldan and (GetTime() < 0.5 and ( timeToDie / 95 > 40 or timeToDie / 95 < 15 )) then
 		return DE.HandOfGuldan;
 	end
 
@@ -111,7 +111,7 @@ function Warlock:Demonology()
 	end
 
 	-- call_action_list,name=racials,if=pet.demonic_tyrant.active&(buff.nether_portal.remains<=2)|fight_remains<22;
-	if and ( buff[DE.NetherPortal].remains <= 2 ) or timeToDie < 22 then
+	if ( buff[DE.NetherPortal].remains <= 2 ) or timeToDie < 22 then
 		local result = Warlock:DemonologyRacials();
 		if result then
 			return result;
@@ -139,7 +139,7 @@ function Warlock:Demonology()
 	end
 
 	-- bilescourge_bombers,if=!pet.demonic_tyrant.active;
-	if talents[DE.BilescourgeBombers] and cooldown[DE.BilescourgeBombers].ready and (not) then
+	if talents[DE.BilescourgeBombers] and cooldown[DE.BilescourgeBombers].ready then
 		return DE.BilescourgeBombers;
 	end
 
@@ -209,7 +209,7 @@ function Warlock:Demonology()
 	end
 
 	-- doom,target_if=refreshable;
-	if talents[DE.Doom] and mana >= 500 and () then
+	if talents[DE.Doom] and mana >= 500 then
 		return DE.Doom;
 	end
 
@@ -349,7 +349,7 @@ function Warlock:DemonologyTyrant()
 	end
 
 	-- shadow_bolt,if=prev_gcd.1.grimoire_felguard&time>30&buff.nether_portal.down&buff.demonic_core.down|time<10&buff.fel_covenant.stack<2&talent.fel_covenant&fight_remains%%90>40;
-	if mana >= 750 and currentSpell ~= DE.ShadowBolt and (spellHistory[1] == DE.GrimoireFelguard and GetTime() > 30 and not buff[DE.NetherPortal].up and not buff[DE.DemonicCore].up or GetTime() < 10 and buff[DE.FelCovenant].count < 2 and talents[DE.FelCovenant] and timeToDie / / 90 > 40) then
+	if mana >= 750 and currentSpell ~= DE.ShadowBolt and (spellHistory[1] == DE.GrimoireFelguard and GetTime() > 30 and not buff[DE.NetherPortal].up and not buff[DE.DemonicCore].up or GetTime() < 10 and buff[DE.FelCovenant].count < 2 and talents[DE.FelCovenant] and timeToDie / 90 > 40) then
 		return DE.ShadowBolt;
 	end
 
@@ -384,7 +384,7 @@ function Warlock:DemonologyTyrant()
 	end
 
 	-- grimoire_felguard,if=buff.vilefiend.up|!talent.summon_vilefiend&(!talent.nether_portal|buff.nether_portal.up|cooldown.nether_portal.remains>30)&(buff.nether_portal.up|buff.dreadstalkers.up|soul_shard=5)&variable.np&(!raid_event.adds.in<15-raid_event.add.duration);
-	if talents[DE.GrimoireFelguard] and cooldown[DE.GrimoireFelguard].ready and soulShards >= 1 and (buff[DE.Vilefiend].up or not talents[DE.SummonVilefiend] and ( not talents[DE.NetherPortal] or buff[DE.NetherPortal].up or cooldown[DE.NetherPortal].remains > 30 ) and ( buff[DE.NetherPortal].up or buff[DE.Dreadstalkers].up or soulShards == 5 ) and np and ( not raid_event.adds.in < 15 - raid_event.add.duration )) then
+	if talents[DE.GrimoireFelguard] and cooldown[DE.GrimoireFelguard].ready and soulShards >= 1 and (buff[DE.Vilefiend].up or not talents[DE.SummonVilefiend] and ( not talents[DE.NetherPortal] or buff[DE.NetherPortal].up or cooldown[DE.NetherPortal].remains > 30 ) and ( buff[DE.NetherPortal].up or buff[DE.Dreadstalkers].up or soulShards == 5 ) and np ) then
 		return DE.GrimoireFelguard;
 	end
 
@@ -431,7 +431,7 @@ function Warlock:DemonologyVariables()
 	local timeToDie = fd.timeToDie;
 
 	-- variable,name=tyrant_cd,op=setif,value=cooldown.invoke_power_infusion_0.remains,value_else=cooldown.summon_demonic_tyrant.remains,condition=((((fight_remains+time)%%120<=85&(fight_remains+time)%%120>=25)|time>=210)&variable.shadow_timings)&cooldown.invoke_power_infusion_0.duration>0&!talent.grand_warlocks_design;
-	if ( ( ( ( timeToDie + GetTime() ) / / 120 <= 85 and ( timeToDie + GetTime() ) / / 120 >= 25 ) or GetTime() >= 210 ) and shadowTimings ) and cooldown[DE.InvokePowerInfusion0].duration > 0 and not talents[DE.GrandWarlocksDesign] then
+	if ( ( ( ( timeToDie + GetTime() ) / 120 <= 85 and ( timeToDie + GetTime() ) / 120 >= 25 ) or GetTime() >= 210 ) and shadowTimings ) and cooldown[DE.InvokePowerInfusion0].duration > 0 and not talents[DE.GrandWarlocksDesign] then
 		local tyrantCd = cooldown[DE.InvokePowerInfusion0].remains;
 	else
 		local tyrantCd = cooldown[DE.SummonDemonicTyrant].remains;
@@ -439,12 +439,12 @@ function Warlock:DemonologyVariables()
 
 	-- variable,name=pet_expire,op=set,value=(buff.dreadstalkers.remains>?buff.vilefiend.remains)-gcd*0.5,if=buff.vilefiend.up&buff.dreadstalkers.up;
 	if buff[DE.Vilefiend].up and buff[DE.Dreadstalkers].up then
-		local petExpire = ( buff[DE.Dreadstalkers].remains > ? buff[DE.Vilefiend].remains ) - gcd * 0.5;
+		local petExpire = ( buff[DE.Dreadstalkers].remains >= buff[DE.Vilefiend].remains ) - gcd * 0.5;
 	end
 
 	-- variable,name=pet_expire,op=set,value=(buff.dreadstalkers.remains>?buff.grimoire_felguard.remains)-gcd*0.5,if=!talent.summon_vilefiend&talent.grimoire_felguard&buff.dreadstalkers.up;
 	if not talents[DE.SummonVilefiend] and talents[DE.GrimoireFelguard] and buff[DE.Dreadstalkers].up then
-		local petExpire = ( buff[DE.Dreadstalkers].remains > ? buff[DE.GrimoireFelguard].remains ) - gcd * 0.5;
+		local petExpire = ( buff[DE.Dreadstalkers].remains >= buff[DE.GrimoireFelguard].remains ) - gcd * 0.5;
 	end
 
 	-- variable,name=pet_expire,op=set,value=(buff.dreadstalkers.remains)-gcd*0.5,if=!talent.summon_vilefiend&(!talent.grimoire_felguard|!set_bonus.tier30_2pc)&buff.dreadstalkers.up;

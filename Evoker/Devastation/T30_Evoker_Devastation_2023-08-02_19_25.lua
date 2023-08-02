@@ -66,7 +66,7 @@ function Evoker:Devastation()
 	local gcd = fd.gcd;
 
 	-- variable,name=next_dragonrage,value=cooldown.dragonrage.remains<?(cooldown.eternity_surge.remains-2*gcd.max)<?(cooldown.fire_breath.remains-gcd.max);
-	local nextDragonrage = cooldown[DV.Dragonrage].remains < ? ( cooldown[DV.EternitySurge].remains - 2 * gcd ) < ? ( cooldown[DV.FireBreath].remains - gcd );
+	local nextDragonrage = cooldown[DV.Dragonrage].remains <= ( cooldown[DV.EternitySurge].remains - 2 * gcd ) <= ( cooldown[DV.FireBreath].remains - gcd );
 
 	-- call_action_list,name=trinkets;
 
@@ -157,7 +157,7 @@ function Evoker:DevastationAoe()
 	end
 
 	-- pyre,target_if=max:target.health.pct,if=(talent.raging_inferno&debuff.in_firestorm.up)|(active_enemies==3&buff.charged_blast.stack>=15)|active_enemies>=4;
-	if talents[DV.Pyre] and essence >= 2 and (( talents[DV.RagingInferno] and debuff[DV.InFirestorm].up ) or ( targets == == 3 and buff[DV.ChargedBlast].count >= 15 ) or targets >= 4) then
+	if talents[DV.Pyre] and essence >= 2 and (( talents[DV.RagingInferno] and debuff[DV.InFirestorm].up ) or ( targets == 3 and buff[DV.ChargedBlast].count >= 15 ) or targets >= 4) then
 		return DV.Pyre;
 	end
 
@@ -172,7 +172,7 @@ function Evoker:DevastationAoe()
 	end
 
 	-- azure_strike,target_if=max:target.health.pct;
-	if mana >= 0 and () then
+	if mana >= 0 then
 		return DV.AzureStrike;
 	end
 end
@@ -254,7 +254,7 @@ function Evoker:DevastationSt()
 	local manaTimeToMax = manaMax - mana / manaRegen;
 
 	-- hover,use_off_gcd=1,if=raid_event.movement.in<2&!buff.hover.up;
-	if cooldown[DV.Hover].ready and (raid_event.movement.in < 2 and not buff[DV.Hover].up) then
+	if cooldown[DV.Hover].ready and (not buff[DV.Hover].up) then
 		return DV.Hover;
 	end
 
@@ -315,7 +315,7 @@ function Evoker:DevastationSt()
 	end
 
 	-- pyre,if=debuff.in_firestorm.up&talent.raging_inferno&buff.charged_blast.stack==20&active_enemies>=2;
-	if talents[DV.Pyre] and essence >= 2 and (debuff[DV.InFirestorm].up and talents[DV.RagingInferno] and buff[DV.ChargedBlast].count == == 20 and targets >= 2) then
+	if talents[DV.Pyre] and essence >= 2 and (debuff[DV.InFirestorm].up and talents[DV.RagingInferno] and buff[DV.ChargedBlast].count == 20 and targets >= 2) then
 		return DV.Pyre;
 	end
 
@@ -325,7 +325,7 @@ function Evoker:DevastationSt()
 	end
 
 	-- deep_breath,if=!buff.dragonrage.up&active_enemies>=2&((raid_event.adds.in>=120&!talent.onyx_legacy)|(raid_event.adds.in>=60&talent.onyx_legacy));
-	if cooldown[DV.DeepBreath].ready and (not buff[DV.Dragonrage].up and targets >= 2 and ( ( raid_event.adds.in >= 120 and not talents[DV.OnyxLegacy] ) or ( raid_event.adds.in >= 60 and talents[DV.OnyxLegacy] ) )) then
+	if cooldown[DV.DeepBreath].ready and (not buff[DV.Dragonrage].up and targets >= 2 and ( ( not talents[DV.OnyxLegacy] ) or ( talents[DV.OnyxLegacy] ) )) then
 		return DV.DeepBreath;
 	end
 
@@ -343,7 +343,7 @@ function Evoker:DevastationSt()
 	end
 
 	-- living_flame,if=!buff.dragonrage.up|(buff.iridescence_red.remains>execute_time|buff.iridescence_blue.up)&active_enemies==1;
-	if mana >= 0 and currentSpell ~= DV.LivingFlame and (not buff[DV.Dragonrage].up or ( buff[DV.IridescenceRed].remains > timeShift or buff[DV.IridescenceBlue].up ) and targets == == 1) then
+	if mana >= 0 and currentSpell ~= DV.LivingFlame and (not buff[DV.Dragonrage].up or ( buff[DV.IridescenceRed].remains > timeShift or buff[DV.IridescenceBlue].up ) and targets == 1) then
 		return DV.LivingFlame;
 	end
 

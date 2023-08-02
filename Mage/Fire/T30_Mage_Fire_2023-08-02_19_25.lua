@@ -91,7 +91,7 @@ function Mage:Fire()
 	local itemCutoffActive = ( timeToCombustion < onUseCutoff or buff[FR.Combustion].remains > skbDuration and not cooldown[FR.ItemCd1141].remains ) and ( ( onUseCutoff ) + ( onUseCutoff ) > 1 );
 
 	-- variable,use_off_gcd=1,use_while_casting=1,name=fire_blast_pooling,value=buff.combustion.down&action.fire_blast.charges_fractional+(variable.time_to_combustion+action.shifting_power.full_reduction*variable.shifting_power_before_combustion)%cooldown.fire_blast.duration-1<cooldown.fire_blast.max_charges+variable.overpool_fire_blasts%cooldown.fire_blast.duration-(buff.combustion.duration%cooldown.fire_blast.duration)%%1&variable.time_to_combustion<fight_remains;
-	local fireBlastPooling = not buff[FR.Combustion].up and + ( timeToCombustion + * shiftingPowerBeforeCombustion ) / cooldown[FR.FireBlast].duration - 1 < cooldown[FR.FireBlast].maxCharges + overpoolFireBlasts / cooldown[FR.FireBlast].duration - ( buff[FR.Combustion].duration / cooldown[FR.FireBlast].duration ) / / 1 and timeToCombustion < timeToDie;
+	local fireBlastPooling = not buff[FR.Combustion].up and ( timeToCombustion * shiftingPowerBeforeCombustion ) / cooldown[FR.FireBlast].duration - 1 < cooldown[FR.FireBlast].maxCharges + overpoolFireBlasts / cooldown[FR.FireBlast].duration - ( buff[FR.Combustion].duration / cooldown[FR.FireBlast].duration ) / 1 and timeToCombustion < timeToDie;
 
 	-- call_action_list,name=combustion_phase,if=variable.time_to_combustion<=0|buff.combustion.up|variable.time_to_combustion<variable.combustion_precast_time&cooldown.combustion.remains<variable.combustion_precast_time;
 	if timeToCombustion <= 0 or buff[FR.Combustion].up or timeToCombustion < combustionPrecastTime and cooldown[FR.Combustion].remains < combustionPrecastTime then
@@ -135,7 +135,7 @@ function Mage:Fire()
 	end
 
 	-- fire_blast,use_while_casting=1,if=action.shifting_power.executing&full_recharge_time<action.shifting_power.tick_reduction;
-	if talents[FR.FireBlast] and cooldown[FR.FireBlast].ready and mana >= 500 and (cooldown[FR.ShiftingPower].executing and cooldown[FR.FireBlast].fullRecharge <) then
+	if talents[FR.FireBlast] and cooldown[FR.FireBlast].ready and mana >= 500 and (cooldown[FR.ShiftingPower].executing and cooldown[FR.FireBlast].fullRecharge ) then
 		return FR.FireBlast;
 	end
 
@@ -148,7 +148,7 @@ function Mage:Fire()
 	end
 
 	-- ice_nova,if=!searing_touch.active;
-	if talents[FR.IceNova] and cooldown[FR.IceNova].ready and (not) then
+	if talents[FR.IceNova] and cooldown[FR.IceNova].ready then
 		return FR.IceNova;
 	end
 
@@ -181,7 +181,7 @@ function Mage:FireActiveTalents()
 	end
 
 	-- meteor,if=variable.time_to_combustion<=0|buff.combustion.remains>travel_time|!talent.sun_kings_blessing&(cooldown.meteor.duration<variable.time_to_combustion|fight_remains<variable.time_to_combustion);
-	if talents[FR.Meteor] and cooldown[FR.Meteor].ready and mana >= 500 and (timeToCombustion <= 0 or buff[FR.Combustion].remains not talents[FR.SunKingsBlessing] and ( cooldown[FR.Meteor].duration < timeToCombustion or timeToDie < timeToCombustion )) then
+	if talents[FR.Meteor] and cooldown[FR.Meteor].ready and mana >= 500 and (timeToCombustion <= 0 or buff[FR.Combustion].remains or not talents[FR.SunKingsBlessing] and ( cooldown[FR.Meteor].duration < timeToCombustion or timeToDie < timeToCombustion )) then
 		return FR.Meteor;
 	end
 
@@ -267,12 +267,12 @@ function Mage:FireCombustionPhase()
 	end
 
 	-- flamestrike,if=buff.combustion.down&buff.fury_of_the_sun_king.up&buff.fury_of_the_sun_king.remains>cast_time&buff.fury_of_the_sun_king.expiration_delay_remains=0&cooldown.combustion.remains<cast_time&active_enemies>=variable.skb_flamestrike;
-	if mana >= 1250 and currentSpell ~= FR.Flamestrike and (not buff[FR.Combustion].up and buff[FR.FuryOfTheSunKing].up and buff[FR.FuryOfTheSunKing].remains > timeShift and  == 0 and cooldown[FR.Combustion].remains < timeShift and targets >= skbFlamestrike) then
+	if mana >= 1250 and currentSpell ~= FR.Flamestrike and (not buff[FR.Combustion].up and buff[FR.FuryOfTheSunKing].up and buff[FR.FuryOfTheSunKing].remains > timeShift and cooldown[FR.Combustion].remains < timeShift and targets >= skbFlamestrike) then
 		return FR.Flamestrike;
 	end
 
 	-- pyroblast,if=buff.combustion.down&buff.fury_of_the_sun_king.up&buff.fury_of_the_sun_king.remains>cast_time&buff.fury_of_the_sun_king.expiration_delay_remains=0;
-	if talents[FR.Pyroblast] and mana >= 1000 and currentSpell ~= FR.Pyroblast and (not buff[FR.Combustion].up and buff[FR.FuryOfTheSunKing].up and buff[FR.FuryOfTheSunKing].remains > timeShift and  == 0) then
+	if talents[FR.Pyroblast] and mana >= 1000 and currentSpell ~= FR.Pyroblast and (not buff[FR.Combustion].up and buff[FR.FuryOfTheSunKing].up and buff[FR.FuryOfTheSunKing].remains > timeShift ) then
 		return FR.Pyroblast;
 	end
 
@@ -287,7 +287,7 @@ function Mage:FireCombustionPhase()
 	end
 
 	-- combustion,use_off_gcd=1,use_while_casting=1,if=hot_streak_spells_in_flight=0&buff.combustion.down&variable.time_to_combustion<=0&(action.scorch.executing&action.scorch.execute_remains<variable.combustion_cast_remains|action.fireball.executing&action.fireball.execute_remains<variable.combustion_cast_remains|action.pyroblast.executing&action.pyroblast.execute_remains<variable.combustion_cast_remains|action.flamestrike.executing&action.flamestrike.execute_remains<variable.combustion_cast_remains|action.meteor.in_flight&action.meteor.in_flight_remains<variable.combustion_cast_remains);
-	if talents[FR.Combustion] and cooldown[FR.Combustion].ready and mana >= 5000 and (== 0 and not buff[FR.Combustion].up and timeToCombustion <= 0 and ( cooldown[FR.Scorch].executing and cooldown[FR.Scorch].execute_remains < combustionCastRemains or cooldown[FR.Fireball].executing and cooldown[FR.Fireball].execute_remains < combustionCastRemains or cooldown[FR.Pyroblast].executing and cooldown[FR.Pyroblast].execute_remains < combustionCastRemains or cooldown[FR.Flamestrike].executing and cooldown[FR.Flamestrike].execute_remains < combustionCastRemains or inFlight and cooldown[FR.Meteor].in_flight_remains < combustionCastRemains )) then
+	if talents[FR.Combustion] and cooldown[FR.Combustion].ready and mana >= 5000 and (not buff[FR.Combustion].up and timeToCombustion <= 0 and ( cooldown[FR.Scorch].executing and cooldown[FR.Scorch].execute_remains < combustionCastRemains or cooldown[FR.Fireball].executing and cooldown[FR.Fireball].execute_remains < combustionCastRemains or cooldown[FR.Pyroblast].executing and cooldown[FR.Pyroblast].execute_remains < combustionCastRemains or cooldown[FR.Flamestrike].executing and cooldown[FR.Flamestrike].execute_remains < combustionCastRemains or inFlight and cooldown[FR.Meteor].in_flight_remains < combustionCastRemains )) then
 		return FR.Combustion;
 	end
 
@@ -322,12 +322,12 @@ function Mage:FireCombustionPhase()
 	end
 
 	-- flamestrike,if=buff.fury_of_the_sun_king.up&buff.fury_of_the_sun_king.remains>cast_time&active_enemies>=variable.skb_flamestrike&buff.fury_of_the_sun_king.expiration_delay_remains=0;
-	if mana >= 1250 and currentSpell ~= FR.Flamestrike and (buff[FR.FuryOfTheSunKing].up and buff[FR.FuryOfTheSunKing].remains > timeShift and targets >= skbFlamestrike and  == 0) then
+	if mana >= 1250 and currentSpell ~= FR.Flamestrike and (buff[FR.FuryOfTheSunKing].up and buff[FR.FuryOfTheSunKing].remains > timeShift and targets >= skbFlamestrike ) then
 		return FR.Flamestrike;
 	end
 
 	-- pyroblast,if=buff.fury_of_the_sun_king.up&buff.fury_of_the_sun_king.remains>cast_time&buff.fury_of_the_sun_king.expiration_delay_remains=0;
-	if talents[FR.Pyroblast] and mana >= 1000 and currentSpell ~= FR.Pyroblast and (buff[FR.FuryOfTheSunKing].up and buff[FR.FuryOfTheSunKing].remains > timeShift and  == 0) then
+	if talents[FR.Pyroblast] and mana >= 1000 and currentSpell ~= FR.Pyroblast and (buff[FR.FuryOfTheSunKing].up and buff[FR.FuryOfTheSunKing].remains > timeShift ) then
 		return FR.Pyroblast;
 	end
 
@@ -337,7 +337,7 @@ function Mage:FireCombustionPhase()
 	end
 
 	-- phoenix_flames,if=set_bonus.tier30_2pc&travel_time<buff.combustion.remains&buff.heating_up.react+hot_streak_spells_in_flight<2&(debuff.charring_embers.remains<2*gcd.max|buff.flames_fury.up);
-	if talents[FR.PhoenixFlames] and cooldown[FR.PhoenixFlames].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and buff[FR.Combustion].remains and buff[FR.HeatingUp].count 2 and ( debuff[FR.CharringEmbers].remains < 2 * gcd or buff[FR.FlamesFury].up )) then
+	if talents[FR.PhoenixFlames] and cooldown[FR.PhoenixFlames].ready and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and buff[FR.Combustion].remains and ( debuff[FR.CharringEmbers].remains < 2 * gcd or buff[FR.FlamesFury].up )) then
 		return FR.PhoenixFlames;
 	end
 
@@ -347,7 +347,7 @@ function Mage:FireCombustionPhase()
 	end
 
 	-- phoenix_flames,if=!set_bonus.tier30_2pc&!talent.alexstraszas_fury&travel_time<buff.combustion.remains&buff.heating_up.react+hot_streak_spells_in_flight<2;
-	if talents[FR.PhoenixFlames] and cooldown[FR.PhoenixFlames].ready and (not MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and not talents[FR.AlexstraszasFury] and buff[FR.Combustion].remains and buff[FR.HeatingUp].count 2) then
+	if talents[FR.PhoenixFlames] and cooldown[FR.PhoenixFlames].ready and (not MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and not talents[FR.AlexstraszasFury] and buff[FR.Combustion].remains and buff[FR.HeatingUp].count > 2) then
 		return FR.PhoenixFlames;
 	end
 
@@ -414,11 +414,11 @@ function Mage:FireCombustionTiming()
 
 	-- variable,use_off_gcd=1,use_while_casting=1,name=time_to_combustion,op=max,value=raid_event.adds.in,if=raid_event.adds.exists&raid_event.adds.count>=3&raid_event.adds.duration>15;
 	if targets > 1 and raid_event.adds.count >= 3 and raid_event.adds.duration > 15 then
-		local timeToCombustion = raid_event.adds.in;
+		local timeToCombustion
 	end
 
 	-- variable,use_off_gcd=1,use_while_casting=1,name=time_to_combustion,value=raid_event.vulnerable.in*!raid_event.vulnerable.up,if=raid_event.vulnerable.exists&variable.combustion_ready_time<raid_event.vulnerable.in;
-	if raid_event.vulnerable.exists and combustionReadyTime < raid_event.vulnerable.in then
+	if combustionReadyTime then
 		local timeToCombustion = WTFFFFFF;
 	end
 
@@ -501,22 +501,22 @@ function Mage:FireStandardRotation()
 	end
 
 	-- pyroblast,if=buff.hot_streak.react&searing_touch.active;
-	if talents[FR.Pyroblast] and mana >= 1000 and currentSpell ~= FR.Pyroblast and (buff[FR.HotStreak].count and) then
+	if talents[FR.Pyroblast] and mana >= 1000 and currentSpell ~= FR.Pyroblast and (buff[FR.HotStreak].count ) then
 		return FR.Pyroblast;
 	end
 
 	-- flamestrike,if=active_enemies>=variable.skb_flamestrike&buff.fury_of_the_sun_king.up&buff.fury_of_the_sun_king.expiration_delay_remains=0;
-	if mana >= 1250 and currentSpell ~= FR.Flamestrike and (targets >= skbFlamestrike and buff[FR.FuryOfTheSunKing].up and  == 0) then
+	if mana >= 1250 and currentSpell ~= FR.Flamestrike and (targets >= skbFlamestrike and buff[FR.FuryOfTheSunKing].up ) then
 		return FR.Flamestrike;
 	end
 
 	-- pyroblast,if=buff.fury_of_the_sun_king.up&buff.fury_of_the_sun_king.expiration_delay_remains=0;
-	if talents[FR.Pyroblast] and mana >= 1000 and currentSpell ~= FR.Pyroblast and (buff[FR.FuryOfTheSunKing].up and  == 0) then
+	if talents[FR.Pyroblast] and mana >= 1000 and currentSpell ~= FR.Pyroblast and (buff[FR.FuryOfTheSunKing].up ) then
 		return FR.Pyroblast;
 	end
 
 	-- fire_blast,use_off_gcd=1,use_while_casting=1,if=!firestarter.active&!variable.fire_blast_pooling&buff.fury_of_the_sun_king.down&(((action.fireball.executing&(action.fireball.execute_remains<0.5|!talent.hyperthermia)|action.pyroblast.executing&(action.pyroblast.execute_remains<0.5|!talent.hyperthermia))&buff.heating_up.react)|(searing_touch.active&(!improved_scorch.active|debuff.improved_scorch.stack=debuff.improved_scorch.max_stack|full_recharge_time<3)&(buff.heating_up.react&!action.scorch.executing|!buff.hot_streak.react&!buff.heating_up.react&action.scorch.executing&!hot_streak_spells_in_flight)));
-	if talents[FR.FireBlast] and cooldown[FR.FireBlast].ready and mana >= 500 and (not firestarterActive and not fireBlastPooling and not buff[FR.FuryOfTheSunKing].up and ( ( ( cooldown[FR.Fireball].executing and ( cooldown[FR.Fireball].execute_remains < 0.5 or not talents[FR.Hyperthermia] ) or cooldown[FR.Pyroblast].executing and ( cooldown[FR.Pyroblast].execute_remains < 0.5 or not talents[FR.Hyperthermia] ) ) and buff[FR.HeatingUp].count ) or ( ( not debuff[FR.ImprovedScorch].up or debuff[FR.ImprovedScorch].count == debuff[FR.ImprovedScorch].maxStacks or cooldown[FR.FireBlast].fullRecharge < 3 ) and ( buff[FR.HeatingUp].count and not cooldown[FR.Scorch].executing or not buff[FR.HotStreak].count and not buff[FR.HeatingUp].count and cooldown[FR.Scorch].executing and not ) ) )) then
+	if talents[FR.FireBlast] and cooldown[FR.FireBlast].ready and mana >= 500 and (not firestarterActive and not fireBlastPooling and not buff[FR.FuryOfTheSunKing].up and ( ( ( cooldown[FR.Fireball].executing and ( cooldown[FR.Fireball].execute_remains < 0.5 or not talents[FR.Hyperthermia] ) or cooldown[FR.Pyroblast].executing and ( cooldown[FR.Pyroblast].execute_remains < 0.5 or not talents[FR.Hyperthermia] ) ) and buff[FR.HeatingUp].count ) or ( ( not debuff[FR.ImprovedScorch].up or debuff[FR.ImprovedScorch].count == debuff[FR.ImprovedScorch].maxStacks or cooldown[FR.FireBlast].fullRecharge < 3 ) and ( buff[FR.HeatingUp].count and not cooldown[FR.Scorch].executing or not buff[FR.HotStreak].count and not buff[FR.HeatingUp].count and cooldown[FR.Scorch].executing ) ) )) then
 		return FR.FireBlast;
 	end
 
@@ -541,7 +541,7 @@ function Mage:FireStandardRotation()
 	end
 
 	-- phoenix_flames,if=talent.alexstraszas_fury&!buff.hot_streak.react&hot_streak_spells_in_flight=0&(!variable.phoenix_pooling&buff.flames_fury.up|charges_fractional>2.5|charges_fractional>1.5&buff.feel_the_burn.remains<2*gcd.max);
-	if talents[FR.PhoenixFlames] and cooldown[FR.PhoenixFlames].ready and (talents[FR.AlexstraszasFury] and not buff[FR.HotStreak].count and == 0 and ( not phoenixPooling and buff[FR.FlamesFury].up or cooldown[FR.PhoenixFlames].charges > 2.5 or cooldown[FR.PhoenixFlames].charges > 1.5 and buff[FR.FeelTheBurn].remains < 2 * gcd )) then
+	if talents[FR.PhoenixFlames] and cooldown[FR.PhoenixFlames].ready and (talents[FR.AlexstraszasFury] and not buff[FR.HotStreak].count and ( not phoenixPooling and buff[FR.FlamesFury].up or cooldown[FR.PhoenixFlames].charges > 2.5 or cooldown[FR.PhoenixFlames].charges > 1.5 and buff[FR.FeelTheBurn].remains < 2 * gcd )) then
 		return FR.PhoenixFlames;
 	end
 
@@ -557,7 +557,7 @@ function Mage:FireStandardRotation()
 	end
 
 	-- scorch,if=searing_touch.active;
-	if talents[FR.Scorch] and mana >= 500 and currentSpell ~= FR.Scorch and () then
+	if talents[FR.Scorch] and mana >= 500 and currentSpell ~= FR.Scorch then
 		return FR.Scorch;
 	end
 

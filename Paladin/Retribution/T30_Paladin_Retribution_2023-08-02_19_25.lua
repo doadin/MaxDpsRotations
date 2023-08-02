@@ -107,7 +107,7 @@ function Paladin:RetributionCooldowns()
 	end
 
 	-- final_reckoning,if=(holy_power>=4&time<8|holy_power>=3&time>=8|holy_power>=2&talent.divine_auxiliary)&(cooldown.avenging_wrath.remains>10|cooldown.crusade.remains&(!buff.crusade.up|buff.crusade.stack>=10))&(time_to_hpg>0|holy_power=5|holy_power>=2&talent.divine_auxiliary)&(!raid_event.adds.exists|raid_event.adds.up|raid_event.adds.in>40);
-	if talents[RT.FinalReckoning] and cooldown[RT.FinalReckoning].ready and (( holyPower >= 4 and GetTime() < 8 or holyPower >= 3 and GetTime() >= 8 or holyPower >= 2 and talents[RT.DivineAuxiliary] ) and ( cooldown[RT.AvengingWrath].remains > 10 or cooldown[RT.Crusade].remains and ( not buff[RT.Crusade].up or buff[RT.Crusade].count >= 10 ) ) and ( 0 or holyPower == 5 or holyPower >= 2 and talents[RT.DivineAuxiliary] ) and ( not targets > 1 or raid_event.adds.up or raid_event.adds.in > 40 )) then
+	if talents[RT.FinalReckoning] and cooldown[RT.FinalReckoning].ready and (( holyPower >= 4 and GetTime() < 8 or holyPower >= 3 and GetTime() >= 8 or holyPower >= 2 and talents[RT.DivineAuxiliary] ) and ( cooldown[RT.AvengingWrath].remains > 10 or cooldown[RT.Crusade].remains and ( not buff[RT.Crusade].up or buff[RT.Crusade].count >= 10 ) ) and ( 0 or holyPower == 5 or holyPower >= 2 and talents[RT.DivineAuxiliary] ) and ( not targets > 1 )) then
 		return RT.FinalReckoning;
 	end
 end
@@ -185,12 +185,12 @@ function Paladin:RetributionGenerators()
 	end
 
 	-- wake_of_ashes,if=holy_power<=2&(cooldown.avenging_wrath.remains|cooldown.crusade.remains)&(!talent.execution_sentence|cooldown.execution_sentence.remains>4|target.time_to_die<8)&(!raid_event.adds.exists|raid_event.adds.in>20|raid_event.adds.up);
-	if talents[RT.WakeOfAshes] and cooldown[RT.WakeOfAshes].ready and (holyPower <= 2 and ( cooldown[RT.AvengingWrath].remains or cooldown[RT.Crusade].remains ) and ( not talents[RT.ExecutionSentence] or cooldown[RT.ExecutionSentence].remains > 4 or timeToDie < 8 ) and ( not targets > 1 or raid_event.adds.in > 20 or raid_event.adds.up )) then
+	if talents[RT.WakeOfAshes] and cooldown[RT.WakeOfAshes].ready and (holyPower <= 2 and ( cooldown[RT.AvengingWrath].remains or cooldown[RT.Crusade].remains ) and ( not talents[RT.ExecutionSentence] or cooldown[RT.ExecutionSentence].remains > 4 or timeToDie < 8 ) and ( not targets > 1 )) then
 		return RT.WakeOfAshes;
 	end
 
 	-- divine_toll,if=holy_power<=2&!debuff.judgment.up&(!raid_event.adds.exists|raid_event.adds.in>30|raid_event.adds.up)&(cooldown.avenging_wrath.remains>15|cooldown.crusade.remains>15|fight_remains<8);
-	if talents[RT.DivineToll] and cooldown[RT.DivineToll].ready and mana >= 7500 and (holyPower <= 2 and not debuff[RT.Judgment].up and ( not targets > 1 or raid_event.adds.in > 30 or raid_event.adds.up ) and ( cooldown[RT.AvengingWrath].remains > 15 or cooldown[RT.Crusade].remains > 15 or timeToDie < 8 )) then
+	if talents[RT.DivineToll] and cooldown[RT.DivineToll].ready and mana >= 7500 and (holyPower <= 2 and not debuff[RT.Judgment].up and ( not targets > 1  ) and ( cooldown[RT.AvengingWrath].remains > 15 or cooldown[RT.Crusade].remains > 15 or timeToDie < 8 )) then
 		return RT.DivineToll;
 	end
 

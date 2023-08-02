@@ -60,7 +60,7 @@ function Hunter:Marksmanship()
 	local timeToDie = fd.timeToDie;
 
 	-- variable,name=trueshot_ready,value=cooldown.trueshot.ready&buff.trueshot.down&(!raid_event.adds.exists&(!talent.bullseye|fight_remains>cooldown.trueshot.duration_guess+buff.trueshot.duration%2|buff.bullseye.stack=buff.bullseye.max_stack)&(!trinket.1.has_use_buff|trinket.1.cooldown.remains>30|trinket.1.cooldown.ready)&(!trinket.2.has_use_buff|trinket.2.cooldown.remains>30|trinket.2.cooldown.ready)|raid_event.adds.exists&(!raid_event.adds.up&(raid_event.adds.duration+raid_event.adds.in<25|raid_event.adds.in>60)|raid_event.adds.up&raid_event.adds.remains>10)|active_enemies>1|fight_remains<25);
-	local trueshotReady = cooldown[MM.Trueshot].ready and not buff[MM.Trueshot].up and ( not targets > 1 and ( not talents[MM.Bullseye] or timeToDie > cooldown[MM.Trueshot].duration + buff[MM.Trueshot].duration / 2 or buff[MM.Bullseye].count == buff[MM.Bullseye].maxStacks ) and ( not 30 or ) and ( not 30 or ) or targets > 1 and ( not raid_event.adds.up and ( raid_event.adds.duration + raid_event.adds.in < 25 or raid_event.adds.in > 60 ) or raid_event.adds.up and raid_event.adds.remains > 10 ) or targets > 1 or timeToDie < 25 );
+	local trueshotReady = cooldown[MM.Trueshot].ready and not buff[MM.Trueshot].up and ( not targets > 1 and ( not talents[MM.Bullseye] or timeToDie > cooldown[MM.Trueshot].duration + buff[MM.Trueshot].duration / 2 or buff[MM.Bullseye].count == buff[MM.Bullseye].maxStacks ) or targets > 1 or timeToDie < 25 );
 
 	-- call_action_list,name=cds;
 	local result = Hunter:MarksmanshipCds();
@@ -148,7 +148,7 @@ function Hunter:MarksmanshipSt()
 	end
 
 	-- serpent_sting,target_if=min:dot.serpent_sting.remains,if=refreshable&!talent.serpentstalkers_trickery&buff.trueshot.down;
-	if talents[MM.SerpentSting] and focus >= 10 and (debuff[MM.Serpent Sting].refreshable and not talents[MM.SerpentstalkersTrickery] and not buff[MM.Trueshot].up) then
+	if talents[MM.SerpentSting] and focus >= 10 and (debuff[MM.SerpentSting].refreshable and not talents[MM.SerpentstalkersTrickery] and not buff[MM.Trueshot].up) then
 		return MM.SerpentSting;
 	end
 
@@ -193,12 +193,12 @@ function Hunter:MarksmanshipSt()
 	end
 
 	-- aimed_shot,target_if=min:dot.serpent_sting.remains+action.serpent_sting.in_flight_to_target*99,if=talent.serpentstalkers_trickery&(buff.precise_shots.down|(buff.trueshot.up|full_recharge_time<gcd+cast_time)&(!talent.chimaera_shot|active_enemies<2|ca_active)|buff.trick_shots.remains>execute_time&active_enemies>1);
-	if talents[MM.AimedShot] and cooldown[MM.AimedShot].ready and focus >= 35 and currentSpell ~= MM.AimedShot and (talents[MM.SerpentstalkersTrickery] and ( not buff[MM.PreciseShots].up or ( buff[MM.Trueshot].up or cooldown[MM.AimedShot].fullRecharge < gcd + timeShift ) and ( not talents[MM.ChimaeraShot] or targets < 2 or ) or buff[MM.TrickShots].remains > timeShift and targets > 1 )) then
+	if talents[MM.AimedShot] and cooldown[MM.AimedShot].ready and focus >= 35 and currentSpell ~= MM.AimedShot and (talents[MM.SerpentstalkersTrickery] and ( not buff[MM.PreciseShots].up or ( buff[MM.Trueshot].up or cooldown[MM.AimedShot].fullRecharge < gcd + timeShift ) and ( not talents[MM.ChimaeraShot] or targets < 2 ) or buff[MM.TrickShots].remains > timeShift and targets > 1 )) then
 		return MM.AimedShot;
 	end
 
 	-- aimed_shot,target_if=max:debuff.latent_poison.stack,if=buff.precise_shots.down|(buff.trueshot.up|full_recharge_time<gcd+cast_time)&(!talent.chimaera_shot|active_enemies<2|ca_active)|buff.trick_shots.remains>execute_time&active_enemies>1;
-	if talents[MM.AimedShot] and cooldown[MM.AimedShot].ready and focus >= 35 and currentSpell ~= MM.AimedShot and (not buff[MM.PreciseShots].up or ( buff[MM.Trueshot].up or cooldown[MM.AimedShot].fullRecharge < gcd + timeShift ) and ( not talents[MM.ChimaeraShot] or targets < 2 or ) or buff[MM.TrickShots].remains > timeShift and targets > 1) then
+	if talents[MM.AimedShot] and cooldown[MM.AimedShot].ready and focus >= 35 and currentSpell ~= MM.AimedShot and (not buff[MM.PreciseShots].up or ( buff[MM.Trueshot].up or cooldown[MM.AimedShot].fullRecharge < gcd + timeShift ) and ( not talents[MM.ChimaeraShot] or targets < 2 ) or buff[MM.TrickShots].remains > timeShift and targets > 1) then
 		return MM.AimedShot;
 	end
 
@@ -295,7 +295,7 @@ function Hunter:MarksmanshipTrickshots()
 	end
 
 	-- serpent_sting,target_if=min:dot.serpent_sting.remains,if=refreshable&talent.hydras_bite&!talent.serpentstalkers_trickery;
-	if talents[MM.SerpentSting] and focus >= 10 and (debuff[MM.Serpent Sting].refreshable and talents[MM.HydrasBite] and not talents[MM.SerpentstalkersTrickery]) then
+	if talents[MM.SerpentSting] and focus >= 10 and (debuff[MM.SerpentSting].refreshable and talents[MM.HydrasBite] and not talents[MM.SerpentstalkersTrickery]) then
 		return MM.SerpentSting;
 	end
 
@@ -345,7 +345,7 @@ function Hunter:MarksmanshipTrickshots()
 	end
 
 	-- serpent_sting,target_if=min:dot.serpent_sting.remains,if=refreshable&talent.poison_injection&!talent.serpentstalkers_trickery;
-	if talents[MM.SerpentSting] and focus >= 10 and (debuff[MM.Serpent Sting].refreshable and talents[MM.PoisonInjection] and not talents[MM.SerpentstalkersTrickery]) then
+	if talents[MM.SerpentSting] and focus >= 10 and (debuff[MM.SerpentSting].refreshable and talents[MM.PoisonInjection] and not talents[MM.SerpentstalkersTrickery]) then
 		return MM.SerpentSting;
 	end
 
@@ -388,9 +388,9 @@ function Hunter:MarksmanshipTrinkets()
 	local syncRemains = cooldown[MM.Trueshot].remains;
 
 	-- variable,name=trinket_1_stronger,value=!trinket.2.has_cooldown|trinket.1.has_use_buff&(!trinket.2.has_use_buff|trinket.2.cooldown.duration<trinket.1.cooldown.duration|trinket.2.cast_time<trinket.1.cast_time|trinket.2.cast_time=trinket.1.cast_time&trinket.2.cooldown.duration=trinket.1.cooldown.duration)|!trinket.1.has_use_buff&(!trinket.2.has_use_buff&(trinket.2.cooldown.duration<trinket.1.cooldown.duration|trinket.2.cast_time<trinket.1.cast_time|trinket.2.cast_time=trinket.1.cast_time&trinket.2.cooldown.duration=trinket.1.cooldown.duration));
-	local trinket1Stronger = not ( not == == ) or not ( not ( == == ) );
+	--local trinket1Stronger = not ( not == == ) or not ( not ( == == ) );
 
 	-- variable,name=trinket_2_stronger,value=!trinket.1.has_cooldown|trinket.2.has_use_buff&(!trinket.1.has_use_buff|trinket.1.cooldown.duration<trinket.2.cooldown.duration|trinket.1.cast_time<trinket.2.cast_time|trinket.1.cast_time=trinket.2.cast_time&trinket.1.cooldown.duration=trinket.2.cooldown.duration)|!trinket.2.has_use_buff&(!trinket.1.has_use_buff&(trinket.1.cooldown.duration<trinket.2.cooldown.duration|trinket.1.cast_time<trinket.2.cast_time|trinket.1.cast_time=trinket.2.cast_time&trinket.1.cooldown.duration=trinket.2.cooldown.duration));
-	local trinket2Stronger = not ( not == == ) or not ( not ( == == ) );
+	--local trinket2Stronger = not ( not == == ) or not ( not ( == == ) );
 end
 

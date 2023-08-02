@@ -121,7 +121,7 @@ function Rogue:Assassination()
 	end
 
 	-- slice_and_dice,if=!buff.slice_and_dice.up&combo_points>=2|!talent.cut_to_the_chase&refreshable&combo_points>=4;
-	if energy >= 20 and comboPoints >= 5 and (not buff[AS.SliceAndDice].up and comboPoints >= 2 or not talents[AS.CutToTheChase] and debuff[AS.Slice And Dice].refreshable and comboPoints >= 4) then
+	if energy >= 20 and comboPoints >= 5 and (not buff[AS.SliceAndDice].up and comboPoints >= 2 or not talents[AS.CutToTheChase] and debuff[AS.SliceAndDice].refreshable and comboPoints >= 4) then
 		return AS.SliceAndDice;
 	end
 
@@ -174,12 +174,12 @@ function Rogue:AssassinationCds()
 	end
 
 	-- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&combo_points.deficit>=cp_max_spend;
-	if talents[AS.MarkedForDeath] and cooldown[AS.MarkedForDeath].ready and (raid_event.adds.in > 30 - raid_event.adds.duration and comboPointsDeficit >= cpMaxSpend) then
+	if talents[AS.MarkedForDeath] and cooldown[AS.MarkedForDeath].ready and (comboPointsDeficit >= cpMaxSpend) then
 		return AS.MarkedForDeath;
 	end
 
 	-- variable,name=deathmark_exsanguinate_condition,value=!talent.exsanguinate|cooldown.exsanguinate.remains>15|exsanguinated.rupture|exsanguinated.garrote;
-	local deathmarkExsanguinateCondition = not talents[AS.Exsanguinate] or cooldown[AS.Exsanguinate].remains > 15 or;
+	local deathmarkExsanguinateCondition = not talents[AS.Exsanguinate] or cooldown[AS.Exsanguinate].remains > 15;
 
 	-- variable,name=deathmark_ma_condition,value=!talent.master_assassin.enabled|dot.garrote.ticking;
 	local deathmarkMaCondition = not talents[AS.MasterAssassin] or debuff[AS.Garrote].up;
@@ -203,7 +203,7 @@ function Rogue:AssassinationCds()
 	end
 
 	-- variable,name=exsanguinate_condition,value=talent.exsanguinate&!stealthed.rogue&(!stealthed.improved_garrote|dot.garrote.pmultiplier>1)&!dot.deathmark.ticking&target.time_to_die>variable.exsang_sync_remains+4&variable.exsang_sync_remains<4;
-	local exsanguinateCondition = talents[AS.Exsanguinate] and not stealthedRogue and ( not stealthedImprovedGarrote or ) and not debuff[AS.Deathmark].up and timeToDie > exsangSyncRemains + 4 and exsangSyncRemains < 4;
+	local exsanguinateCondition = talents[AS.Exsanguinate] and not stealthedRogue and ( not stealthedImprovedGarrote ) and not debuff[AS.Deathmark].up and timeToDie > exsangSyncRemains + 4 and exsangSyncRemains < 4;
 
 	-- echoing_reprimand,if=talent.exsanguinate&talent.resounding_clarity&(variable.exsanguinate_condition&combo_points<=2&variable.exsang_sync_remains<=2&!dot.garrote.refreshable&dot.rupture.remains>9.6);
 	if talents[AS.EchoingReprimand] and cooldown[AS.EchoingReprimand].ready and energy >= 10 and (talents[AS.Exsanguinate] and talents[AS.ResoundingClarity] and ( exsanguinateCondition and comboPoints <= 2 and exsangSyncRemains <= 2 and not debuff[AS.Garrote].refreshable and debuff[AS.Rupture].remains > 9.6 )) then
@@ -241,12 +241,12 @@ function Rogue:AssassinationCds()
 	end
 
 	-- indiscriminate_carnage,if=(spell_targets.fan_of_knives>desired_targets|spell_targets.fan_of_knives>1&raid_event.adds.in>60)&(!talent.improved_garrote|cooldown.vanish.remains>45);
-	if talents[AS.IndiscriminateCarnage] and cooldown[AS.IndiscriminateCarnage].ready and (( targets > desiredTargets or targets > 1 and raid_event.adds.in > 60 ) and ( not talents[AS.ImprovedGarrote] or cooldown[AS.Vanish].remains > 45 )) then
+	if talents[AS.IndiscriminateCarnage] and cooldown[AS.IndiscriminateCarnage].ready and (( targets > desiredTargets or targets > 1 ) and ( not talents[AS.ImprovedGarrote] or cooldown[AS.Vanish].remains > 45 )) then
 		return AS.IndiscriminateCarnage;
 	end
 
 	-- call_action_list,name=vanish,if=!stealthed.all&master_assassin_remains=0;
-	if not stealthedAll and == 0 then
+	if not stealthedAll then
 		local result = Rogue:AssassinationVanish();
 		if result then
 			return result;
@@ -380,52 +380,52 @@ function Rogue:AssassinationDot()
 	local skipRupture = 0;
 
 	-- rupture,if=talent.exsanguinate.enabled&!will_lose_exsanguinate&dot.rupture.pmultiplier<=1&!dot.rupture.ticking&effective_combo_points<=3&variable.single_target;
-	if energy >= 22 and comboPoints >= 5 and (talents[AS.Exsanguinate] and not and not debuff[AS.Rupture].up and comboPoints <= 3 and singleTarget) then
+	if energy >= 22 and comboPoints >= 5 and (talents[AS.Exsanguinate] and not debuff[AS.Rupture].up and comboPoints <= 3 and singleTarget) then
 		return AS.Rupture;
 	end
 
 	-- garrote,if=talent.exsanguinate.enabled&!will_lose_exsanguinate&dot.garrote.pmultiplier<=1&variable.exsang_sync_remains<2&spell_targets.fan_of_knives=1&raid_event.adds.in>6&dot.garrote.remains*0.5<target.time_to_die;
-	if cooldown[AS.Garrote].ready and energy >= 45 and (talents[AS.Exsanguinate] and not and exsangSyncRemains < 2 and targets == 1 and raid_event.adds.in > 6 and debuff[AS.Garrote].remains * 0.5 < timeToDie) then
+	if cooldown[AS.Garrote].ready and energy >= 45 and (talents[AS.Exsanguinate] and exsangSyncRemains < 2 and targets == 1 and debuff[AS.Garrote].remains * 0.5 < timeToDie) then
 		return AS.Garrote;
 	end
 
 	-- rupture,if=talent.exsanguinate.enabled&!will_lose_exsanguinate&dot.rupture.pmultiplier<=1&variable.exsang_sync_remains<1&effective_combo_points>=variable.exsanguinate_rupture_cp&dot.rupture.remains*0.5<target.time_to_die;
-	if energy >= 22 and comboPoints >= 5 and (talents[AS.Exsanguinate] and not and exsangSyncRemains < 1 and comboPoints >= exsanguinateRuptureCp and debuff[AS.Rupture].remains * 0.5 < timeToDie) then
+	if energy >= 22 and comboPoints >= 5 and (talents[AS.Exsanguinate] and exsangSyncRemains < 1 and comboPoints >= exsanguinateRuptureCp and debuff[AS.Rupture].remains * 0.5 < timeToDie) then
 		return AS.Rupture;
 	end
 
 	-- garrote,if=refreshable&combo_points.deficit>=1&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3)&(!will_lose_exsanguinate|remains<=tick_time*2&spell_targets.fan_of_knives>=3)&(target.time_to_die-remains)>4&master_assassin_remains=0;
-	if cooldown[AS.Garrote].ready and energy >= 45 and (debuff[AS.Garrote].refreshable and comboPointsDeficit >= 1 and ( 1 or debuff[AS.Garrote].remains targets >= 3 ) and ( not debuff[AS.Garrote].remains 2 and targets >= 3 ) and ( timeToDie - debuff[AS.Garrote].remains ) > 4 and == 0) then
+	if cooldown[AS.Garrote].ready and energy >= 45 and (debuff[AS.Garrote].refreshable and comboPointsDeficit >= 1 and ( debuff[AS.Garrote].remains and targets >= 3 ) and ( not debuff[AS.Garrote].remains and targets >= 3 ) and ( timeToDie - debuff[AS.Garrote].remains ) > 4 ) then
 		return AS.Garrote;
 	end
 
 	-- garrote,cycle_targets=1,if=!variable.skip_cycle_garrote&target!=self.target&refreshable&combo_points.deficit>=1&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3)&(!will_lose_exsanguinate|remains<=tick_time*2&spell_targets.fan_of_knives>=3)&(target.time_to_die-remains)>12&master_assassin_remains=0;
-	if cooldown[AS.Garrote].ready and energy >= 45 and (not skipCycleGarrote and target.targetonly not == debuff[AS.Garrote].refreshable and comboPointsDeficit >= 1 and ( 1 or debuff[AS.Garrote].remains targets >= 3 ) and ( not debuff[AS.Garrote].remains 2 and targets >= 3 ) and ( timeToDie - debuff[AS.Garrote].remains ) > 12 and == 0) then
+	if cooldown[AS.Garrote].ready and energy >= 45 and (not skipCycleGarrote and not debuff[AS.Garrote].refreshable and comboPointsDeficit >= 1 and ( debuff[AS.Garrote].remains and targets >= 3 ) and ( not debuff[AS.Garrote].remains and targets >= 3 ) and ( timeToDie - debuff[AS.Garrote].remains ) > 12 ) then
 		return AS.Garrote;
 	end
 
 	-- crimson_tempest,target_if=min:remains,if=spell_targets>=2&effective_combo_points>=4&energy.regen_combined>20&(!cooldown.deathmark.ready|dot.rupture.ticking)&remains<(2+3*(spell_targets>=4));
-	if talents[AS.CrimsonTempest] and energy >= 27 and comboPoints >= 5 and (targets >= 2 and comboPoints >= 4 and energyRegenCombined > 20 and ( not cooldown[AS.Deathmark].ready or debuff[AS.Rupture].up ) and debuff[AS.Crimson Tempest].remains < ( 2 + 3 * ( targets >= 4 ) )) then
+	if talents[AS.CrimsonTempest] and energy >= 27 and comboPoints >= 5 and (targets >= 2 and comboPoints >= 4 and energyRegenCombined > 20 and ( not cooldown[AS.Deathmark].ready or debuff[AS.Rupture].up ) and debuff[AS.CrimsonTempest].remains < ( 2 + 3 * ( targets >= 4 ) )) then
 		return AS.CrimsonTempest;
 	end
 
 	-- rupture,if=!variable.skip_rupture&effective_combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3)&(!will_lose_exsanguinate|remains<=tick_time*2&spell_targets.fan_of_knives>=3)&target.time_to_die-remains>(4+(talent.dashing_scoundrel*5)+(talent.doomblade*5)+(variable.regen_saturated*6));
-	if energy >= 22 and comboPoints >= 5 and (not skipRupture and comboPoints >= 4 and debuff[AS.Rupture].refreshable and ( 1 or debuff[AS.Rupture].remains targets >= 3 ) and ( not debuff[AS.Rupture].remains 2 and targets >= 3 ) and timeToDie - debuff[AS.Rupture].remains > ( 4 + ( (talents[AS.DashingScoundrel] and 1 or 0) * 5 ) + ( (talents[AS.Doomblade] and 1 or 0) * 5 ) + ( regenSaturated * 6 ) )) then
+	if energy >= 22 and comboPoints >= 5 and (not skipRupture and comboPoints >= 4 and debuff[AS.Rupture].refreshable and ( debuff[AS.Rupture].remains and targets >= 3 ) and ( not debuff[AS.Rupture].remains and targets >= 3 ) and timeToDie - debuff[AS.Rupture].remains > ( 4 + ( (talents[AS.DashingScoundrel] and 1 or 0) * 5 ) + ( (talents[AS.Doomblade] and 1 or 0) * 5 ) + ( regenSaturated * 6 ) )) then
 		return AS.Rupture;
 	end
 
 	-- rupture,cycle_targets=1,if=!variable.skip_cycle_rupture&!variable.skip_rupture&target!=self.target&effective_combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3)&(!will_lose_exsanguinate|remains<=tick_time*2&spell_targets.fan_of_knives>=3)&target.time_to_die-remains>(4+(talent.dashing_scoundrel*5)+(talent.doomblade*5)+(variable.regen_saturated*6));
-	if energy >= 22 and comboPoints >= 5 and (not skipCycleRupture and not skipRupture and target.targetonly not == comboPoints >= 4 and debuff[AS.Rupture].refreshable and ( 1 or debuff[AS.Rupture].remains targets >= 3 ) and ( not debuff[AS.Rupture].remains 2 and targets >= 3 ) and timeToDie - debuff[AS.Rupture].remains > ( 4 + ( (talents[AS.DashingScoundrel] and 1 or 0) * 5 ) + ( (talents[AS.Doomblade] and 1 or 0) * 5 ) + ( regenSaturated * 6 ) )) then
+	if energy >= 22 and comboPoints >= 5 and (not skipCycleRupture and not skipRupture and not comboPoints >= 4 and debuff[AS.Rupture].refreshable and ( debuff[AS.Rupture].remains and targets >= 3 ) and ( not debuff[AS.Rupture].remains and targets >= 3 ) and timeToDie - debuff[AS.Rupture].remains > ( 4 + ( (talents[AS.DashingScoundrel] and 1 or 0) * 5 ) + ( (talents[AS.Doomblade] and 1 or 0) * 5 ) + ( regenSaturated * 6 ) )) then
 		return AS.Rupture;
 	end
 
 	-- crimson_tempest,if=spell_targets>=2&effective_combo_points>=4&remains<2+3*(spell_targets>=4);
-	if talents[AS.CrimsonTempest] and energy >= 27 and comboPoints >= 5 and (targets >= 2 and comboPoints >= 4 and debuff[AS.Crimson Tempest].remains < 2 + 3 * ( targets >= 4 )) then
+	if talents[AS.CrimsonTempest] and energy >= 27 and comboPoints >= 5 and (targets >= 2 and comboPoints >= 4 and debuff[AS.CrimsonTempest].remains < 2 + 3 * ( targets >= 4 )) then
 		return AS.CrimsonTempest;
 	end
 
 	-- crimson_tempest,if=spell_targets=1&!talent.dashing_scoundrel&effective_combo_points>=(cp_max_spend-1)&refreshable&!will_lose_exsanguinate&!debuff.shiv.up&debuff.amplifying_poison.stack<15&(!talent.kingsbane|buff.envenom.up|!cooldown.kingsbane.up)&target.time_to_die-remains>4;
-	if talents[AS.CrimsonTempest] and energy >= 27 and comboPoints >= 5 and (targets == 1 and not talents[AS.DashingScoundrel] and comboPoints >= ( cpMaxSpend - 1 ) and debuff[AS.Crimson Tempest].refreshable and not not debuff[AS.Shiv].up and debuff[AS.AmplifyingPoison].count < 15 and ( not talents[AS.Kingsbane] or buff[AS.Envenom].up or not cooldown[AS.Kingsbane].up ) and timeToDie - debuff[AS.Crimson Tempest].remains > 4) then
+	if talents[AS.CrimsonTempest] and energy >= 27 and comboPoints >= 5 and (targets == 1 and not talents[AS.DashingScoundrel] and comboPoints >= ( cpMaxSpend - 1 ) and debuff[AS.CrimsonTempest].refreshable and not not debuff[AS.Shiv].up and debuff[AS.AmplifyingPoison].count < 15 and ( not talents[AS.Kingsbane] or buff[AS.Envenom].up or not cooldown[AS.Kingsbane].up ) and timeToDie - debuff[AS.CrimsonTempest].remains > 4) then
 		return AS.CrimsonTempest;
 	end
 end
@@ -450,17 +450,17 @@ function Rogue:AssassinationStealthed()
 	local energyTimeToMax = energyMax - energy / energyRegen;
 
 	-- indiscriminate_carnage,if=spell_targets.fan_of_knives>desired_targets|spell_targets.fan_of_knives>1&raid_event.adds.in>60;
-	if talents[AS.IndiscriminateCarnage] and cooldown[AS.IndiscriminateCarnage].ready and (targets > desiredTargets or targets > 1 and raid_event.adds.in > 60) then
+	if talents[AS.IndiscriminateCarnage] and cooldown[AS.IndiscriminateCarnage].ready and (targets > desiredTargets or targets > 1 ) then
 		return AS.IndiscriminateCarnage;
 	end
 
 	-- garrote,target_if=min:remains,if=stealthed.improved_garrote&!will_lose_exsanguinate&(remains<(12-buff.sepsis_buff.remains)%exsanguinated_rate|pmultiplier<=1)&target.time_to_die-remains>2;
-	if cooldown[AS.Garrote].ready and energy >= 45 and (stealthedImprovedGarrote and not ( debuff[AS.Garrote].remains < ( 12 - buff[AS.SepsisBuff].remains ) 1 ) and timeToDie - debuff[AS.Garrote].remains > 2) then
+	if cooldown[AS.Garrote].ready and energy >= 45 and (stealthedImprovedGarrote and not ( debuff[AS.Garrote].remains < ( 12 - buff[AS.SepsisBuff].remains )) and timeToDie - debuff[AS.Garrote].remains > 2) then
 		return AS.Garrote;
 	end
 
 	-- garrote,if=talent.exsanguinate.enabled&stealthed.improved_garrote&active_enemies=1&!will_lose_exsanguinate&(remains<18%exsanguinated_rate|pmultiplier<=1)&variable.exsang_sync_remains<18&improved_garrote_remains<1.3;
-	if cooldown[AS.Garrote].ready and energy >= 45 and (talents[AS.Exsanguinate] and stealthedImprovedGarrote and targets == 1 and not ( debuff[AS.Garrote].remains < 18 1 ) and exsangSyncRemains < 18 and 1.3) then
+	if cooldown[AS.Garrote].ready and energy >= 45 and (talents[AS.Exsanguinate] and stealthedImprovedGarrote and targets == 1 and not ( debuff[AS.Garrote].remains < 18) and exsangSyncRemains < 18 and 1.3) then
 		return AS.Garrote;
 	end
 end
@@ -483,12 +483,12 @@ function Rogue:AssassinationVanish()
 	local comboPointsTimeToMax = comboPointsMax - comboPoints / comboPointsRegen;
 
 	-- vanish,if=talent.improved_garrote&cooldown.garrote.up&!exsanguinated.garrote&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<4)&combo_points.deficit>=(spell_targets.fan_of_knives>?4);
-	if cooldown[AS.Vanish].ready and (talents[AS.ImprovedGarrote] and cooldown[AS.Garrote].up and not ( or debuff[AS.Garrote].refreshable ) and ( debuff[AS.Deathmark].up or cooldown[AS.Deathmark].remains < 4 ) and comboPointsDeficit >= ( targets > ? 4 )) then
+	if cooldown[AS.Vanish].ready and (talents[AS.ImprovedGarrote] and cooldown[AS.Garrote].up and not ( debuff[AS.Garrote].refreshable ) and ( debuff[AS.Deathmark].up or cooldown[AS.Deathmark].remains < 4 ) and comboPointsDeficit >= ( targets >= 4 )) then
 		return AS.Vanish;
 	end
 
 	-- vanish,if=talent.improved_garrote&cooldown.garrote.up&!exsanguinated.garrote&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&spell_targets.fan_of_knives>(3-talent.indiscriminate_carnage)&(!talent.indiscriminate_carnage|cooldown.indiscriminate_carnage.ready);
-	if cooldown[AS.Vanish].ready and (talents[AS.ImprovedGarrote] and cooldown[AS.Garrote].up and not ( or debuff[AS.Garrote].refreshable ) and targets > ( 3 - (talents[AS.IndiscriminateCarnage] and 1 or 0) ) and ( not talents[AS.IndiscriminateCarnage] or cooldown[AS.IndiscriminateCarnage].ready )) then
+	if cooldown[AS.Vanish].ready and (talents[AS.ImprovedGarrote] and cooldown[AS.Garrote].up and not ( debuff[AS.Garrote].refreshable ) and targets > ( 3 - (talents[AS.IndiscriminateCarnage] and 1 or 0) ) and ( not talents[AS.IndiscriminateCarnage] or cooldown[AS.IndiscriminateCarnage].ready )) then
 		return AS.Vanish;
 	end
 
@@ -498,7 +498,7 @@ function Rogue:AssassinationVanish()
 	end
 
 	-- shadow_dance,if=talent.improved_garrote&cooldown.garrote.up&!exsanguinated.garrote&(dot.garrote.pmultiplier<=1|dot.garrote.refreshable)&(debuff.deathmark.up|cooldown.deathmark.remains<12|cooldown.deathmark.remains>60)&combo_points.deficit>=(spell_targets.fan_of_knives>?4);
-	if talents[AS.ShadowDance] and cooldown[AS.ShadowDance].ready and (talents[AS.ImprovedGarrote] and cooldown[AS.Garrote].up and not ( or debuff[AS.Garrote].refreshable ) and ( debuff[AS.Deathmark].up or cooldown[AS.Deathmark].remains < 12 or cooldown[AS.Deathmark].remains > 60 ) and comboPointsDeficit >= ( targets > ? 4 )) then
+	if talents[AS.ShadowDance] and cooldown[AS.ShadowDance].ready and (talents[AS.ImprovedGarrote] and cooldown[AS.Garrote].up and not ( debuff[AS.Garrote].refreshable ) and ( debuff[AS.Deathmark].up or cooldown[AS.Deathmark].remains < 12 or cooldown[AS.Deathmark].remains > 60 ) and comboPointsDeficit >= ( targets >= 4 )) then
 		return AS.ShadowDance;
 	end
 

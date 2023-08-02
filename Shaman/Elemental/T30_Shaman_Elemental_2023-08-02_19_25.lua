@@ -235,7 +235,7 @@ function Shaman:ElementalAoe()
 	end
 
 	-- elemental_blast,if=enemies=3&!talent.echoes_of_great_sundering.enabled;
-	if talents[EL.ElementalBlast] and mana >= 0 and maelstrom >= 75 and currentSpell ~= EL.ElementalBlast and (== 3 and not talents[EL.EchoesOfGreatSundering]) then
+	if talents[EL.ElementalBlast] and mana >= 0 and maelstrom >= 75 and currentSpell ~= EL.ElementalBlast and (not talents[EL.EchoesOfGreatSundering]) then
 		return EL.ElementalBlast;
 	end
 
@@ -305,7 +305,7 @@ function Shaman:ElementalAoe()
 	end
 
 	-- lava_burst,target_if=dot.flame_shock.remains,if=enemies=3&talent.master_of_the_elements.enabled;
-	if talents[EL.LavaBurst] and cooldown[EL.LavaBurst].ready and mana >= 1250 and currentSpell ~= EL.LavaBurst and (== 3 and talents[EL.MasterOfTheElements]) then
+	if talents[EL.LavaBurst] and cooldown[EL.LavaBurst].ready and mana >= 1250 and currentSpell ~= EL.LavaBurst and (talents[EL.MasterOfTheElements]) then
 		return EL.LavaBurst;
 	end
 
@@ -335,12 +335,12 @@ function Shaman:ElementalAoe()
 	end
 
 	-- flame_shock,moving=1,target_if=refreshable;
-	if cooldown[EL.FlameShock].ready and mana >= 750 and () then
+	if cooldown[EL.FlameShock].ready and mana >= 750 then
 		return EL.FlameShock;
 	end
 
 	-- frost_shock,moving=1;
-	if talents[EL.FrostShock] and mana >= 500 and () then
+	if talents[EL.FrostShock] and mana >= 500 then
 		return EL.FrostShock;
 	end
 end
@@ -399,7 +399,7 @@ function Shaman:ElementalSingleTarget()
 	end
 
 	-- flame_shock,target_if=min:dot.flame_shock.remains,if=active_enemies=1&refreshable&!buff.surge_of_power.up&(!buff.master_of_the_elements.up|(!buff.stormkeeper.up&(talent.elemental_blast.enabled&maelstrom<90-8*talent.eye_of_the_storm.rank|maelstrom<60-5*talent.eye_of_the_storm.rank)));
-	if cooldown[EL.FlameShock].ready and mana >= 750 and (targets == 1 and debuff[EL.Flame Shock].refreshable and not buff[EL.SurgeOfPower].up and ( not buff[EL.MasterOfTheElements].up or ( not buff[EL.Stormkeeper].up and ( talents[EL.ElementalBlast] and maelstrom < 90 - 8 * (talents[EL.EyeOfTheStorm] and 1 or 0) or maelstrom < 60 - 5 * (talents[EL.EyeOfTheStorm] and 1 or 0) ) ) )) then
+	if cooldown[EL.FlameShock].ready and mana >= 750 and (targets == 1 and debuff[EL.FlameShock].refreshable and not buff[EL.SurgeOfPower].up and ( not buff[EL.MasterOfTheElements].up or ( not buff[EL.Stormkeeper].up and ( talents[EL.ElementalBlast] and maelstrom < 90 - 8 * (talents[EL.EyeOfTheStorm] and 1 or 0) or maelstrom < 60 - 5 * (talents[EL.EyeOfTheStorm] and 1 or 0) ) ) )) then
 		return EL.FlameShock;
 	end
 
@@ -409,7 +409,7 @@ function Shaman:ElementalSingleTarget()
 	end
 
 	-- flame_shock,target_if=min:dot.flame_shock.remains,if=active_enemies>1&(spell_targets.chain_lightning>1|spell_targets.lava_beam>1)&refreshable&(talent.deeply_rooted_elements.enabled|talent.ascendance.enabled|talent.primordial_wave.enabled|talent.searing_flames.enabled|talent.magma_chamber.enabled)&(buff.surge_of_power.up&!buff.stormkeeper.up&!cooldown.stormkeeper.remains=0|!talent.surge_of_power.enabled),cycle_targets=1;
-	if cooldown[EL.FlameShock].ready and mana >= 750 and (targets > 1 and ( targets > 1 or targets > 1 ) and debuff[EL.Flame Shock].refreshable and ( talents[EL.DeeplyRootedElements] or talents[EL.Ascendance] or talents[EL.PrimordialWave] or talents[EL.SearingFlames] or talents[EL.MagmaChamber] ) and ( buff[EL.SurgeOfPower].up and not buff[EL.Stormkeeper].up and not cooldown[EL.Stormkeeper].remains == 0 or not talents[EL.SurgeOfPower] )) then
+	if cooldown[EL.FlameShock].ready and mana >= 750 and (targets > 1 and ( targets > 1 or targets > 1 ) and debuff[EL.FlameShock].refreshable and ( talents[EL.DeeplyRootedElements] or talents[EL.Ascendance] or talents[EL.PrimordialWave] or talents[EL.SearingFlames] or talents[EL.MagmaChamber] ) and ( buff[EL.SurgeOfPower].up and not buff[EL.Stormkeeper].up and not cooldown[EL.Stormkeeper].remains == 0 or not talents[EL.SurgeOfPower] )) then
 		return EL.FlameShock;
 	end
 
@@ -544,7 +544,7 @@ function Shaman:ElementalSingleTarget()
 	end
 
 	-- lava_burst,target_if=dot.flame_shock.remains>2,if=enemies=1&talent.deeply_rooted_elements.enabled;
-	if talents[EL.LavaBurst] and cooldown[EL.LavaBurst].ready and mana >= 1250 and currentSpell ~= EL.LavaBurst and (== 1 and talents[EL.DeeplyRootedElements]) then
+	if talents[EL.LavaBurst] and cooldown[EL.LavaBurst].ready and mana >= 1250 and currentSpell ~= EL.LavaBurst and (talents[EL.DeeplyRootedElements]) then
 		return EL.LavaBurst;
 	end
 
@@ -622,17 +622,17 @@ function Shaman:ElementalSingleTarget()
 	-- EL.LightningBolt;
 
 	-- flame_shock,moving=1,target_if=refreshable;
-	if cooldown[EL.FlameShock].ready and mana >= 750 and () then
+	if cooldown[EL.FlameShock].ready and mana >= 750 then
 		return EL.FlameShock;
 	end
 
 	-- flame_shock,moving=1,if=movement.distance>6;
-	if cooldown[EL.FlameShock].ready and mana >= 750 and (6) then
+	if cooldown[EL.FlameShock].ready and mana >= 750 then
 		return EL.FlameShock;
 	end
 
 	-- frost_shock,moving=1;
-	if talents[EL.FrostShock] and mana >= 500 and () then
+	if talents[EL.FrostShock] and mana >= 500 then
 		return EL.FrostShock;
 	end
 end

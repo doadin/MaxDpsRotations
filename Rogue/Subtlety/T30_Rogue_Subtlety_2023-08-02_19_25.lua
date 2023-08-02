@@ -127,7 +127,7 @@ function Rogue:Subtlety()
 	end
 
 	-- variable,name=priority_rotation,value=priority_rotation;
-	local priorityRotation = ;
+	--local priorityRotation = ;
 
 	-- variable,name=stealth_threshold,value=25+talent.vigor.enabled*20+talent.master_of_shadows.enabled*20+talent.shadow_focus.enabled*25+talent.alacrity.enabled*20+25*(spell_targets.shuriken_storm>=4);
 	local stealthThreshold = 25 + (talents[SB.Vigor] and 1 or 0) * 20 + (talents[SB.MasterOfShadows] and 1 or 0) * 20 + (talents[SB.ShadowFocus] and 1 or 0) * 25 + (talents[SB.Alacrity] and 1 or 0) * 20 + 25 * ( targets >= 4 );
@@ -282,7 +282,7 @@ function Rogue:SubtletyCds()
 	end
 
 	-- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&combo_points.deficit>=cp_max_spend;
-	if talents[SB.MarkedForDeath] and cooldown[SB.MarkedForDeath].ready and (raid_event.adds.in > 30 - raid_event.adds.duration and comboPointsDeficit >= cpMaxSpend) then
+	if talents[SB.MarkedForDeath] and cooldown[SB.MarkedForDeath].ready and (targets > 1 and comboPointsDeficit >= cpMaxSpend) then
 		return SB.MarkedForDeath;
 	end
 
@@ -344,13 +344,13 @@ function Rogue:SubtletyFinish()
 	local comboPointsTimeToMax = comboPointsMax - comboPoints / comboPointsRegen;
 
 	-- variable,name=secret_condition,value=buff.shadow_dance.up&(buff.danse_macabre.stack>=3|!talent.danse_macabre)&(!buff.premeditation.up|spell_targets.shuriken_storm!=2);
-	local secretCondition = buff[SB.ShadowDance].up and ( buff[SB.DanseMacabre].count >= 3 or not talents[SB.DanseMacabre] ) and ( not buff[SB.Premeditation].up or targets not == 2 );
+	local secretCondition = buff[SB.ShadowDance].up and ( buff[SB.DanseMacabre].count >= 3 or not talents[SB.DanseMacabre] ) and ( not buff[SB.Premeditation].up or targets );
 
 	-- variable,name=premed_snd_condition,value=talent.premeditation.enabled&spell_targets.shuriken_storm<5;
 	local premedSndCondition = talents[SB.Premeditation] and targets < 5;
 
 	-- slice_and_dice,if=!variable.premed_snd_condition&spell_targets.shuriken_storm<6&!buff.shadow_dance.up&buff.slice_and_dice.remains<fight_remains&refreshable;
-	if energy >= 20 and comboPoints >= 6 and (not premedSndCondition and targets < 6 and not buff[SB.ShadowDance].up and buff[SB.SliceAndDice].remains < timeToDie and debuff[SB.Slice And Dice].refreshable) then
+	if energy >= 20 and comboPoints >= 6 and (not premedSndCondition and targets < 6 and not buff[SB.ShadowDance].up and buff[SB.SliceAndDice].remains < timeToDie and debuff[SB.SliceAndDice].refreshable) then
 		return SB.SliceAndDice;
 	end
 
@@ -496,7 +496,7 @@ function Rogue:SubtletyStealthed()
 	end
 
 	-- gloomblade,if=variable.gloomblade_condition&(!used_for_danse|spell_targets.shuriken_storm!=2)|combo_points<=2&buff.the_rotten.up&spell_targets.shuriken_storm<=3;
-	if talents[SB.Gloomblade] and energy >= 35 and (gloombladeCondition and ( not targets not == 2 ) or comboPoints <= 2 and buff[SB.TheRotten].up and targets <= 3) then
+	if talents[SB.Gloomblade] and energy >= 35 and (gloombladeCondition and ( not targets ) or comboPoints <= 2 and buff[SB.TheRotten].up and targets <= 3) then
 		return SB.Gloomblade;
 	end
 

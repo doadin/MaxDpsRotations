@@ -97,7 +97,7 @@ function Demonhunter:Havoc()
 	local waitingForMomentum = talents[HV.Momentum] and not buff[HV.Momentum].up;
 
 	-- variable,name=holding_meta,value=(talent.demonic&talent.essence_break)&variable.3min_trinket&fight_remains>cooldown.metamorphosis.remains+30+talent.shattered_destiny*60&cooldown.metamorphosis.remains<20&cooldown.metamorphosis.remains>action.eye_beam.execute_time+gcd.max*(talent.inner_demon+2);
-	local holdingMeta = ( talents[HV.Demonic] and talents[HV.EssenceBreak] ) and 3minTrinket and timeToDie > cooldown[HV.Metamorphosis].remains + 30 + (talents[HV.ShatteredDestiny] and 1 or 0) * 60 and cooldown[HV.Metamorphosis].remains < 20 and cooldown[HV.Metamorphosis].remains > timeShift + gcd * ( (talents[HV.InnerDemon] and 1 or 0) + 2 );
+	local holdingMeta = ( talents[HV.Demonic] and talents[HV.EssenceBreak] ) and timeToDie > cooldown[HV.Metamorphosis].remains + 30 + (talents[HV.ShatteredDestiny] and 1 or 0) * 60 and cooldown[HV.Metamorphosis].remains < 20 and cooldown[HV.Metamorphosis].remains > timeShift + gcd * ( (talents[HV.InnerDemon] and 1 or 0) + 2 );
 
 	-- immolation_aura,if=talent.ragefire&active_enemies>=3&(cooldown.blade_dance.remains|debuff.essence_break.down);
 	if cooldown[HV.ImmolationAura].ready and (talents[HV.Ragefire] and targets >= 3 and ( cooldown[HV.BladeDance].remains or not debuff[HV.EssenceBreak].up )) then
@@ -149,7 +149,7 @@ function Demonhunter:Havoc()
 	end
 
 	-- vengeful_retreat,use_off_gcd=1,if=talent.initiative&talent.essence_break&time>1&(cooldown.essence_break.remains>15|cooldown.essence_break.remains<gcd.max*2&(buff.initiative.remains<gcd.max&!variable.holding_meta&cooldown.eye_beam.remains=gcd.remains&(raid_event.adds.in>(40-talent.cycle_of_hatred*15))&fury>30|!talent.demonic|buff.metamorphosis.up|cooldown.eye_beam.remains>15+(10*talent.cycle_of_hatred)))&talent.any_means_necessary;
-	if talents[HV.VengefulRetreat] and cooldown[HV.VengefulRetreat].ready and (talents[HV.Initiative] and talents[HV.EssenceBreak] and GetTime() > 1 and ( cooldown[HV.EssenceBreak].remains > 15 or cooldown[HV.EssenceBreak].remains < gcd * 2 and ( buff[HV.Initiative].remains < gcd and not holdingMeta and cooldown[HV.EyeBeam].remains == gcdRemains and ( raid_event.adds.in > ( 40 - (talents[HV.CycleOfHatred] and 1 or 0) * 15 ) ) and fury > 30 or not talents[HV.Demonic] or buff[HV.Metamorphosis].up or cooldown[HV.EyeBeam].remains > 15 + ( 10 * (talents[HV.CycleOfHatred] and 1 or 0) ) ) ) and talents[HV.AnyMeansNecessary]) then
+	if talents[HV.VengefulRetreat] and cooldown[HV.VengefulRetreat].ready and (talents[HV.Initiative] and talents[HV.EssenceBreak] and GetTime() > 1 and ( cooldown[HV.EssenceBreak].remains > 15 or cooldown[HV.EssenceBreak].remains < gcd * 2 and ( buff[HV.Initiative].remains < gcd and not holdingMeta and cooldown[HV.EyeBeam].remains == gcdRemains and ( 40 - (talents[HV.CycleOfHatred] and 1 or 0) * 15 )  and fury > 30 or not talents[HV.Demonic] or buff[HV.Metamorphosis].up or cooldown[HV.EyeBeam].remains > 15 + ( 10 * (talents[HV.CycleOfHatred] and 1 or 0) ) ) ) and talents[HV.AnyMeansNecessary]) then
 		return HV.VengefulRetreat;
 	end
 
@@ -164,7 +164,7 @@ function Demonhunter:Havoc()
 	end
 
 	-- essence_break,if=(active_enemies>desired_targets|raid_event.adds.in>40)&!variable.waiting_for_momentum&(buff.metamorphosis.remains>gcd.max*3|cooldown.eye_beam.remains>10)&(!talent.tactical_retreat|buff.tactical_retreat.up|time<10)&buff.vengeful_retreat_movement.remains<gcd.max*0.5&cooldown.blade_dance.remains<=3.1*gcd.max|fight_remains<6;
-	if talents[HV.EssenceBreak] and cooldown[HV.EssenceBreak].ready and (( targets > desiredTargets or raid_event.adds.in > 40 ) and not waitingForMomentum and ( buff[HV.Metamorphosis].remains > gcd * 3 or cooldown[HV.EyeBeam].remains > 10 ) and ( not talents[HV.TacticalRetreat] or buff[HV.TacticalRetreat].up or GetTime() < 10 ) and buff[HV.VengefulRetreatMovement].remains < gcd * 0.5 and cooldown[HV.BladeDance].remains <= 3.1 * gcd or timeToDie < 6) then
+	if talents[HV.EssenceBreak] and cooldown[HV.EssenceBreak].ready and (( targets > desiredTargets ) and not waitingForMomentum and ( buff[HV.Metamorphosis].remains > gcd * 3 or cooldown[HV.EyeBeam].remains > 10 ) and ( not talents[HV.TacticalRetreat] or buff[HV.TacticalRetreat].up or GetTime() < 10 ) and buff[HV.VengefulRetreatMovement].remains < gcd * 0.5 and cooldown[HV.BladeDance].remains <= 3.1 * gcd or timeToDie < 6) then
 		return HV.EssenceBreak;
 	end
 
@@ -174,12 +174,12 @@ function Demonhunter:Havoc()
 	end
 
 	-- fel_barrage,if=active_enemies>desired_targets|raid_event.adds.in>30;
-	if talents[HV.FelBarrage] and cooldown[HV.FelBarrage].ready and (targets > desiredTargets or raid_event.adds.in > 30) then
+	if talents[HV.FelBarrage] and cooldown[HV.FelBarrage].ready and (targets > desiredTargets) then
 		return HV.FelBarrage;
 	end
 
 	-- glaive_tempest,if=(active_enemies>desired_targets|raid_event.adds.in>10)&(debuff.essence_break.down|active_enemies>1);
-	if talents[HV.GlaiveTempest] and cooldown[HV.GlaiveTempest].ready and fury >= 30 and (( targets > desiredTargets or raid_event.adds.in > 10 ) and ( not debuff[HV.EssenceBreak].up or targets > 1 )) then
+	if talents[HV.GlaiveTempest] and cooldown[HV.GlaiveTempest].ready and fury >= 30 and (( targets > desiredTargets ) and ( not debuff[HV.EssenceBreak].up or targets > 1 )) then
 		return HV.GlaiveTempest;
 	end
 
@@ -194,17 +194,17 @@ function Demonhunter:Havoc()
 	end
 
 	-- the_hunt,if=debuff.essence_break.down&(time<10|cooldown.metamorphosis.remains>10|!equipped.algethar_puzzle_box)&(raid_event.adds.in>90|active_enemies>3|time_to_die<10)&(time>6&debuff.essence_break.down&(!talent.furious_gaze|buff.furious_gaze.up)|!set_bonus.tier30_2pc);
-	if talents[HV.TheHunt] and cooldown[HV.TheHunt].ready and currentSpell ~= HV.TheHunt and (not debuff[HV.EssenceBreak].up and ( GetTime() < 10 or cooldown[HV.Metamorphosis].remains > 10 or not IsEquippedItem(AlgetharPuzzleBox) ) and ( raid_event.adds.in > 90 or targets > 3 or timeToDie < 10 ) and ( GetTime() > 6 and not debuff[HV.EssenceBreak].up and ( not talents[HV.FuriousGaze] or buff[HV.FuriousGaze].up ) or not MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) )) then
+	if talents[HV.TheHunt] and cooldown[HV.TheHunt].ready and currentSpell ~= HV.TheHunt and (not debuff[HV.EssenceBreak].up and ( GetTime() < 10 or cooldown[HV.Metamorphosis].remains > 10 or not IsEquippedItem(AlgetharPuzzleBox) ) and ( targets > 3 or timeToDie < 10 ) and ( GetTime() > 6 and not debuff[HV.EssenceBreak].up and ( not talents[HV.FuriousGaze] or buff[HV.FuriousGaze].up ) or not MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) )) then
 		return HV.TheHunt;
 	end
 
 	-- eye_beam,if=active_enemies>desired_targets|raid_event.adds.in>(40-talent.cycle_of_hatred*15)&!debuff.essence_break.up&(cooldown.metamorphosis.remains>40-talent.cycle_of_hatred*15|!variable.holding_meta)&(buff.metamorphosis.down|buff.metamorphosis.remains>gcd.max|!talent.restless_hunter)|fight_remains<15;
-	if talents[HV.EyeBeam] and cooldown[HV.EyeBeam].ready and fury >= 30 and (targets > desiredTargets or raid_event.adds.in > ( 40 - (talents[HV.CycleOfHatred] and 1 or 0) * 15 ) and not debuff[HV.EssenceBreak].up and ( cooldown[HV.Metamorphosis].remains > 40 - (talents[HV.CycleOfHatred] and 1 or 0) * 15 or not holdingMeta ) and ( not buff[HV.Metamorphosis].up or buff[HV.Metamorphosis].remains > gcd or not talents[HV.RestlessHunter] ) or timeToDie < 15) then
+	if talents[HV.EyeBeam] and cooldown[HV.EyeBeam].ready and fury >= 30 and (targets > desiredTargets and not debuff[HV.EssenceBreak].up and ( cooldown[HV.Metamorphosis].remains > 40 - (talents[HV.CycleOfHatred] and 1 or 0) * 15 or not holdingMeta ) and ( not buff[HV.Metamorphosis].up or buff[HV.Metamorphosis].remains > gcd or not talents[HV.RestlessHunter] ) or timeToDie < 15) then
 		return HV.EyeBeam;
 	end
 
 	-- blade_dance,if=variable.blade_dance&(cooldown.eye_beam.remains>5|equipped.algethar_puzzle_box&cooldown.metamorphosis.remains>(cooldown.blade_dance.duration)|!talent.demonic|(raid_event.adds.in>cooldown&raid_event.adds.in<25));
-	if cooldown[HV.BladeDance].ready and fury >= 35 and (bladeDance and ( cooldown[HV.EyeBeam].remains > 5 or IsEquippedItem(AlgetharPuzzleBox) and cooldown[HV.Metamorphosis].remains > ( cooldown[HV.BladeDance].duration ) or not talents[HV.Demonic] or ( raid_event.adds.in > cooldown[HV.].remains and raid_event.adds.in < 25 ) )) then
+	if cooldown[HV.BladeDance].ready and fury >= 35 and (bladeDance and ( cooldown[HV.EyeBeam].remains > 5 or IsEquippedItem(AlgetharPuzzleBox) and cooldown[HV.Metamorphosis].remains > ( cooldown[HV.BladeDance].duration ) or not talents[HV.Demonic] )) then
 		return HV.BladeDance;
 	end
 
@@ -214,7 +214,7 @@ function Demonhunter:Havoc()
 	end
 
 	-- throw_glaive,if=talent.soulrend&(active_enemies>desired_targets|raid_event.adds.in>full_recharge_time+9)&spell_targets>=(2-talent.furious_throws)&!debuff.essence_break.up&(full_recharge_time<gcd.max*3|active_enemies>1);
-	if cooldown[HV.ThrowGlaive].ready and fury >= 0 and (talents[HV.Soulrend] and ( targets > desiredTargets or raid_event.adds.in > cooldown[HV.ThrowGlaive].fullRecharge + 9 ) and targets >= ( 2 - (talents[HV.FuriousThrows] and 1 or 0) ) and not debuff[HV.EssenceBreak].up and ( cooldown[HV.ThrowGlaive].fullRecharge < gcd * 3 or targets > 1 )) then
+	if cooldown[HV.ThrowGlaive].ready and fury >= 0 and (talents[HV.Soulrend] and ( targets > desiredTargets ) and targets >= ( 2 - (talents[HV.FuriousThrows] and 1 or 0) ) and not debuff[HV.EssenceBreak].up and ( cooldown[HV.ThrowGlaive].fullRecharge < gcd * 3 or targets > 1 )) then
 		return HV.ThrowGlaive;
 	end
 
@@ -234,12 +234,12 @@ function Demonhunter:Havoc()
 	end
 
 	-- throw_glaive,if=talent.soulrend&(active_enemies>desired_targets|raid_event.adds.in>full_recharge_time+9)&spell_targets>=(2-talent.furious_throws)&!debuff.essence_break.up;
-	if cooldown[HV.ThrowGlaive].ready and fury >= 0 and (talents[HV.Soulrend] and ( targets > desiredTargets or raid_event.adds.in > cooldown[HV.ThrowGlaive].fullRecharge + 9 ) and targets >= ( 2 - (talents[HV.FuriousThrows] and 1 or 0) ) and not debuff[HV.EssenceBreak].up) then
+	if cooldown[HV.ThrowGlaive].ready and fury >= 0 and (talents[HV.Soulrend] and ( targets > desiredTargets ) and targets >= ( 2 - (talents[HV.FuriousThrows] and 1 or 0) ) and not debuff[HV.EssenceBreak].up) then
 		return HV.ThrowGlaive;
 	end
 
 	-- immolation_aura,if=!buff.immolation_aura.up&(!talent.ragefire|active_enemies>desired_targets|raid_event.adds.in>15)&buff.out_of_range.down;
-	if cooldown[HV.ImmolationAura].ready and (not buff[HV.ImmolationAura].up and ( not talents[HV.Ragefire] or targets > desiredTargets or raid_event.adds.in > 15 ) and not buff[HV.OutOfRange].up) then
+	if cooldown[HV.ImmolationAura].ready and (not buff[HV.ImmolationAura].up and ( not talents[HV.Ragefire] or targets > desiredTargets ) and not buff[HV.OutOfRange].up) then
 		return HV.ImmolationAura;
 	end
 
@@ -254,7 +254,7 @@ function Demonhunter:Havoc()
 	end
 
 	-- sigil_of_flame,if=raid_event.adds.in>15&fury.deficit>=30&buff.out_of_range.down;
-	if talents[HV.SigilOfFlame] and cooldown[HV.SigilOfFlame].ready and (raid_event.adds.in > 15 and furyDeficit >= 30 and not buff[HV.OutOfRange].up) then
+	if talents[HV.SigilOfFlame] and cooldown[HV.SigilOfFlame].ready then
 		return HV.SigilOfFlame;
 	end
 
@@ -264,22 +264,22 @@ function Demonhunter:Havoc()
 	end
 
 	-- fel_rush,if=!talent.momentum&talent.demon_blades&!cooldown.eye_beam.ready&(charges=2|(raid_event.movement.in>10&raid_event.adds.in>10));
-	if cooldown[HV.FelRush].ready and (not talents[HV.Momentum] and talents[HV.DemonBlades] and not cooldown[HV.EyeBeam].ready and ( cooldown[HV.FelRush].charges == 2 or ( raid_event.movement.in > 10 and raid_event.adds.in > 10 ) )) then
+	if cooldown[HV.FelRush].ready and (not talents[HV.Momentum] and talents[HV.DemonBlades] and not cooldown[HV.EyeBeam].ready and ( cooldown[HV.FelRush].charges == 2 )) then
 		return HV.FelRush;
 	end
 
 	-- demons_bite,target_if=min:debuff.burning_wound.remains,if=talent.burning_wound&debuff.burning_wound.remains<4&active_dot.burning_wound<(spell_targets>?3);
-	if talents[HV.BurningWound] and debuff[HV.BurningWound].remains < 4 and activeDot[HV.BurningWound] < ( targets > ? 3 ) then
+	if talents[HV.BurningWound] and debuff[HV.BurningWound].remains < 4 and activeDot[HV.BurningWound] < ( targets >  3 ) then
 		return HV.DemonsBite;
 	end
 
 	-- fel_rush,if=!talent.momentum&!talent.demon_blades&spell_targets>1&(charges=2|(raid_event.movement.in>10&raid_event.adds.in>10));
-	if cooldown[HV.FelRush].ready and (not talents[HV.Momentum] and not talents[HV.DemonBlades] and targets > 1 and ( cooldown[HV.FelRush].charges == 2 or ( raid_event.movement.in > 10 and raid_event.adds.in > 10 ) )) then
+	if cooldown[HV.FelRush].ready and (not talents[HV.Momentum] and not talents[HV.DemonBlades] and targets > 1 and ( cooldown[HV.FelRush].charges == 2  )) then
 		return HV.FelRush;
 	end
 
 	-- sigil_of_flame,if=raid_event.adds.in>15&fury.deficit>=30&buff.out_of_range.down;
-	if talents[HV.SigilOfFlame] and cooldown[HV.SigilOfFlame].ready and (raid_event.adds.in > 15 and furyDeficit >= 30 and not buff[HV.OutOfRange].up) then
+	if talents[HV.SigilOfFlame] and cooldown[HV.SigilOfFlame].ready then
 		return HV.SigilOfFlame;
 	end
 
@@ -313,7 +313,7 @@ function Demonhunter:HavocCooldown()
 	local timeToDie = fd.timeToDie;
 
 	-- metamorphosis,if=!talent.demonic&((!talent.chaotic_transformation|cooldown.eye_beam.remains>20)&active_enemies>desired_targets|raid_event.adds.in>60|fight_remains<25);
-	if cooldown[HV.Metamorphosis].ready and (not talents[HV.Demonic] and ( ( not talents[HV.ChaoticTransformation] or cooldown[HV.EyeBeam].remains > 20 ) and targets > desiredTargets or raid_event.adds.in > 60 or timeToDie < 25 )) then
+	if cooldown[HV.Metamorphosis].ready and (not talents[HV.Demonic] and ( ( not talents[HV.ChaoticTransformation] or cooldown[HV.EyeBeam].remains > 20 ) and targets > desiredTargets or timeToDie < 25 )) then
 		return HV.Metamorphosis;
 	end
 
@@ -323,7 +323,7 @@ function Demonhunter:HavocCooldown()
 	end
 
 	-- elysian_decree,if=(active_enemies>desired_targets|raid_event.adds.in>30);
-	if talents[HV.ElysianDecree] and cooldown[HV.ElysianDecree].ready and (( targets > desiredTargets or raid_event.adds.in > 30 )) then
+	if talents[HV.ElysianDecree] and cooldown[HV.ElysianDecree].ready and (( targets > desiredTargets )) then
 		return HV.ElysianDecree;
 	end
 end

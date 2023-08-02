@@ -117,7 +117,7 @@ function Druid:GuardianBear()
 	end
 
 	-- thrash_bear,target_if=refreshable|(dot.thrash_bear.stack<5&talent.flashing_claws.rank=2|dot.thrash_bear.stack<4&talent.flashing_claws.rank=1|dot.thrash_bear.stack<3&!talent.flashing_claws.enabled);
-	if talents[GR.Thrash] and () then
+	if talents[GR.Thrash] then
 		return GR.Thrash;
 	end
 
@@ -210,7 +210,7 @@ function Druid:GuardianBear()
 	end
 
 	-- thrash_bear,target_if=active_enemies>=5;
-	if talents[GR.Thrash] and () then
+	if talents[GR.Thrash] then
 		return GR.Thrash;
 	end
 
@@ -230,7 +230,7 @@ function Druid:GuardianBear()
 	end
 
 	-- pulverize,target_if=dot.thrash_bear.stack>2;
-	if talents[GR.Pulverize] and cooldown[GR.Pulverize].ready and () then
+	if talents[GR.Pulverize] and cooldown[GR.Pulverize].ready then
 		return GR.Pulverize;
 	end
 

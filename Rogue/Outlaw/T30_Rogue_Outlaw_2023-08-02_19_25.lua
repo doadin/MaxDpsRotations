@@ -112,7 +112,7 @@ function Rogue:Outlaw()
 	end
 
 	-- variable,name=rtb_reroll,op=reset,if=!(raid_event.adds.remains>12|raid_event.adds.up&(raid_event.adds.in-raid_event.adds.remains)<6|target.time_to_die>12)|fight_remains<12;
-	if not ( raid_event.adds.remains > 12 or raid_event.adds.up and ( raid_event.adds.in - raid_event.adds.remains ) < 6 or timeToDie > 12 ) or timeToDie < 12 then
+	if targets > 1 or timeToDie < 12 then
 		local rtbReroll = 0;
 	end
 
@@ -120,10 +120,10 @@ function Rogue:Outlaw()
 	local ambushCondition = ( talents[OL.HiddenOpportunity] or comboPointsDeficit >= 2 + (talents[OL.ImprovedAmbush] and 1 or 0) + buff[OL.Broadside].up or buff[OL.ViciousFollowup].up ) and energy >= 50;
 
 	-- variable,name=finish_condition,value=combo_points>=((cp_max_spend-1)<?(6-talent.summarily_dispatched))|effective_combo_points>=cp_max_spend;
-	local finishCondition = comboPoints >= ( ( cpMaxSpend - 1 ) < ? ( 6 - (talents[OL.SummarilyDispatched] and 1 or 0) ) ) or comboPoints >= cpMaxSpend;
+	local finishCondition = comboPoints >= ( ( cpMaxSpend - 1 ) <= ( 6 - (talents[OL.SummarilyDispatched] and 1 or 0) ) ) or comboPoints >= cpMaxSpend;
 
 	-- variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.remains>1+talent.killing_spree.enabled;
-	local bladeFlurrySync = targets < 2 and raid_event.adds.in > 20 or buff[OL.BladeFlurry].remains > 1 + talents[OL.KillingSpree];
+	local bladeFlurrySync = targets < 2 or buff[OL.BladeFlurry].remains > 1 + talents[OL.KillingSpree];
 
 	-- call_action_list,name=stealth,if=stealthed.basic|buff.shadowmeld.up;
 	if stealthedBasic or buff[OL.Shadowmeld].up then
@@ -316,7 +316,7 @@ function Rogue:OutlawCds()
 	end
 
 	-- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&combo_points.deficit>=cp_max_spend-1&!buff.dreadblades.up;
-	if talents[OL.MarkedForDeath] and cooldown[OL.MarkedForDeath].ready and (raid_event.adds.in > 30 - raid_event.adds.duration and comboPointsDeficit >= cpMaxSpend - 1 and not buff[OL.Dreadblades].up) then
+	if talents[OL.MarkedForDeath] and cooldown[OL.MarkedForDeath].ready and (comboPointsDeficit >= cpMaxSpend - 1 and not buff[OL.Dreadblades].up) then
 		return OL.MarkedForDeath;
 	end
 
@@ -362,7 +362,7 @@ function Rogue:OutlawFinish()
 	end
 
 	-- slice_and_dice,if=buff.slice_and_dice.remains<fight_remains&refreshable&(!talent.swift_slasher|combo_points>=cp_max_spend);
-	if energy >= 20 and comboPoints >= 6 and (buff[OL.SliceAndDice].remains < timeToDie and debuff[OL.Slice And Dice].refreshable and ( not talents[OL.SwiftSlasher] or comboPoints >= cpMaxSpend )) then
+	if energy >= 20 and comboPoints >= 6 and (buff[OL.SliceAndDice].remains < timeToDie and debuff[OL.SliceAndDice].refreshable and ( not talents[OL.SwiftSlasher] or comboPoints >= cpMaxSpend )) then
 		return OL.SliceAndDice;
 	end
 

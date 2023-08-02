@@ -80,12 +80,12 @@ function Shaman:Enhancement()
 	end
 
 	-- ascendance,if=dot.flame_shock.ticking&((ti_lightning_bolt&active_enemies=1&raid_event.adds.in>=90)|(ti_chain_lightning&active_enemies>1));
-	if talents[EH.Ascendance] and cooldown[EH.Ascendance].ready and (debuff[EH.FlameShock].up and ( ( targets == 1 and raid_event.adds.in >= 90 ) or ( targets > 1 ) )) then
+	if talents[EH.Ascendance] and cooldown[EH.Ascendance].ready and (debuff[EH.FlameShock].up and ( ( targets == 1 ) or ( targets > 1 ) )) then
 		return EH.Ascendance;
 	end
 
 	-- doom_winds,if=raid_event.adds.in>=90|active_enemies>1;
-	if talents[EH.DoomWinds] and cooldown[EH.DoomWinds].ready and (raid_event.adds.in >= 90 or targets > 1) then
+	if talents[EH.DoomWinds] and cooldown[EH.DoomWinds].ready and ( targets > 1) then
 		return EH.DoomWinds;
 	end
 
@@ -169,7 +169,7 @@ function Shaman:EnhancementAoe()
 	end
 
 	-- crash_lightning,if=buff.doom_winds.up|!buff.crash_lightning.up|(talent.alpha_wolf.enabled&feral_spirit.active&alpha_wolf_min_remains=0);
-	if buff[EH.DoomWinds].up or not buff[EH.CrashLightning].up or ( talents[EH.AlphaWolf] and feralSpiritActive and == 0 ) then
+	if buff[EH.DoomWinds].up or not buff[EH.CrashLightning].up or ( talents[EH.AlphaWolf] and feralSpiritActive ) then
 		return EH.CrashLightning;
 	end
 
@@ -209,7 +209,7 @@ function Shaman:EnhancementAoe()
 	end
 
 	-- flame_shock,if=talent.molten_assault.enabled&!ticking;
-	if cooldown[EH.FlameShock].ready and mana >= 750 and (talents[EH.MoltenAssault] and not debuff[EH.Flame Shock].up) then
+	if cooldown[EH.FlameShock].ready and mana >= 750 and (talents[EH.MoltenAssault] and not debuff[EH.FlameShock].up) then
 		return EH.FlameShock;
 	end
 
@@ -277,7 +277,7 @@ function Shaman:EnhancementAoe()
 	end
 
 	-- flame_shock,if=!ticking;
-	if cooldown[EH.FlameShock].ready and mana >= 750 and (not debuff[EH.Flame Shock].up) then
+	if cooldown[EH.FlameShock].ready and mana >= 750 and (not debuff[EH.FlameShock].up) then
 		return EH.FlameShock;
 	end
 
@@ -315,12 +315,12 @@ function Shaman:EnhancementSingle()
 	local maelstromTimeToMax = maelstromMax - maelstrom / maelstromRegen;
 
 	-- primordial_wave,if=!dot.flame_shock.ticking&talent.lashing_flames.enabled&(raid_event.adds.in>42|raid_event.adds.in<6);
-	if talents[EH.PrimordialWave] and cooldown[EH.PrimordialWave].ready and mana >= 1500 and (not debuff[EH.FlameShock].up and talents[EH.LashingFlames] and ( raid_event.adds.in > 42 or raid_event.adds.in < 6 )) then
+	if talents[EH.PrimordialWave] and cooldown[EH.PrimordialWave].ready and mana >= 1500 and (not debuff[EH.FlameShock].up and talents[EH.LashingFlames] ) then
 		return EH.PrimordialWave;
 	end
 
 	-- flame_shock,if=!ticking&talent.lashing_flames.enabled;
-	if cooldown[EH.FlameShock].ready and mana >= 750 and (not debuff[EH.Flame Shock].up and talents[EH.LashingFlames]) then
+	if cooldown[EH.FlameShock].ready and mana >= 750 and (not debuff[EH.FlameShock].up and talents[EH.LashingFlames]) then
 		return EH.FlameShock;
 	end
 
@@ -330,7 +330,7 @@ function Shaman:EnhancementSingle()
 	end
 
 	-- sundering,if=set_bonus.tier30_2pc&raid_event.adds.in>=40;
-	if talents[EH.Sundering] and cooldown[EH.Sundering].ready and mana >= 3000 and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) and raid_event.adds.in >= 40) then
+	if talents[EH.Sundering] and cooldown[EH.Sundering].ready and mana >= 3000 and (MaxDps.tier[30] and MaxDps.tier[30].count and (MaxDps.tier[30].count == 2) ) then
 		return EH.Sundering;
 	end
 
@@ -340,7 +340,7 @@ function Shaman:EnhancementSingle()
 	end
 
 	-- windstrike,if=talent.thorims_invocation.enabled&buff.maelstrom_weapon.stack>=1&(talent.deeply_rooted_elements.enabled|(talent.stormblast.enabled&buff.stormbringer.up)|(talent.elemental_assault.enabled&talent.stormflurry.enabled)|ti_lightning_bolt);
-	if cooldown[EH.Windstrike].ready and (talents[EH.ThorimsInvocation] and buff[EH.MaelstromWeapon].count >= 1 and ( talents[EH.DeeplyRootedElements] or ( talents[EH.Stormblast] and buff[EH.Stormbringer].up ) or ( talents[EH.ElementalAssault] and talents[EH.Stormflurry] ) or )) then
+	if cooldown[EH.Windstrike].ready and (talents[EH.ThorimsInvocation] and buff[EH.MaelstromWeapon].count >= 1 and ( talents[EH.DeeplyRootedElements] or ( talents[EH.Stormblast] and buff[EH.Stormbringer].up ) or ( talents[EH.ElementalAssault] and talents[EH.Stormflurry] ) )) then
 		return EH.Windstrike;
 	end
 
@@ -365,7 +365,7 @@ function Shaman:EnhancementSingle()
 	end
 
 	-- lightning_bolt,if=buff.maelstrom_weapon.stack>=5&buff.primordial_wave.up&raid_event.adds.in>buff.primordial_wave.remains&(!buff.splintered_elements.up|fight_remains<=12);
-	if mana >= 500 and currentSpell ~= EH.LightningBolt and (buff[EH.MaelstromWeapon].count >= 5 and buff[EH.PrimordialWave].up and raid_event.adds.in > buff[EH.PrimordialWave].remains and ( not buff[EH.SplinteredElements].up or timeToDie <= 12 )) then
+	if mana >= 500 and currentSpell ~= EH.LightningBolt and (buff[EH.MaelstromWeapon].count >= 5 and buff[EH.PrimordialWave].up and ( not buff[EH.SplinteredElements].up or timeToDie <= 12 )) then
 		return EH.LightningBolt;
 	end
 
@@ -395,22 +395,22 @@ function Shaman:EnhancementSingle()
 	end
 
 	-- sundering,if=buff.doom_winds.up&raid_event.adds.in>=40;
-	if talents[EH.Sundering] and cooldown[EH.Sundering].ready and mana >= 3000 and (buff[EH.DoomWinds].up and raid_event.adds.in >= 40) then
+	if talents[EH.Sundering] and cooldown[EH.Sundering].ready and mana >= 3000 and (buff[EH.DoomWinds].up) then
 		return EH.Sundering;
 	end
 
 	-- crash_lightning,if=buff.doom_winds.up|(talent.alpha_wolf.enabled&feral_spirit.active&alpha_wolf_min_remains=0);
-	if buff[EH.DoomWinds].up or ( talents[EH.AlphaWolf] and feralSpiritActive and == 0 ) then
+	if buff[EH.DoomWinds].up or ( talents[EH.AlphaWolf] and feralSpiritActive ) then
 		return EH.CrashLightning;
 	end
 
 	-- primordial_wave,if=raid_event.adds.in>42|raid_event.adds.in<6;
-	if talents[EH.PrimordialWave] and cooldown[EH.PrimordialWave].ready and mana >= 1500 and (raid_event.adds.in > 42 or raid_event.adds.in < 6) then
+	if talents[EH.PrimordialWave] and cooldown[EH.PrimordialWave].ready and mana >= 1500 then
 		return EH.PrimordialWave;
 	end
 
 	-- flame_shock,if=!ticking;
-	if cooldown[EH.FlameShock].ready and mana >= 750 and (not debuff[EH.Flame Shock].up) then
+	if cooldown[EH.FlameShock].ready and mana >= 750 and (not debuff[EH.FlameShock].up) then
 		return EH.FlameShock;
 	end
 
@@ -450,7 +450,7 @@ function Shaman:EnhancementSingle()
 	end
 
 	-- sundering,if=raid_event.adds.in>=40;
-	if talents[EH.Sundering] and cooldown[EH.Sundering].ready and mana >= 3000 and (raid_event.adds.in >= 40) then
+	if talents[EH.Sundering] and cooldown[EH.Sundering].ready and mana >= 3000 then
 		return EH.Sundering;
 	end
 

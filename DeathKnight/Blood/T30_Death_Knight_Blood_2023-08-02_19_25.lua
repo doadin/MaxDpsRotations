@@ -2,7 +2,7 @@ local _, addonTable = ...;
 
 -- @type MaxDps;
 if not MaxDps then return end;
-local Deathknight = addonTable.Deathknight;
+local DeathKnight = addonTable.Deathknight;
 local MaxDps = MaxDps;
 
 local UnitPower = UnitPower;
@@ -83,11 +83,13 @@ function DeathKnight:Blood()
 	local deathStrikeDumpAmount = 65;
 
 	-- variable,name=bone_shield_refresh_value,value=4,op=setif,condition=!talent.deaths_caress.enabled|talent.consumption.enabled|talent.blooddrinker.enabled,value_else=5;
+	local boneShieldRefreshValue
 	if not talents[BL.DeathsCaress] or talents[BL.Consumption] or talents[BL.Blooddrinker] then
-		local boneShieldRefreshValue = 4;
+		boneShieldRefreshValue = 4;
 	else
-		local boneShieldRefreshValue = 5;
+		boneShieldRefreshValue = 5;
 	end
+	local heartStrikeRp = ( 10 + targets * (talents[BL.Heartbreaker] and 1 or 0) * 2 );
 
 	-- call_action_list,name=trinkets;
 
@@ -208,6 +210,8 @@ function DeathKnight:BloodDrwUp()
 	local healthTimeToMax = healthMax - health / healthRegen;
 	local runeforge = fd.runeforge;
 
+	local deathStrikeDumpAmount = 65;
+
 	-- blood_boil,if=!dot.blood_plague.ticking;
 	if talents[BL.BloodBoil] and cooldown[BL.BloodBoil].ready and (not debuff[BL.BloodPlague].up) then
 		return BL.BloodBoil;
@@ -272,14 +276,6 @@ function DeathKnight:BloodDrwUp()
 	end
 end
 
-function DeathKnight:BloodRacials()
-	local fd = MaxDps.FrameData;
-	local timeTo35 = fd.timeToDie;
-	local timeTo20 = fd.timeToDie;
-	local targetHp = MaxDps:TargetPercentHealth() * 100;
-	local runeforge = fd.runeforge;
-end
-
 function DeathKnight:BloodStandard()
 	local fd = MaxDps.FrameData;
 	local timeTo35 = fd.timeToDie;
@@ -313,6 +309,8 @@ function DeathKnight:BloodStandard()
 	local healthDeficit = UnitPowerMax('player', Enum.PowerType.Health) - health;
 	local healthTimeToMax = healthMax - health / healthRegen;
 	local runeforge = fd.runeforge;
+
+	local deathStrikeDumpAmount = 65;
 
 	-- tombstone,if=buff.bone_shield.stack>5&rune>=2&runic_power.deficit>=30&!talent.shattering_bone|(talent.shattering_bone.enabled&death_and_decay.ticking)&cooldown.dancing_rune_weapon.remains>=25;
 	if talents[BL.Tombstone] and cooldown[BL.Tombstone].ready and (buff[BL.BoneShield].count > 5 and runes >= 2 and runicPowerDeficit >= 30 and not talents[BL.ShatteringBone] or ( talents[BL.ShatteringBone] and debuff[BL.DeathAndDecay].up ) and cooldown[BL.DancingRuneWeapon].remains >= 25) then
@@ -378,11 +376,4 @@ function DeathKnight:BloodStandard()
 	end
 end
 
-function DeathKnight:BloodTrinkets()
-	local fd = MaxDps.FrameData;
-	local timeTo35 = fd.timeToDie;
-	local timeTo20 = fd.timeToDie;
-	local targetHp = MaxDps:TargetPercentHealth() * 100;
-	local runeforge = fd.runeforge;
-end
 

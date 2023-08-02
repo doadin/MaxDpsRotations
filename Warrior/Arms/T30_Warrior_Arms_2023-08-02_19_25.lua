@@ -34,7 +34,7 @@ local AR = {
 	MartialProwess = 316440,
 	MortalStrike = 12294,
 	ExecutionersPrecision = 386634,
-	SuddenDeathAura = ,
+	--SuddenDeathAura = ,
 	Execute = 163201,
 	Shockwave = 46968,
 	SonicBoom = 390725,
@@ -231,12 +231,12 @@ function Warrior:ArmsHac()
 	end
 
 	-- avatar,if=raid_event.adds.in>15|talent.blademasters_torment&active_enemies>1|target.time_to_die<20;
-	if talents[AR.Avatar] and cooldown[AR.Avatar].ready and (raid_event.adds.in > 15 or talents[AR.BlademastersTorment] and targets > 1 or timeToDie < 20) then
+	if talents[AR.Avatar] and cooldown[AR.Avatar].ready and (talents[AR.BlademastersTorment] and targets > 1 or timeToDie < 20) then
 		return AR.Avatar;
 	end
 
 	-- warbreaker,if=raid_event.adds.in>22|active_enemies>1;
-	if talents[AR.Warbreaker] and cooldown[AR.Warbreaker].ready and (raid_event.adds.in > 22 or targets > 1) then
+	if talents[AR.Warbreaker] and cooldown[AR.Warbreaker].ready and (targets > 1) then
 		return AR.Warbreaker;
 	end
 
@@ -251,12 +251,12 @@ function Warrior:ArmsHac()
 	end
 
 	-- thunderous_roar,if=(buff.test_of_might.up|!talent.test_of_might&debuff.colossus_smash.up)&raid_event.adds.in>15|active_enemies>1&dot.deep_wounds.remains;
-	if talents[AR.ThunderousRoar] and cooldown[AR.ThunderousRoar].ready and (( buff[AR.TestOfMight].up or not talents[AR.TestOfMight] and debuff[AR.ColossusSmash].up ) and raid_event.adds.in > 15 or targets > 1 and debuff[AR.DeepWounds].remains) then
+	if talents[AR.ThunderousRoar] and cooldown[AR.ThunderousRoar].ready and (( buff[AR.TestOfMight].up or not talents[AR.TestOfMight] and debuff[AR.ColossusSmash].up ) or targets > 1 and debuff[AR.DeepWounds].remains) then
 		return AR.ThunderousRoar;
 	end
 
 	-- spear_of_bastion,if=(buff.test_of_might.up|!talent.test_of_might&debuff.colossus_smash.up)&raid_event.adds.in>15;
-	if talents[AR.SpearOfBastion] and cooldown[AR.SpearOfBastion].ready and (( buff[AR.TestOfMight].up or not talents[AR.TestOfMight] and debuff[AR.ColossusSmash].up ) and raid_event.adds.in > 15) then
+	if talents[AR.SpearOfBastion] and cooldown[AR.SpearOfBastion].ready and (( buff[AR.TestOfMight].up or not talents[AR.TestOfMight] and debuff[AR.ColossusSmash].up ) ) then
 		return AR.SpearOfBastion;
 	end
 
@@ -266,7 +266,7 @@ function Warrior:ArmsHac()
 	end
 
 	-- bladestorm,if=active_enemies>1&(buff.test_of_might.up|!talent.test_of_might&debuff.colossus_smash.up)&raid_event.adds.in>30|active_enemies>1&dot.deep_wounds.remains;
-	if cooldown[AR.Bladestorm].ready and (targets > 1 and ( buff[AR.TestOfMight].up or not talents[AR.TestOfMight] and debuff[AR.ColossusSmash].up ) and raid_event.adds.in > 30 or targets > 1 and debuff[AR.DeepWounds].remains) then
+	if cooldown[AR.Bladestorm].ready and (targets > 1 and ( buff[AR.TestOfMight].up or not talents[AR.TestOfMight] and debuff[AR.ColossusSmash].up ) or targets > 1 and debuff[AR.DeepWounds].remains) then
 		return AR.Bladestorm;
 	end
 
@@ -306,7 +306,7 @@ function Warrior:ArmsHac()
 	end
 
 	-- thunderous_roar,if=raid_event.adds.in>15;
-	if talents[AR.ThunderousRoar] and cooldown[AR.ThunderousRoar].ready and (raid_event.adds.in > 15) then
+	if talents[AR.ThunderousRoar] and cooldown[AR.ThunderousRoar].ready then
 		return AR.ThunderousRoar;
 	end
 
@@ -371,7 +371,7 @@ function Warrior:ArmsHac()
 	end
 
 	-- bladestorm,if=raid_event.adds.in>30;
-	if cooldown[AR.Bladestorm].ready and (raid_event.adds.in > 30) then
+	if cooldown[AR.Bladestorm].ready then
 		return AR.Bladestorm;
 	end
 

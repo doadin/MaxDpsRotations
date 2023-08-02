@@ -81,7 +81,7 @@ function Warlock:Affliction()
 	end
 
 	-- call_action_list,name=cleave,if=active_enemies!=1&active_enemies<4|variable.cleave_apl;
-	if targets not == 1 and targets < 4 or cleaveApl then
+	if not targets == 1 and targets < 4 or cleaveApl then
 		local result = Warlock:AfflictionCleave();
 		if result then
 			return result;
@@ -114,7 +114,7 @@ function Warlock:Affliction()
 	end
 
 	-- unstable_affliction,if=remains<5;
-	if talents[AF.UnstableAffliction] and mana >= 500 and currentSpell ~= AF.UnstableAffliction and (debuff[AF.Unstable Affliction].remains < 5) then
+	if talents[AF.UnstableAffliction] and mana >= 500 and currentSpell ~= AF.UnstableAffliction and (debuff[AF.UnstableAffliction].remains < 5) then
 		return AF.UnstableAffliction;
 	end
 
@@ -129,7 +129,7 @@ function Warlock:Affliction()
 	end
 
 	-- siphon_life,if=remains<5;
-	if talents[AF.SiphonLife] and mana >= 500 and (debuff[AF.Siphon Life].remains < 5) then
+	if talents[AF.SiphonLife] and mana >= 500 and (debuff[AF.SiphonLife].remains < 5) then
 		return AF.SiphonLife;
 	end
 
@@ -219,7 +219,7 @@ function Warlock:Affliction()
 	end
 
 	-- drain_soul,interrupt=1;
-	if talents[AF.DrainSoul] and mana >= 0 and () then
+	if talents[AF.DrainSoul] and mana >= 0 then
 		return AF.DrainSoul;
 	end
 
@@ -285,7 +285,7 @@ function Warlock:AfflictionAoe()
 	end
 
 	-- unstable_affliction,if=remains<5;
-	if talents[AF.UnstableAffliction] and mana >= 500 and currentSpell ~= AF.UnstableAffliction and (debuff[AF.Unstable Affliction].remains < 5) then
+	if talents[AF.UnstableAffliction] and mana >= 500 and currentSpell ~= AF.UnstableAffliction and (debuff[AF.UnstableAffliction].remains < 5) then
 		return AF.UnstableAffliction;
 	end
 
@@ -335,7 +335,7 @@ function Warlock:AfflictionAoe()
 	end
 
 	-- drain_soul,interrupt_global=1;
-	if talents[AF.DrainSoul] and mana >= 0 and () then
+	if talents[AF.DrainSoul] and mana >= 0 then
 		return AF.DrainSoul;
 	end
 
@@ -394,7 +394,7 @@ function Warlock:AfflictionCleave()
 	end
 
 	-- unstable_affliction,if=remains<5;
-	if talents[AF.UnstableAffliction] and mana >= 500 and currentSpell ~= AF.UnstableAffliction and (debuff[AF.Unstable Affliction].remains < 5) then
+	if talents[AF.UnstableAffliction] and mana >= 500 and currentSpell ~= AF.UnstableAffliction and (debuff[AF.UnstableAffliction].remains < 5) then
 		return AF.UnstableAffliction;
 	end
 
@@ -404,17 +404,17 @@ function Warlock:AfflictionCleave()
 	end
 
 	-- agony,target_if=!(target=self.target)&remains<5;
-	if mana >= 500 and () then
+	if mana >= 500 then
 		return AF.Agony;
 	end
 
 	-- siphon_life,if=remains<5;
-	if talents[AF.SiphonLife] and mana >= 500 and (debuff[AF.Siphon Life].remains < 5) then
+	if talents[AF.SiphonLife] and mana >= 500 and (debuff[AF.SiphonLife].remains < 5) then
 		return AF.SiphonLife;
 	end
 
 	-- siphon_life,target_if=!(target=self.target)&remains<3;
-	if talents[AF.SiphonLife] and mana >= 500 and () then
+	if talents[AF.SiphonLife] and mana >= 500 then
 		return AF.SiphonLife;
 	end
 
@@ -424,7 +424,7 @@ function Warlock:AfflictionCleave()
 	end
 
 	-- corruption,target_if=remains<5&(talent.absolute_corruption|!talent.seed_of_corruption);
-	if mana >= 500 and () then
+	if mana >= 500 then
 		return AF.Corruption;
 	end
 
@@ -464,7 +464,7 @@ function Warlock:AfflictionCleave()
 	end
 
 	-- malefic_rapture,if=!talent.dread_touch&(dot.soul_rot.remains>cast_time|dot.phantom_singularity.remains>cast_time|dot.vile_taint_dot.remains>cast_time|pet.darkglare.active);
-	if talents[AF.MaleficRapture] and soulShards >= 1 and currentSpell ~= AF.MaleficRapture and (not talents[AF.DreadTouch] and ( debuff[AF.SoulRot].remains > timeShift or debuff[AF.PhantomSingularity].remains > timeShift or debuff[AF.VileTaintDot].remains > timeShift or )) then
+	if talents[AF.MaleficRapture] and soulShards >= 1 and currentSpell ~= AF.MaleficRapture and (not talents[AF.DreadTouch] and ( debuff[AF.SoulRot].remains > timeShift or debuff[AF.PhantomSingularity].remains > timeShift or debuff[AF.VileTaintDot].remains > timeShift )) then
 		return AF.MaleficRapture;
 	end
 
@@ -489,17 +489,17 @@ function Warlock:AfflictionCleave()
 	end
 
 	-- agony,target_if=refreshable;
-	if mana >= 500 and () then
+	if mana >= 500 then
 		return AF.Agony;
 	end
 
 	-- corruption,target_if=refreshable;
-	if mana >= 500 and () then
+	if mana >= 500 then
 		return AF.Corruption;
 	end
 
 	-- drain_soul,interrupt_global=1;
-	if talents[AF.DrainSoul] and mana >= 0 and () then
+	if talents[AF.DrainSoul] and mana >= 0 then
 		return AF.DrainSoul;
 	end
 
@@ -546,6 +546,6 @@ function Warlock:AfflictionVariables()
 	local hasCds = talents[AF.PhantomSingularity] or talents[AF.VileTaint] or talents[AF.SoulRot] or talents[AF.SummonDarkglare];
 
 	-- variable,name=cds_active,op=set,value=!variable.has_cds|(pet.darkglare.active|variable.cd_dots_up|buff.power_infusion.react);
-	local cdsActive = not hasCds or ( or cdDotsUp or buff[AF.PowerInfusion].count );
+	local cdsActive = not hasCds or ( cdDotsUp or buff[AF.PowerInfusion].count );
 end
 
