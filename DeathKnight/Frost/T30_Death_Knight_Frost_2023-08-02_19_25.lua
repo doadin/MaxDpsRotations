@@ -2,7 +2,7 @@ local _, addonTable = ...;
 
 -- @type MaxDps;
 if not MaxDps then return end;
-local DeathKnight = addonTable.Deathknight;
+local DeathKnight = addonTable.DeathKnight;
 local MaxDps = MaxDps;
 
 local UnitPower = UnitPower;
@@ -851,10 +851,10 @@ function DeathKnight:FrostVariables()
 	local runeforge = fd.runeforge;
 
 	-- variable,name=st_planning,value=active_enemies=1&(raid_event.adds.in>15|!raid_event.adds.exists);
-	stPlanning = targets == 1 and ( not targets > 1 );
+	stPlanning = (targets == 1);
 
 	-- variable,name=adds_remain,value=active_enemies>=2&(!raid_event.adds.exists|raid_event.adds.exists&raid_event.adds.remains>5);
-	addsRemain = targets >= 2 and ( not targets > 1 or targets > 1 and raid_event.adds.remains > 5 );
+	addsRemain = targets >= 2 and ( not targets > 1 or targets > 1 );
 
 	-- variable,name=rime_buffs,value=buff.rime.react&(talent.rage_of_the_frozen_champion|talent.avalanche|talent.icebreaker);
 	rimeBuffs = buff[FR.Rime].count and ( talents[FR.RageOfTheFrozenChampion] or talents[FR.Avalanche] or talents[FR.Icebreaker] );
